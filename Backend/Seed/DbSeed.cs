@@ -10,17 +10,7 @@ public static class DbSeed
             {
                 Name = "Administrator",
             };
-            var managerRole = new IdentityRole
-            {
-                Name = "Manager",
-            };
-            var employeeRole = new IdentityRole
-            {
-                Name = "Employee",
-            };
             await roleManager.CreateAsync(adminRole);
-            await roleManager.CreateAsync(managerRole);
-            await roleManager.CreateAsync(employeeRole);
         }
 
         if(!userManager.Users.Any())
