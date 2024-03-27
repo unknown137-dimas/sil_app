@@ -1,9 +1,7 @@
-public class PatientSample
+public class PatientSample : ModelBase
 {
-    public Guid Id { get; set; }
     public DateTime SampleSchedule { get; set; }
     public Guid PatientId { get; set; }
     public Patient Patient { get; set; } = null!;
-    public Guid SampleServiceId { get; set; }
-    public SampleService SampleService { get; set; } = null!;
+    public ICollection<SampleService> SampleServices { get; set; } = null!;
 }

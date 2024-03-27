@@ -1,8 +1,9 @@
-public class PatientCheckResult
+public class PatientCheckResult : ModelBase
 {
-    public Guid Id { get; set; }
     public Guid PatientCheckId { get; set; }
     public PatientCheck PatientCheck { get; set; } = null!;
+    public Guid CheckServiceId { get; set; }
+    public CheckService CheckService { get; set; } = null!;
     public float? NumericResult { get; set; }
     public string? StringResult { get; set; }
 }

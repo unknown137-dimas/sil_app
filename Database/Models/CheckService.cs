@@ -1,5 +1,6 @@
 public class CheckService : ModelBase
 {
+    public string Name { get; set; } = null!;
     public Guid CheckCategoryId { get; set; }
     public CheckCategory CheckCategory { get; set; } = null!;
     public CheckType NormalValueType { get; set; }
