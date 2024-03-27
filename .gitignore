@@ -34,8 +34,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-Backend/[Oo]bj/*
-Database/[Oo]bj/*
+Migrations/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -484,3 +483,5 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+*.db*
