@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 public class TokenService
 {
@@ -12,7 +13,7 @@ public class TokenService
         _configuration = configuration;
     }
 
-    public string GenerateToken(User userIdentity, IEnumerable<string> roles)
+    public string GenerateToken(IdentityUser userIdentity, IEnumerable<string> roles)
     {
         var claims = new List<Claim>
         {

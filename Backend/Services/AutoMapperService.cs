@@ -1,10 +1,11 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 public class AutoMapperService : Profile
 {
     public AutoMapperService()
     {
-        CreateMap<UserDTO, User>().ReverseMap();
+        CreateMap<UserDTO, IdentityUser>().ReverseMap();
     }
 
     public static IMapper InitializeAutoMapper()
