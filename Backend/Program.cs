@@ -1,15 +1,12 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity;
 using NLog.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
-// var jsonReader = new JsonReader();
-
-builder.WebHost.UseUrls("https://localhost:7098");
 
 //Add services to the container.
 // builder.Services.AddCors(options =>
@@ -76,14 +73,14 @@ builder.Services.AddAuthentication(options =>
 	})
 .AddCookie("Identity.Application");
 
-builder.Services.AddIdentityCore<User>(opt => 
+builder.Services.AddIdentityCore<IdentityUser>(opt => 
 {
     opt.Password.RequiredLength = 8;
     opt.SignIn.RequireConfirmedEmail = true;
 })
 .AddSignInManager()
 .AddRoles<IdentityRole>()
-.AddTokenProvider<DataProtectorTokenProvider<User>>("Identity")
+.AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Identity")
 .AddDefaultTokenProviders()
 .AddEntityFrameworkStores<LisDbContext>();
 
@@ -95,7 +92,7 @@ var app = builder.Build();
 
 // Data seeding to create default role and admin user
 var services = app.Services.CreateScope().ServiceProvider;
-var userManager = services.GetRequiredService<UserManager<User>>();
+var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 await DbSeed.Seed(userManager, roleManager);
 
