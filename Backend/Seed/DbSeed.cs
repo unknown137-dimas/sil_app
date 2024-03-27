@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 public static class DbSeed
 {
-    public static async Task Seed(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+    public static async Task Seed(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
     {
         if(!roleManager.Roles.Any())
         {
@@ -15,7 +15,7 @@ public static class DbSeed
 
         if(!userManager.Users.Any())
         {
-            var defAdmin = new User
+            var defAdmin = new IdentityUser
             {
                 UserName = "admin",
                 Email = "admin@fake-email.com",
