@@ -1,5 +1,0 @@
-D:\Documents\PROJECTS\Side Projects\sil_app\Database\obj\Debug\net8.0\Database.csproj.AssemblyReference.cache
-D:\Documents\PROJECTS\Side Projects\sil_app\Database\obj\Debug\net8.0\Database.GeneratedMSBuildEditorConfig.editorconfig
-D:\Documents\PROJECTS\Side Projects\sil_app\Database\obj\Debug\net8.0\Database.AssemblyInfoInputs.cache
-D:\Documents\PROJECTS\Side Projects\sil_app\Database\obj\Debug\net8.0\Database.AssemblyInfo.cs
-D:\Documents\PROJECTS\Side Projects\sil_app\Database\obj\Debug\net8.0\Database.csproj.CoreCompileInputs.cache
