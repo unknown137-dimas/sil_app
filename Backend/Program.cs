@@ -30,7 +30,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ILisDbContext, LisDbContext>(o =>
 	o.UseSqlite(
 		builder.Configuration.GetConnectionString("DefaultConnection"),
-		optionsBuilder => optionsBuilder.MigrationsAssembly("MeetingRoomBooking.Api")
+		optionsBuilder => optionsBuilder.MigrationsAssembly("Database")
 	)
 );
 
