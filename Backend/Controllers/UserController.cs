@@ -9,25 +9,17 @@ namespace Backend.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-	private readonly TokenService _tokenService;
 
     public UserController(
         ILogger<UserController> logger,
-        UserManager<User> userManager,
-        RoleManager<IdentityRole> roleManager,
-		TokenService tokenService
+        UserManager<IdentityUser> userManager,
+        RoleManager<IdentityRole> roleManager
     )
     {
         _logger = logger;
         _userManager = userManager;
         _roleManager = roleManager;
-		_tokenService = tokenService;
     }
-
-    [Authorize]
-    [HttpGet]
-    public async Task<ActionResult>
-
 }
