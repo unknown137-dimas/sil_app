@@ -34,12 +34,20 @@ builder.Services.AddDbContext<ILisDbContext, LisDbContext>(o =>
 	)
 );
 
-// Configure Dependency Injection.
-// builder.Services.AddScoped<IRepository<Room>, RoomRepository>();
-// builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
-// builder.Services.AddScoped<IRepository<Activity>, ActivityRepository>();
+// Configure DB Repositories
+builder.Services.AddScoped<IRepository<CheckCategory>, Repository<CheckCategory>>();
+builder.Services.AddScoped<IRepository<CheckService>, Repository<CheckService>>();
+builder.Services.AddScoped<IRepository<MedicalTool>, Repository<MedicalTool>>();
+builder.Services.AddScoped<IRepository<Patient>, Repository<Patient>>();
+builder.Services.AddScoped<IRepository<PatientCheck>, Repository<PatientCheck>>();
+builder.Services.AddScoped<IRepository<PatientCheckResult>, Repository<PatientCheckResult>>();
+builder.Services.AddScoped<IRepository<PatientSample>, Repository<PatientSample>>();
+builder.Services.AddScoped<IRepository<PatientSampleResult>, Repository<PatientSampleResult>>();
+builder.Services.AddScoped<IRepository<Reagen>, Repository<Reagen>>();
+builder.Services.AddScoped<IRepository<SampleCategory>, Repository<SampleCategory>>();
+builder.Services.AddScoped<IRepository<SampleService>, Repository<SampleService>>();
  
-// builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+// Configure Logging
 builder.Services.AddLogging(logBuilder =>
 	{
 		logBuilder.ClearProviders();
@@ -47,7 +55,6 @@ builder.Services.AddLogging(logBuilder =>
 		logBuilder.AddNLog("nlog.config");
 	});
 
-builder.Services.AddScoped<TokenService>();
 
 // Configure Authentication.
 builder.Services.AddAuthentication(options =>
@@ -72,6 +79,8 @@ builder.Services.AddAuthentication(options =>
 		};
 	})
 .AddCookie("Identity.Application");
+
+builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddIdentityCore<IdentityUser>(opt => 
 {
