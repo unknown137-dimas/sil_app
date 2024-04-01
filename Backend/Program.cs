@@ -4,49 +4,53 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NLog.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Add services to the container.
-// builder.Services.AddCors(options =>
-// {
-// 	options.AddDefaultPolicy(policy =>
-// 	{
-// 		// TODO change this to the web domain name
-// 		policy.WithOrigins("https://localhost:44459");
-// 		policy.AllowCredentials();
-// 		policy.AllowAnyHeader();
-// 		policy.AllowAnyMethod();
-// 	});
-// });
 builder.Services.AddControllers().AddJsonOptions(x =>
 	x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ILisDbContext, LisDbContext>(o =>
-	o.UseSqlite(
+builder.Services.AddSwaggerGen(configurations => 
+	{
+		configurations.SwaggerDoc("v1", new OpenApiInfo() {Title = "LaboratoriumInformationSystem", Version = "v1"});
+
+		OpenApiSecurityScheme securitySchema = new OpenApiSecurityScheme
+		{
+			Description =
+				"JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+			Name = "Authorization",
+			In = ParameterLocation.Header,
+			Type = SecuritySchemeType.Http,
+			Scheme = "bearer",
+			Reference = new OpenApiReference
+			{
+				Type = ReferenceType.SecurityScheme,
+				Id = "Bearer"
+			}
+		};
+
+		configurations.AddSecurityDefinition("Bearer", securitySchema);
+
+		OpenApiSecurityRequirement securityRequirement = new OpenApiSecurityRequirement
+		{
+			{securitySchema, new[] {"Bearer"}}
+		};
+
+		configurations.AddSecurityRequirement(securityRequirement);
+	}
+);
+builder.Services.AddDbContext<LisDbContext>(options =>
+	options.UseSqlite(
 		builder.Configuration.GetConnectionString("DefaultConnection"),
 		optionsBuilder => optionsBuilder.MigrationsAssembly("Database")
 	)
 );
 
-// Configure DB Repositories
-builder.Services.AddScoped<IRepository<CheckCategory>, Repository<CheckCategory>>();
-builder.Services.AddScoped<IRepository<CheckService>, Repository<CheckService>>();
-builder.Services.AddScoped<IRepository<MedicalTool>, Repository<MedicalTool>>();
-builder.Services.AddScoped<IRepository<Patient>, Repository<Patient>>();
-builder.Services.AddScoped<IRepository<PatientCheck>, Repository<PatientCheck>>();
-builder.Services.AddScoped<IRepository<PatientCheckResult>, Repository<PatientCheckResult>>();
-builder.Services.AddScoped<IRepository<PatientSample>, Repository<PatientSample>>();
-builder.Services.AddScoped<IRepository<PatientSampleResult>, Repository<PatientSampleResult>>();
-builder.Services.AddScoped<IRepository<Reagen>, Repository<Reagen>>();
-builder.Services.AddScoped<IRepository<SampleCategory>, Repository<SampleCategory>>();
-builder.Services.AddScoped<IRepository<SampleService>, Repository<SampleService>>();
- 
 // Configure Logging
 builder.Services.AddLogging(logBuilder =>
 	{
@@ -82,14 +86,14 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<TokenService>();
 
-builder.Services.AddIdentityCore<IdentityUser>(opt => 
+builder.Services.AddIdentityCore<User>(opt => 
 {
     opt.Password.RequiredLength = 8;
     opt.SignIn.RequireConfirmedEmail = true;
 })
 .AddSignInManager()
 .AddRoles<IdentityRole>()
-.AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Identity")
+.AddTokenProvider<DataProtectorTokenProvider<User>>("Identity")
 .AddDefaultTokenProviders()
 .AddEntityFrameworkStores<LisDbContext>();
 
@@ -101,7 +105,7 @@ var app = builder.Build();
 
 // Data seeding to create default role and admin user
 var services = app.Services.CreateScope().ServiceProvider;
-var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+var userManager = services.GetRequiredService<UserManager<User>>();
 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 await DbSeed.Seed(userManager, roleManager);
 
