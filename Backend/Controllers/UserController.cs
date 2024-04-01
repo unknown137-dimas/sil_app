@@ -9,12 +9,12 @@ namespace Backend.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
 
     public UserController(
         ILogger<UserController> logger,
-        UserManager<IdentityUser> userManager,
+        UserManager<User> userManager,
         RoleManager<IdentityRole> roleManager
     )
     {

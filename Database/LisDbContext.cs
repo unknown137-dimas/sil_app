@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 public class LisDbContext : IdentityDbContext, ILisDbContext
 {
+    public DbSet<User> Users { get; set; }
     public DbSet<CheckCategory> CheckCategories { get; set; }
     public DbSet<CheckService> CheckServices { get; set; }
     public DbSet<MedicalTool> MedicalTools { get; set; }
@@ -15,17 +17,26 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
     public DbSet<SampleCategory> SampleCategories { get; set; }
     public DbSet<SampleService> SampleServices { get; set; }
 
-    public LisDbContext(){}
-    public LisDbContext(DbContextOptions<LisDbContext> options) : base(options) {}
+    protected readonly IConfiguration _configuration;
+
+    public LisDbContext(IConfiguration configuration, DbContextOptions<LisDbContext> options) : base(options)
+    {
+        _configuration = configuration;
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("FileName=./App.db");
+        base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<User>(_ =>
+        {
+            _.Property(_ => _.FirstName).IsRequired(true);
+            _.Property(_ => _.LastName).IsRequired(true);
+        });
         modelBuilder.Entity<CheckCategory>(_ => 
         {
             _.HasKey(_ => _.Id);

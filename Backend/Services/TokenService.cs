@@ -13,7 +13,7 @@ public class TokenService
         _configuration = configuration;
     }
 
-    public string GenerateToken(IdentityUser userIdentity, IEnumerable<string> roles)
+    public string GenerateToken(User userIdentity, IEnumerable<string> roles)
     {
         var claims = new List<Claim>
         {
