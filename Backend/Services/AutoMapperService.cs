@@ -5,7 +5,12 @@ public class AutoMapperService : Profile
 {
     public AutoMapperService()
     {
-        CreateMap<UserDTO, IdentityUser>().ReverseMap();
+        CreateMap<UserDTO, User>().ReverseMap();
+        CreateMap<CheckCategoryDTO, CheckCategory>().ReverseMap();
+        CreateMap<CheckServiceDTO, CheckService>().ReverseMap();
+        CreateMap<MedicalToolDTO, MedicalTool>().ReverseMap();
+        CreateMap<RoleDTO, IdentityRole>().ReverseMap();
+        CreateMap<SampleCategoryDTO, SampleCategory>().ReverseMap();
     }
 
     public static IMapper InitializeAutoMapper()
