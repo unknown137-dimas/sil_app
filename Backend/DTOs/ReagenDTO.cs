@@ -1,6 +1,6 @@
-namespace Database.Models;
+namespace Backend.DTOs;
 
-public class Reagen : ModelBase
+public class ReagenDTO : DTOBase
 {
     public string Name { get; set; } = null!;
     public string Code { get; set; } = null!;

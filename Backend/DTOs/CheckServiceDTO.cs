@@ -1,5 +1,6 @@
-using Backend.DTOs;
 using Database.Enums;
+
+namespace Backend.DTOs;
 
 public class CheckServiceDTO : DTOBase
 {

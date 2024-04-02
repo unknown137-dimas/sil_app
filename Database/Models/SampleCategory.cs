@@ -1,4 +1,4 @@
-using Database.Models;
+namespace Database.Models;
 
 public class SampleCategory : ModelBase
 {

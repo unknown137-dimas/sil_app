@@ -1,4 +1,4 @@
-using Backend.DTOs;
+namespace Backend.DTOs;
 
 public class SampleServiceDTO : DTOBase
 {

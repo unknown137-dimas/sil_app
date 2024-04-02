@@ -1,5 +1,6 @@
 using Database.Enums;
-using Database.Models;
+
+namespace Database.Models;
 
 public class MedicalTool : ModelBase
 {
