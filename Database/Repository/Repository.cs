@@ -13,7 +13,7 @@ public class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEnti
         return _dbContext.Set<TEntity>();
     }
 
-    public async Task<TEntity?> GetAsync(Guid id)
+    public async Task<TEntity?> GetAsync(string id)
     {
         return await _dbContext.Set<TEntity>().FindAsync(id);
     }
