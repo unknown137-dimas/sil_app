@@ -40,6 +40,15 @@ public class MedicalToolModule : IMedicalToolModule
         }
     }
 
+    public IEnumerable<MedicalToolDTO> GetAllMedicalTool()
+    {
+        using(_medicalToolRepository)
+        {
+            return _mapper.Map<IEnumerable<MedicalToolDTO>>(_medicalToolRepository.GetEntities());
+        }
+    }
+
+
     public async Task<MedicalToolDTO?> GetById(string medicalToolId)
     {
         using(_medicalToolRepository)

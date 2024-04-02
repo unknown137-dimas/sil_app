@@ -40,6 +40,15 @@ public class ReagenModule : IReagenModule
         }
     }
 
+    public IEnumerable<ReagenDTO> GetAllReagen()
+    {
+        using(_reagenRepository)
+        {
+            return _mapper.Map<IEnumerable<ReagenDTO>>(_reagenRepository.GetEntities());
+        }
+    }
+
+
     public async Task<ReagenDTO?> GetById(string reagenId)
     {
         using(_reagenRepository)
