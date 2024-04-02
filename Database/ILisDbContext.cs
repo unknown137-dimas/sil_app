@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 public interface ILisDbContext
 {
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> IdentityUsers { get; set; }
     public DbSet<CheckCategory> CheckCategories { get; set; }
     public DbSet<CheckService> CheckServices { get; set; }
     public DbSet<MedicalTool> MedicalTools { get; set; }
