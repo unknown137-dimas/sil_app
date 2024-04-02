@@ -23,12 +23,6 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
     {
         _configuration = configuration;
     }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
