@@ -51,6 +51,8 @@ builder.Services.AddDbContext<LisDbContext>(options =>
 	)
 );
 
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 // Configure Logging
 builder.Services.AddLogging(logBuilder =>
 	{
