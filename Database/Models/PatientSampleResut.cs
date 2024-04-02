@@ -1,3 +1,5 @@
+using Database.Models;
+
 public class PatientSampleResult : ModelBase
 {
     public DateTime SampleTakenDate { get; set; }

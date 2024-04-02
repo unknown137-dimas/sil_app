@@ -1,3 +1,6 @@
+using Database.Enums;
+using Database.Models;
+
 public class CheckService : ModelBase
 {
     public string Name { get; set; } = null!;

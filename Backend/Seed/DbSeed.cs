@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 
+namespace Backend.Seed;
+
 public static class DbSeed
 {
     public static async Task Seed(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)

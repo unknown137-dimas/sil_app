@@ -1,3 +1,5 @@
+namespace Database.Enums;
+
 public enum CheckStatus
 {
     Processing,

@@ -1,3 +1,5 @@
+using Database.Models;
+
 public class SampleService : ModelBase
 {
     public string Name { get; set; } = null!;

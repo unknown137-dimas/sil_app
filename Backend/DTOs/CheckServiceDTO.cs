@@ -1,3 +1,6 @@
+using Backend.DTOs;
+using Database.Enums;
+
 public class CheckServiceDTO : DTOBase
 {
     public string Name { get; set; } = null!;

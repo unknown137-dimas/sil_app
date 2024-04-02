@@ -1,3 +1,5 @@
+using Database.Models;
+
 public class PatientCheckResult : ModelBase
 {
     public Guid PatientCheckId { get; set; }

@@ -1,3 +1,5 @@
+using Database.Models;
+
 public class SampleCategory : ModelBase
 {
     public string Name { get; set; } = null!;

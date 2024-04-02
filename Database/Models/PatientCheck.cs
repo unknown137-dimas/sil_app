@@ -1,3 +1,6 @@
+using Database.Enums;
+using Database.Models;
+
 public class PatientCheck : ModelBase
 {
     public DateTime CheckSchedule { get; set; }

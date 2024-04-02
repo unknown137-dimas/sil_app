@@ -1,3 +1,5 @@
+using Database.Models;
+
 public class Reagen : ModelBase
 {
     public string Name { get; set; } = null!;

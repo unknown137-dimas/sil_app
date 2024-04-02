@@ -1,6 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
+namespace Backend.Services;
+
 public class AutoMapperService : Profile
 {
     public AutoMapperService()

@@ -1,5 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using Backend.Seed;
+using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

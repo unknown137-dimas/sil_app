@@ -1,3 +1,5 @@
+using Database.Models;
+
 public class PatientSample : ModelBase
 {
     public DateTime SampleSchedule { get; set; }

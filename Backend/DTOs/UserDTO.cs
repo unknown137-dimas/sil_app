@@ -1,3 +1,5 @@
+using Backend.DTOs;
+
 public class UserDTO : DTOBase
 {
 	public string UserName { get; set; } = null!;
