@@ -2,6 +2,6 @@ namespace Backend.DTOs;
 
 public class DTOBase
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; } = null!;
 
 }
