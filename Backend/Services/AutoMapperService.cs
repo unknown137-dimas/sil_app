@@ -1,4 +1,6 @@
 using AutoMapper;
+using Backend.DTOs;
+using Database.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Services;
