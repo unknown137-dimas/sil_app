@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-public abstract class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEntity : class
+public class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEntity : class
 {
     protected readonly LisDbContext _dbContext;
-    protected Repository(LisDbContext dbContext)
+    public Repository(LisDbContext dbContext)
     {
         _dbContext = dbContext;
     }
