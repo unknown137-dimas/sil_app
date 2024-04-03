@@ -52,7 +52,12 @@ public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model :
 
     public virtual async Task<int> UpdateAsync(DTO updatedItem)
     {
-        _repository.Update(_mapper.Map<Model>(updatedItem));
+        var existingItem = await _repository.GetAsync(updatedItem.Id!);
+        if(existingItem is not null)
+        {
+            _mapper.Map(updatedItem, existingItem);
+            _repository.Update(existingItem);
+        }
         return await _repository.CommitAsync();
     }
 
