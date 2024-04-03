@@ -8,4 +8,5 @@ public interface IRepository<TEntity> where TEntity : class
     public EntityEntry<TEntity> Update(TEntity entity);
     public EntityEntry<TEntity> Delete(TEntity entity);
     public Task<int> CommitAsync();
+    public bool IsExisted(string id);
 }

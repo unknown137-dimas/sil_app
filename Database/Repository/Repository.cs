@@ -1,6 +1,7 @@
+using Database.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-public class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEntity : class
+public class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEntity : ModelBase
 {
     protected readonly LisDbContext _dbContext;
     public Repository(LisDbContext dbContext)
@@ -41,5 +42,10 @@ public class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEnti
     public async void Dispose()
     {
         await _dbContext.DisposeAsync();
+    }
+
+    public bool IsExisted(string id)
+    {
+        return _dbContext.Set<TEntity>().FirstOrDefault(_ => _.Id.Equals(id)) is not null;
     }
 }
