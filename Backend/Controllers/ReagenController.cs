@@ -1,6 +1,5 @@
 using Backend.DTOs;
 using Backend.Modules;
-using Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -10,11 +9,11 @@ namespace Backend.Controllers;
 public class ReagenController : ControllerBase
 {
     private readonly ILogger<ReagenController> _logger;
-    private readonly Module<ReagenDTO, Reagen> _reagenModule;
+    private readonly ReagenModule _reagenModule;
 
     public ReagenController(
         ILogger<ReagenController> logger,
-        Module<ReagenDTO, Reagen> reagenModule
+        ReagenModule reagenModule
     )
     {
         _logger = logger;
@@ -26,7 +25,7 @@ public class ReagenController : ControllerBase
     public ActionResult<IEnumerable<ReagenDTO>> GetAllReagen()
     {
         var item = _reagenModule.GetAll();
-        return item.Equals(Enumerable.Empty<ReagenDTO>()) ? NoContent() : Ok(item);
+        return Ok(item);
     }
 
     [HttpGet("{reagenId}")]
@@ -36,25 +35,28 @@ public class ReagenController : ControllerBase
         return item is not null ? Ok(item) : NotFound();
     }
 
-    [HttpPost("create")]
+    [HttpPost()]
     public async Task<ActionResult<int>> CreateReagen(ReagenDTO newReagen)
     {
         var item = await _reagenModule.AddAsync(newReagen);
-        return Ok(item);
+        return item > 0 ? Ok(item) : BadRequest();
     }
 
-    [HttpPost("update")]
-    public async Task<ActionResult<int>> UpdateReagen(ReagenDTO updatedReagen)
+    [HttpPost("{reagenId}")]
+    public async Task<ActionResult<ReagenDTO>> UpdateReagen(string reagenId, ReagenDTO updatedReagen)
     {
-
-        var item = await _reagenModule.UpdateAsync(updatedReagen);
-        return Ok(item);
+        int item = 0;
+        if(_reagenModule.IsExisted(reagenId))
+        {
+            item = await _reagenModule.UpdateAsync(updatedReagen);
+        }
+        return item > 0 ? Ok(updatedReagen) : BadRequest("Failed to update");
     }
 
-    [HttpDelete("delete/{reagenId}")]
+    [HttpDelete("{reagenId}")]
     public async Task<ActionResult<int>> DeleteReagen(string reagenId)
     {
         var item = await _reagenModule.DeleteAsync(reagenId);
-        return Ok(item);
+        return item > 0 ? Ok(item) : BadRequest();
     }
 }
