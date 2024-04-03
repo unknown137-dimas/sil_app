@@ -5,7 +5,7 @@ namespace Database.Models;
 public class CheckService : ModelBase
 {
     public string Name { get; set; } = null!;
-    public Guid CheckCategoryId { get; set; }
+    public string CheckCategoryId { get; set; } = null!;
     public CheckCategory CheckCategory { get; set; } = null!;
     public CheckType NormalValueType { get; set; }
     public string? CheckUnit { get; set; }
