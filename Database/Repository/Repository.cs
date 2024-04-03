@@ -1,4 +1,5 @@
 using Database.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 public class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEntity : ModelBase
@@ -46,6 +47,8 @@ public class Repository<TEntity> : IRepository<TEntity>, IDisposable where TEnti
 
     public bool IsExisted(string id)
     {
-        return _dbContext.Set<TEntity>().FirstOrDefault(_ => _.Id.Equals(id)) is not null;
+        return _dbContext.Set<TEntity>()
+            .AsNoTracking()
+            .FirstOrDefault(_ => _.Id.Equals(id)) is not null;
     }
 }
