@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Modules;
-using Backend.Modules.Interfaces;
 using Backend.Seed;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -55,7 +54,7 @@ builder.Services.AddDbContext<LisDbContext>(options =>
 	)
 );
 
-builder.Services.AddScoped<IReagenModule, ReagenModule>();
+builder.Services.AddScoped(typeof(Module<,>));
 
 builder.Services.AddScoped(typeof(Repository<>));
 

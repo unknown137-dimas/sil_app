@@ -1,23 +1,20 @@
-using System.Collections;
-using System.Net;
 using Backend.DTOs;
-using Backend.Modules.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Backend.Modules;
+using Database.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/reagen")]
 public class ReagenController : ControllerBase
 {
     private readonly ILogger<ReagenController> _logger;
-    private readonly IReagenModule _reagenModule;
+    private readonly Module<ReagenDTO, Reagen> _reagenModule;
 
     public ReagenController(
         ILogger<ReagenController> logger,
-        IReagenModule reagenModule
+        Module<ReagenDTO, Reagen> reagenModule
     )
     {
         _logger = logger;
@@ -26,9 +23,10 @@ public class ReagenController : ControllerBase
 
 
     [HttpGet()]
-    public IEnumerable<ReagenDTO> GetAllReagen()
+    public ActionResult<IEnumerable<ReagenDTO>> GetAllReagen()
     {
-        return _reagenModule.GetAllReagen();
+        var item = _reagenModule.GetAll();
+        return item.Equals(Enumerable.Empty<ReagenDTO>()) ? NoContent() : Ok(item);
     }
 
     [HttpGet("{reagenId}")]
@@ -36,5 +34,27 @@ public class ReagenController : ControllerBase
     {
         var item = await _reagenModule.GetById(reagenId);
         return item is not null ? Ok(item) : NotFound();
+    }
+
+    [HttpPost("create")]
+    public async Task<ActionResult<int>> CreateReagen(ReagenDTO newReagen)
+    {
+        var item = await _reagenModule.AddAsync(newReagen);
+        return Ok(item);
+    }
+
+    [HttpPost("update")]
+    public async Task<ActionResult<int>> UpdateReagen(ReagenDTO updatedReagen)
+    {
+
+        var item = await _reagenModule.UpdateAsync(updatedReagen);
+        return Ok(item);
+    }
+
+    [HttpDelete("delete/{reagenId}")]
+    public async Task<ActionResult<int>> DeleteReagen(string reagenId)
+    {
+        var item = await _reagenModule.DeleteAsync(reagenId);
+        return Ok(item);
     }
 }
