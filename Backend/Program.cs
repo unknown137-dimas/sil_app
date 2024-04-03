@@ -54,7 +54,7 @@ builder.Services.AddDbContext<LisDbContext>(options =>
 	)
 );
 
-builder.Services.AddScoped(typeof(Module<,>));
+builder.Services.AddScoped<ReagenModule>();
 
 builder.Services.AddScoped(typeof(Repository<>));
 
