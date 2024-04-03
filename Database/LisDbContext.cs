@@ -35,12 +35,14 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<CheckCategory>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.HasMany(_ => _.CheckServices);
         });
         modelBuilder.Entity<CheckService>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.Property(_ => _.NormalValueType).IsRequired(true);
             _.Property(_ => _.CheckUnit).IsRequired(false).HasMaxLength(15);
@@ -53,6 +55,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<MedicalTool>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.Property(_ => _.Code).IsRequired(true).HasMaxLength(20);
             _.Property(_ => _.LastCalibrationDate).IsRequired(true);
@@ -63,6 +66,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<Patient>(_ =>
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.Property(_ => _.MedicalRecordNumber).IsRequired(true);
             _.Property(_ => _.DateOfBirth).IsRequired(true);
@@ -75,6 +79,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<PatientCheck>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.CheckSchedule).IsRequired(true);
             _.Property(_ => _.ValidationStatus).IsRequired(true);
             _.Property(_ => _.CheckStatus).IsRequired(true);
@@ -84,6 +89,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<PatientCheckResult>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.NumericResult).IsRequired(false);
             _.Property(_ => _.StringResult).IsRequired(false);
             _.HasOne(_ => _.PatientCheck);
@@ -92,6 +98,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<PatientSample>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.SampleSchedule).IsRequired(true);
             _.HasOne(_ => _.Patient);
             _.HasMany(_ => _.SampleServices);
@@ -99,6 +106,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<PatientSampleResult>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.SampleTakenDate).IsRequired(true);
             _.Property(_ => _.SampleNote).IsRequired(false);
             _.HasOne(_ => _.PatientSample);
@@ -107,6 +115,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<Reagen>(_ =>
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.Property(_ => _.Code).IsRequired(true).HasMaxLength(20);
             _.Property(_ => _.ExpiredDate).IsRequired(true);
@@ -115,12 +124,14 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
         modelBuilder.Entity<SampleCategory>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.HasMany(_ => _.SampleServices);
         });
         modelBuilder.Entity<SampleService>(_ => 
         {
             _.HasKey(_ => _.Id);
+            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.HasOne(_ => _.SampleCategory);
         });
