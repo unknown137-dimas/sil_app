@@ -13,8 +13,10 @@ public class AutoMapperService : Profile
         CreateMap<CheckCategoryDTO, CheckCategory>().ReverseMap();
         CreateMap<CheckServiceDTO, CheckService>().ReverseMap();
         CreateMap<MedicalToolDTO, MedicalTool>().ReverseMap();
+        CreateMap<ReagenDTO, Reagen>().ReverseMap();
         CreateMap<RoleDTO, IdentityRole>().ReverseMap();
         CreateMap<SampleCategoryDTO, SampleCategory>().ReverseMap();
+        CreateMap<SampleServiceDTO, SampleService>().ReverseMap();
     }
 
     public static IMapper InitializeAutoMapper()
