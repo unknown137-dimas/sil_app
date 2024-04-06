@@ -38,6 +38,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.HasMany(_ => _.CheckServices);
+            _.HasIndex(_ => _.Name).IsUnique();
         });
         modelBuilder.Entity<CheckService>(_ => 
         {
@@ -51,6 +52,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.MaxNormalValue).IsRequired(false);
             _.Property(_ => _.NormalValue).IsRequired(false);
             _.HasOne(_ => _.CheckCategory);
+            _.HasIndex(_ => _.Name).IsUnique();
         });
         modelBuilder.Entity<MedicalTool>(_ => 
         {
@@ -62,6 +64,8 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.CalibrationDate).IsRequired(true);
             _.Property(_ => _.CalibrationStatus).IsRequired(true);
             _.Property(_ => _.CalibrationNote).IsRequired(false);
+            _.HasIndex(_ => _.Name).IsUnique();
+            _.HasIndex(_ => _.Code).IsUnique();
         });
         modelBuilder.Entity<Patient>(_ =>
         {
@@ -75,6 +79,8 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.HealthInsuranceNumber).IsRequired(false);
             _.Property(_ => _.PhoneNumber).IsRequired(true).HasMaxLength(20);
             _.Property(_ => _.Address).IsRequired(true).HasMaxLength(100);
+            _.HasIndex(_ => _.Name).IsUnique();
+            _.HasIndex(_ => _.MedicalRecordNumber).IsUnique();
         });
         modelBuilder.Entity<PatientCheck>(_ => 
         {
@@ -120,6 +126,8 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.Code).IsRequired(true).HasMaxLength(20);
             _.Property(_ => _.ExpiredDate).IsRequired(true);
             _.Property(_ => _.Stock).IsRequired(true);
+            _.HasIndex(_ => _.Name).IsUnique();
+            _.HasIndex(_ => _.Code).IsUnique();
         });
         modelBuilder.Entity<SampleCategory>(_ => 
         {
@@ -127,6 +135,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.HasMany(_ => _.SampleServices);
+            _.HasIndex(_ => _.Name).IsUnique(); ;
         });
         modelBuilder.Entity<SampleService>(_ => 
         {
@@ -134,6 +143,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.HasOne(_ => _.SampleCategory);
+            _.HasIndex(_ => _.Name).IsUnique(); ;
         });
     }
 
