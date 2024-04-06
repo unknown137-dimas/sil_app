@@ -1,5 +1,7 @@
 using AutoMapper;
 using Backend.DTOs;
+using Backend.Models;
+using Backend.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,39 +9,39 @@ namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController : ControllerBase
+public class UserController : ApiBaseController<UserController, UserDTO>
 {
-    private readonly ILogger<UserController> _logger;
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
 
     public UserController(
         ILogger<UserController> logger,
         UserManager<User> userManager,
-        IMapper mapper
-    )
+        IMapper mapper,
+        IResponseFactory<UserDTO> responseFactory
+    ) : base(logger, responseFactory)
     {
-        _logger = logger;
         _userManager = userManager;
         _mapper = mapper;
     }
 
      [HttpGet()]
-    public ActionResult<IEnumerable<UserDTO>> GetAllUser()
+    public ActionResult<Response<UserDTO>> GetAllUser()
     {
-        var item = _userManager.Users;
-        return Ok(_mapper.Map<IEnumerable<UserDTO>>(item));
+        var item = _mapper.Map<IEnumerable<UserDTO>>(_userManager.Users);
+        return GeneratedResponse(item, "");
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<UserDTO?>> GetUserByIdAsync(string userId)
+    public async Task<ActionResult<Response<UserDTO>>> GetUserByIdAsync(string userId)
     {
-        var item = await _userManager.FindByIdAsync(userId);
-        return item is not null ? Ok(_mapper.Map<UserDTO>(item)) : NotFound();
+        var item = _mapper.Map<UserDTO>(await _userManager.FindByIdAsync(userId));
+        var message = item is not null ? "" : "Item Not Found";
+        return GeneratedResponse(item, message);
     }
 
     [HttpPost()]
-    public async Task<ActionResult<IdentityResult>> CreateUser(NewUserDTO newUser)
+    public async Task<ActionResult<Response<UserDTO>>> CreateUser(NewUserDTO newUser)
     {
         var newItem = new User()
         {
@@ -53,13 +55,14 @@ public class UserController : ControllerBase
         var result = await _userManager.CreateAsync(newItem, newUser.Password);
         if(result.Succeeded)
         {
-            return Ok(result);
+            var userCreated = _mapper.Map<UserDTO>(_userManager.FindByNameAsync(newUser.UserName));
+            return GeneratedResponse(userCreated, result.Errors);
         }
-        return BadRequest(result);
+        return GeneratedResponse(null, result.Errors);
     }
 
     [HttpPost("{userId}")]
-    public async Task<ActionResult<IdentityResult>> UpdateUser(string userId, UserDTO updatedUser)
+    public async Task<ActionResult<Response<UserDTO>>> UpdateUser(string userId, UserDTO updatedUser)
     {
         IdentityResult result = new IdentityResult();
         var existingUser = await _userManager.FindByIdAsync(userId);
@@ -73,24 +76,27 @@ public class UserController : ControllerBase
         }
         if(result.Succeeded)
         {
-            return Ok(result);
+            var userUpdated = _mapper.Map<UserDTO>(await _userManager.FindByIdAsync(userId));
+            return GeneratedResponse(userUpdated, result.Errors);
         }
-        return BadRequest(result);
+        return GeneratedResponse(null, result.Errors);
     }
 
     [HttpDelete("{userId}")]
-    public async Task<ActionResult<IdentityResult>> DeleteUser(string userId)
+    public async Task<ActionResult<Response<UserDTO>>> DeleteUser(string userId)
     {
         var deletedItem = await _userManager.FindByIdAsync(userId);
         IdentityResult result = new IdentityResult();
-        if(deletedItem is not null)
+        if(deletedItem is null)
         {
-            result = await _userManager.DeleteAsync(deletedItem);
+            return GeneratedResponse(null, result.Errors);
         }
+        result = await _userManager.DeleteAsync(deletedItem);
         if(result.Succeeded)
         {
-            return Ok(result);
+            var userDeleted = _mapper.Map<UserDTO>(await _userManager.FindByIdAsync(userId));
+            return GeneratedResponse(userDeleted, result.Errors);
         }
-        return BadRequest(result);
+        return GeneratedResponse(null, result.Errors);
     }
 }

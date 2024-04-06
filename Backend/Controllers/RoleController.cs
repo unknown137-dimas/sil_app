@@ -1,5 +1,7 @@
 using AutoMapper;
 using Backend.DTOs;
+using Backend.Models;
+using Backend.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,9 +9,8 @@ namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/role")]
-public class RoleController : ControllerBase
+public class RoleController : ApiBaseController<RoleController, RoleDTO>
 {
-    private readonly ILogger<RoleController> _logger;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IMapper _mapper;
@@ -18,31 +19,32 @@ public class RoleController : ControllerBase
         ILogger<RoleController> logger,
         UserManager<User> userManager,
         RoleManager<IdentityRole> roleManager,
-        IMapper mapper
-    )
+        IMapper mapper,
+        IResponseFactory<RoleDTO> responseFactory
+    ) : base(logger, responseFactory)
     {
-        _logger = logger;
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
     }
 
     [HttpGet()]
-    public ActionResult<IEnumerable<RoleDTO>> GetAllRole()
+    public ActionResult<Response<RoleDTO>> GetAllRole()
     {
-        var item = _roleManager.Roles;
-        return Ok(_mapper.Map<IEnumerable<RoleDTO>>(item));
+        var item = _mapper.Map<IEnumerable<RoleDTO>>(_roleManager.Roles);
+        return GeneratedResponse(item, "");
     }
 
     [HttpGet("{roleId}")]
-    public async Task<ActionResult<RoleDTO?>> GetRoleByIdAsync(string roleId)
+    public async Task<ActionResult<Response<RoleDTO>>> GetRoleByIdAsync(string roleId)
     {
-        var item = await _roleManager.FindByIdAsync(roleId);
-        return item is not null ? Ok(_mapper.Map<RoleDTO>(item)) : NotFound();
+        var item = _mapper.Map<RoleDTO>(await _roleManager.FindByIdAsync(roleId));
+        var message = item is not null ? "" : "Item Not Found";
+        return GeneratedResponse(item, message);
     }
 
     [HttpPost()]
-    public async Task<ActionResult<IdentityResult>> CreateRole(RoleDTO newRole)
+    public async Task<ActionResult<Response<RoleDTO>>> CreateRole(RoleDTO newRole)
     {
         var newItem = new IdentityRole()
         {
@@ -51,13 +53,14 @@ public class RoleController : ControllerBase
         var result = await _roleManager.CreateAsync(newItem);
         if(result.Succeeded)
         {
-            return Ok(result);
+            var roleCreated = _mapper.Map<RoleDTO>(_roleManager.FindByNameAsync(newRole.Name));
+            return GeneratedResponse(roleCreated, result.Errors);
         }
-        return BadRequest(result);
+        return GeneratedResponse(null, result.Errors);
     }
 
     [HttpPost("{roleId}")]
-    public async Task<ActionResult<IdentityResult>> UpdateRole(string roleId, RoleDTO updatedRole)
+    public async Task<ActionResult<Response<RoleDTO>>> UpdateRole(string roleId, RoleDTO updatedRole)
     {
         IdentityResult result = new IdentityResult();
         var existingRole = await _roleManager.FindByIdAsync(roleId);
@@ -69,13 +72,14 @@ public class RoleController : ControllerBase
         }
         if(result.Succeeded)
         {
-            return Ok(result);
+            var roleUpdated = _mapper.Map<RoleDTO>(_roleManager.FindByIdAsync(roleId));
+            return GeneratedResponse(roleUpdated, result.Errors);
         }
-        return BadRequest(result);
+        return GeneratedResponse(null, result.Errors);
     }
 
     [HttpDelete("{roleId}")]
-    public async Task<ActionResult<IdentityResult>> DeleteRole(string roleId)
+    public async Task<ActionResult<Response<RoleDTO>>> DeleteRole(string roleId)
     {
         var deletedItem = await _roleManager.FindByIdAsync(roleId);
         IdentityResult result = new IdentityResult();
@@ -85,8 +89,9 @@ public class RoleController : ControllerBase
         }
         if(result.Succeeded)
         {
-            return Ok(result);
+            var roleDeleted = _mapper.Map<RoleDTO>(await _roleManager.FindByIdAsync(roleId));
+            return GeneratedResponse(roleDeleted, result.Errors);
         }
-        return BadRequest(result);
+        return GeneratedResponse(null, result.Errors);
     }
 }
