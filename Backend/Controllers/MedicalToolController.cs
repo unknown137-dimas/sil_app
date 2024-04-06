@@ -1,62 +1,86 @@
 using Backend.DTOs;
+using Backend.Models;
 using Backend.Modules;
+using Backend.Utilities;
+using Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-[ApiController]
-[Route("api/medicaltool")]
-public class MedicalToolController : ControllerBase
+public class MedicalToolController : ApiBaseController<MedicalToolController, MedicalToolDTO>
 {
-    private readonly ILogger<MedicalToolController> _logger;
-    private readonly MedicalToolModule _medicalToolModule;
+    private readonly Module<MedicalToolDTO, MedicalTool> _medicalToolModule;
 
     public MedicalToolController(
         ILogger<MedicalToolController> logger,
-        MedicalToolModule medicalToolModule
-    )
+        Module<MedicalToolDTO, MedicalTool> medicalToolModule,
+        IResponseFactory<MedicalToolDTO> responseFactory
+    ) : base(logger, responseFactory)
     {
-        _logger = logger;
         _medicalToolModule = medicalToolModule;
     }
 
 
     [HttpGet()]
-    public ActionResult<IEnumerable<MedicalToolDTO>> GetAllMedicalTool()
+    public ActionResult<Response<MedicalToolDTO>> GetAllMedicalTool()
     {
         var item = _medicalToolModule.GetAll();
-        return Ok(item);
+        return GeneratedResponse(item, "");
     }
 
     [HttpGet("{medicalToolId}")]
-    public async Task<ActionResult<MedicalToolDTO?>> GetMedicalToolByIdAsync(string medicalToolId)
+    public async Task<ActionResult<Response<MedicalToolDTO>>> GetMedicalToolByIdAsync(string medicalToolId)
     {
         var item = await _medicalToolModule.GetById(medicalToolId);
-        return item is not null ? Ok(item) : NotFound();
+        var message = item is not null ? "" : "Item Not Found";
+        return GeneratedResponse(item, message);
     }
 
     [HttpPost()]
-    public async Task<ActionResult<int>> CreateMedicalTool(MedicalToolDTO newMedicalTool)
+    public async Task<ActionResult<Response<MedicalToolDTO>>> CreateMedicalTool(MedicalToolDTO newMedicalTool)
     {
-        var item = await _medicalToolModule.AddAsync(newMedicalTool);
-        return item > 0 ? Ok(item) : BadRequest();
+        MedicalToolDTO? item = null;
+        string message = string.Empty;
+        try
+        {
+            item = await _medicalToolModule.AddAsync(newMedicalTool);
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+        return GeneratedResponse(item, message);
     }
 
     [HttpPost("{medicalToolId}")]
-    public async Task<ActionResult<MedicalToolDTO>> UpdateMedicalTool(string medicalToolId, MedicalToolDTO updatedMedicalTool)
+    public async Task<ActionResult<Response<MedicalToolDTO>>> UpdateMedicalTool(MedicalToolDTO updatedMedicalTool)
     {
-        int item = 0;
-        if(_medicalToolModule.IsExisted(medicalToolId))
+        MedicalToolDTO? item = null;
+        string message = string.Empty;
+        try
         {
             item = await _medicalToolModule.UpdateAsync(updatedMedicalTool);
         }
-        return item > 0 ? Ok(updatedMedicalTool) : BadRequest("Failed to update");
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+        return GeneratedResponse(item, message);
     }
 
     [HttpDelete("{medicalToolId}")]
-    public async Task<ActionResult<int>> DeleteMedicalTool(string medicalToolId)
+    public async Task<ActionResult<Response<MedicalToolDTO>>> DeleteMedicalTool(string medicalToolId)
     {
-        var item = await _medicalToolModule.DeleteAsync(medicalToolId);
-        return item > 0 ? Ok(item) : BadRequest();
+        MedicalToolDTO? item = null;
+        string message = string.Empty;
+        try
+        {
+            item = await _medicalToolModule.DeleteAsync(medicalToolId);
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+        return GeneratedResponse(item, message);
     }
 }

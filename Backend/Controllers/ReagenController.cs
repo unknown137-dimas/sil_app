@@ -1,62 +1,92 @@
 using Backend.DTOs;
+using Backend.Models;
 using Backend.Modules;
+using Backend.Utilities;
+using Database.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Controllers;
 
-[ApiController]
-[Route("api/reagen")]
-public class ReagenController : ControllerBase
+public class ReagenController : ApiBaseController<ReagenController, ReagenDTO>
 {
-    private readonly ILogger<ReagenController> _logger;
-    private readonly ReagenModule _reagenModule;
+    private readonly Module<ReagenDTO, Reagen> _reagenModule;
 
     public ReagenController(
         ILogger<ReagenController> logger,
-        ReagenModule reagenModule
-    )
+        Module<ReagenDTO, Reagen> reagenModule,
+        IResponseFactory<ReagenDTO> responseFactory
+    ) : base(logger, responseFactory)
     {
-        _logger = logger;
         _reagenModule = reagenModule;
     }
 
 
     [HttpGet()]
-    public ActionResult<IEnumerable<ReagenDTO>> GetAllReagen()
+    public ActionResult<Response<ReagenDTO>> GetAllReagen()
     {
         var item = _reagenModule.GetAll();
-        return Ok(item);
+        return GeneratedResponse(item, "");
     }
 
     [HttpGet("{reagenId}")]
-    public async Task<ActionResult<ReagenDTO?>> GetReagenByIdAsync(string reagenId)
+    public async Task<ActionResult<Response<ReagenDTO>>> GetReagenByIdAsync(string reagenId)
     {
         var item = await _reagenModule.GetById(reagenId);
-        return item is not null ? Ok(item) : NotFound();
+        var message = item is not null ? "" : "Item Not Found";
+        return GeneratedResponse(item, message);
     }
 
     [HttpPost()]
-    public async Task<ActionResult<int>> CreateReagen(ReagenDTO newReagen)
+    public async Task<ActionResult<Response<ReagenDTO>>> CreateReagen(ReagenDTO newReagen)
     {
-        var item = await _reagenModule.AddAsync(newReagen);
-        return item > 0 ? Ok(item) : BadRequest();
+        ReagenDTO? item = null;
+        string message = string.Empty;
+        try
+        {
+            item = await _reagenModule.AddAsync(newReagen);
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
+        }
+        return GeneratedResponse(item, message);
     }
 
     [HttpPost("{reagenId}")]
-    public async Task<ActionResult<ReagenDTO>> UpdateReagen(string reagenId, ReagenDTO updatedReagen)
+    public async Task<ActionResult<Response<ReagenDTO>>> UpdateReagen(ReagenDTO updatedReagen)
     {
-        int item = 0;
-        if(_reagenModule.IsExisted(reagenId))
+        ReagenDTO? item = null;
+        string message = string.Empty;
+        try
         {
             item = await _reagenModule.UpdateAsync(updatedReagen);
         }
-        return item > 0 ? Ok(updatedReagen) : BadRequest("Failed to update");
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+        return GeneratedResponse(item, message);
     }
 
     [HttpDelete("{reagenId}")]
-    public async Task<ActionResult<int>> DeleteReagen(string reagenId)
+    public async Task<ActionResult<Response<ReagenDTO>>> DeleteReagen(string reagenId)
     {
-        var item = await _reagenModule.DeleteAsync(reagenId);
-        return item > 0 ? Ok(item) : BadRequest();
+        ReagenDTO? item = null;
+        string message = string.Empty;
+        try
+        {
+            item = await _reagenModule.DeleteAsync(reagenId);
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+        return GeneratedResponse(item, message);
     }
 }
