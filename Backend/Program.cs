@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Backend.Modules;
 using Backend.Seed;
 using Backend.Services;
+using Backend.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -54,9 +55,9 @@ builder.Services.AddDbContext<LisDbContext>(options =>
 	)
 );
 
-builder.Services.AddScoped<ReagenModule>();
-builder.Services.AddScoped<MedicalToolModule>();
+builder.Services.AddScoped(typeof(Module<,>));
 
+builder.Services.AddScoped(typeof(IResponseFactory<>), typeof(ResponseFactory<>));
 builder.Services.AddScoped(typeof(Repository<>));
 
 // Configure Logging
