@@ -6,8 +6,8 @@ namespace Backend.Modules;
 
 public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model : ModelBase
 {
-    protected readonly Repository<Model> _repository;
-    protected readonly IMapper _mapper;
+    private readonly Repository<Model> _repository;
+    private readonly IMapper _mapper;
 
     public Module(Repository<Model> repository,
     IMapper mapper)
