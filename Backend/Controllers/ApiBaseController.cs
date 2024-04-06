@@ -1,5 +1,6 @@
 using Backend.Models;
 using Backend.Utilities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -29,6 +30,20 @@ public class ApiBaseController<T, DTO> : ControllerBase where T : ApiBaseControl
     }
 
     protected ActionResult<Response<DTO>> GeneratedResponse( DTO? data, string message)
+    {
+        int statusCode = StatusCodes.Status200OK;
+        if(!message.IsNullOrEmpty())
+        {
+            statusCode = StatusCodes.Status404NotFound;
+        }
+        if(data is null)
+        {
+            statusCode = StatusCodes.Status500InternalServerError;
+        }
+        return StatusCode(statusCode, _responseFactory.CreateResponse( data, message ));
+    }
+
+    protected ActionResult<Response<DTO>> GeneratedResponse( DTO? data, IEnumerable<IdentityError> message)
     {
         int statusCode = StatusCodes.Status200OK;
         if(!message.IsNullOrEmpty())
