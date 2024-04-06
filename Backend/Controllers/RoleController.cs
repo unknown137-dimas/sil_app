@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/role")]
 public class RoleController : ControllerBase
 {
     private readonly ILogger<RoleController> _logger;
