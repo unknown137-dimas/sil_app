@@ -6,24 +6,25 @@ namespace Backend.Modules;
 
 public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model : ModelBase
 {
-    private readonly Repository<Model> _repository;
-    private readonly IMapper _mapper;
+    private readonly IRepository<Model> _repository;
+    protected readonly IMapper Mapper;
 
-    public Module(Repository<Model> repository,
-    IMapper mapper)
+    public Module(
+        IRepository<Model> repository,
+        IMapper mapper)
     {
         _repository = repository;
-        _mapper = mapper;
+        Mapper = mapper;
     }
 
 
     public virtual async Task<DTO?> AddAsync(DTO newItem)
     {
-        var entityEntry = await _repository.AddAsync(_mapper.Map<Model>(newItem));
+        var entityEntry = await _repository.AddAsync(Mapper.Map<Model>(newItem));
 
         if(await _repository.CommitAsync() > 0)
         {
-            return _mapper.Map<DTO>(entityEntry.Entity);
+            return Mapper.Map<DTO>(entityEntry.Entity);
         }
         throw new Exception("Failed To Add Item");
     }
@@ -37,24 +38,23 @@ public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model :
         }
 
         var entityEntry = _repository.Delete(itemDeleted);
-        await _repository.CommitAsync();
 
         if(await _repository.CommitAsync() > 0)
         {
-            return _mapper.Map<DTO>(entityEntry.Entity);;
+            return Mapper.Map<DTO>(entityEntry.Entity);;
         }
         throw new Exception("Failed To Delete Item");
     }
 
     public virtual IEnumerable<DTO> GetAll()
     {
-        return _mapper.Map<IEnumerable<DTO>>(_repository.GetEntities());
+        return Mapper.Map<IEnumerable<DTO>>(_repository.GetEntities());
     }
 
 
     public virtual async Task<DTO?> GetById(string id)
     {
-        return _mapper.Map<DTO>(await _repository.GetAsync(id));
+        return Mapper.Map<DTO>(await _repository.GetAsync(id));
     }
 
     public virtual bool IsExisted(string id)
@@ -71,13 +71,12 @@ public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model :
             throw new Exception("Item Not Found");
         }
 
-        _mapper.Map(updatedItem, existingItem);
+        Mapper.Map(updatedItem, existingItem);
         var entityEntry = _repository.Update(existingItem);
-        await _repository.CommitAsync();
         
         if(await _repository.CommitAsync() > 0)
         {
-            return _mapper.Map<DTO>(entityEntry.Entity);
+            return Mapper.Map<DTO>(entityEntry.Entity);
         }
         throw new Exception("Failed To Update Item");
     }
