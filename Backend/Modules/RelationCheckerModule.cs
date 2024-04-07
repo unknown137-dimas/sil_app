@@ -69,7 +69,9 @@ public class RelationCheckerModule : IRelationCheckerModule
 
     public ModelBase? Check(SampleCategory sampleCategory)
     {
-        throw new NotImplementedException();
+        return _sampleServiceRepository.GetEntities()
+            .Where(cs => cs.SampleCategoryId.Equals(sampleCategory.Id))
+            .FirstOrDefault();
     }
 
     public ModelBase? Check(SampleService sampleService)
