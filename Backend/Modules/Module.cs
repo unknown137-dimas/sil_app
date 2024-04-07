@@ -63,13 +63,15 @@ public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model :
     }
 
 
-    public virtual async Task<DTO?> UpdateAsync(DTO updatedItem)
+    public virtual async Task<DTO?> UpdateAsync(string id, DTO updatedItem)
     {
-        var existingItem = await _repository.GetAsync(updatedItem.Id!);
+        var existingItem = await _repository.GetAsync(id);
         if(existingItem is null)
         {
             throw new Exception("Item Not Found");
         }
+
+        updatedItem.Id = existingItem.Id;
 
         Mapper.Map(updatedItem, existingItem);
         var entityEntry = _repository.Update(existingItem);
