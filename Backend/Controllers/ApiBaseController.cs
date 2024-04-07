@@ -1,4 +1,5 @@
 using Backend.Models;
+using Backend.Modules;
 using Backend.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,12 @@ namespace Backend.Controllers;
 public class ApiBaseController<T, DTO> : ControllerBase where T : ApiBaseController<T, DTO> where DTO : class
 {
     protected ILogger<T> Logger { get; }
-    private IResponseFactory<DTO> _responseFactory { get; set; }
+    private readonly IResponseFactory<DTO> _responseFactory;
 
-    public ApiBaseController( ILogger<T> logger, IResponseFactory<DTO> responseFactory)
+    public ApiBaseController(
+        ILogger<T> logger,
+        IResponseFactory<DTO> responseFactory
+        )
     {
       Logger = logger;
       _responseFactory = responseFactory;
