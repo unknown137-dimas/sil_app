@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.DTOs;
 using Backend.Models;
+using Backend.Modules;
 using Backend.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,21 @@ public class RoleController : ApiBaseController<RoleController, RoleDTO>
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IMapper _mapper;
+    private readonly IRelationCheckerModule _relationCheckerModule;
 
     public RoleController(
         ILogger<RoleController> logger,
         UserManager<User> userManager,
         RoleManager<IdentityRole> roleManager,
         IMapper mapper,
-        IResponseFactory<RoleDTO> responseFactory
+        IResponseFactory<RoleDTO> responseFactory,
+        IRelationCheckerModule relationCheckerModule
     ) : base(logger, responseFactory)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
+        _relationCheckerModule = relationCheckerModule;
     }
 
     [HttpGet()]

@@ -4,11 +4,11 @@ using Backend.Modules;
 using Backend.Utilities;
 using Database.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Controllers;
 
+[ApiController]
+[Route("api/reagen")]
 public class ReagenController : ApiBaseController<ReagenController, ReagenDTO>
 {
     private readonly Module<ReagenDTO, Reagen> _reagenModule;

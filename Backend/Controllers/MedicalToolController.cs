@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
+[ApiController]
+[Route("api/medical-tool")]
 public class MedicalToolController : ApiBaseController<MedicalToolController, MedicalToolDTO>
 {
     private readonly Module<MedicalToolDTO, MedicalTool> _medicalToolModule;

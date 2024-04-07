@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.DTOs;
 using Backend.Models;
+using Backend.Modules;
 using Backend.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +14,19 @@ public class UserController : ApiBaseController<UserController, UserDTO>
 {
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
+    private readonly IRelationCheckerModule _relationCheckerModule;
 
     public UserController(
         ILogger<UserController> logger,
         UserManager<User> userManager,
         IMapper mapper,
-        IResponseFactory<UserDTO> responseFactory
+        IResponseFactory<UserDTO> responseFactory,
+        IRelationCheckerModule relationCheckerModule
     ) : base(logger, responseFactory)
     {
         _userManager = userManager;
         _mapper = mapper;
+        _relationCheckerModule = relationCheckerModule;
     }
 
      [HttpGet()]
