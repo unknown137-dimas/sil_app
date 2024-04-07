@@ -85,11 +85,11 @@ public class RoleController : ApiBaseController<RoleController, RoleDTO>
     [HttpDelete("{roleId}")]
     public async Task<ActionResult<Response<RoleDTO>>> DeleteRole(string roleId)
     {
-        var deletedItem = await _roleManager.FindByIdAsync(roleId);
+        var deletedRole = await _roleManager.FindByIdAsync(roleId);
         IdentityResult result = new IdentityResult();
-        if(deletedItem is not null && _userManager.GetUsersInRoleAsync(deletedItem.Name!).Result.Count.Equals(0))
+        if(deletedRole is not null && _relationCheckerModule.Check(deletedRole) is null)
         {
-            result = await _roleManager.DeleteAsync(deletedItem);
+            result = await _roleManager.DeleteAsync(deletedRole);
         }
         if(result.Succeeded)
         {
