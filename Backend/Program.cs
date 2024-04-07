@@ -55,10 +55,13 @@ builder.Services.AddDbContext<LisDbContext>(options =>
 	)
 );
 
+builder.Services.AddScoped<CheckCategoryModule>();
 builder.Services.AddScoped(typeof(Module<,>));
 
+
 builder.Services.AddScoped(typeof(IResponseFactory<>), typeof(ResponseFactory<>));
-builder.Services.AddScoped(typeof(Repository<>));
+builder.Services.AddScoped<IRelationCheckerModule, RelationCheckerModule>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Configure Logging
 builder.Services.AddLogging(logBuilder =>
