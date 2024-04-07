@@ -68,6 +68,10 @@ public class CheckCategoryController : ApiBaseController<CheckCategoryController
         catch (Exception ex)
         {
             message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
         }
         return GeneratedResponse(item, message);
     }
@@ -84,6 +88,10 @@ public class CheckCategoryController : ApiBaseController<CheckCategoryController
         catch (Exception ex)
         {
             message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
         }
         return GeneratedResponse(item, message);
     }

@@ -70,6 +70,10 @@ public class ReagenController : ApiBaseController<ReagenController, ReagenDTO>
         catch (Exception ex)
         {
             message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
         }
         return GeneratedResponse(item, message);
     }
@@ -86,6 +90,10 @@ public class ReagenController : ApiBaseController<ReagenController, ReagenDTO>
         catch (Exception ex)
         {
             message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
         }
         return GeneratedResponse(item, message);
     }

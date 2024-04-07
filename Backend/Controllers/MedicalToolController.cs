@@ -50,6 +50,10 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
         catch (Exception ex)
         {
             message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
         }
         return GeneratedResponse(item, message);
     }
@@ -66,6 +70,10 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
         catch (Exception ex)
         {
             message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
         }
         return GeneratedResponse(item, message);
     }
@@ -82,6 +90,10 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
         catch (Exception ex)
         {
             message = ex.Message;
+            if(ex.InnerException is not null)
+            {
+                message = ex.InnerException.Message;
+            }
         }
         return GeneratedResponse(item, message);
     }
