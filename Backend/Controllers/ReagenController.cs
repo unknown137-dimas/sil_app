@@ -59,13 +59,13 @@ public class ReagenController : ApiBaseController<ReagenController, ReagenDTO>
     }
 
     [HttpPost("{reagenId}")]
-    public async Task<ActionResult<Response<ReagenDTO>>> UpdateReagen(ReagenDTO updatedReagen)
+    public async Task<ActionResult<Response<ReagenDTO>>> UpdateReagen(string reagenId, ReagenDTO updatedReagen)
     {
         ReagenDTO? item = null;
         string message = string.Empty;
         try
         {
-            item = await _reagenModule.UpdateAsync(updatedReagen);
+            item = await _reagenModule.UpdateAsync(reagenId, updatedReagen);
         }
         catch (Exception ex)
         {

@@ -59,13 +59,13 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
     }
 
     [HttpPost("{medicalToolId}")]
-    public async Task<ActionResult<Response<MedicalToolDTO>>> UpdateMedicalTool(MedicalToolDTO updatedMedicalTool)
+    public async Task<ActionResult<Response<MedicalToolDTO>>> UpdateMedicalTool(string medicalToolId, MedicalToolDTO updatedMedicalTool)
     {
         MedicalToolDTO? item = null;
         string message = string.Empty;
         try
         {
-            item = await _medicalToolModule.UpdateAsync(updatedMedicalTool);
+            item = await _medicalToolModule.UpdateAsync(medicalToolId, updatedMedicalTool);
         }
         catch (Exception ex)
         {

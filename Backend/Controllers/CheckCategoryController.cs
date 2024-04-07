@@ -57,13 +57,13 @@ public class CheckCategoryController : ApiBaseController<CheckCategoryController
     }
 
     [HttpPost("{checkCategoryId}")]
-    public async Task<ActionResult<Response<CheckCategoryDTO>>> UpdateCheckCategory(CheckCategoryDTO updatedCheckCategory)
+    public async Task<ActionResult<Response<CheckCategoryDTO>>> UpdateCheckCategory(string checkCategoryId, CheckCategoryDTO updatedCheckCategory)
     {
         CheckCategoryDTO? item = null;
         string message = string.Empty;
         try
         {
-            item = await _checkCategoryModule.UpdateAsync(updatedCheckCategory);
+            item = await _checkCategoryModule.UpdateAsync(checkCategoryId, updatedCheckCategory);
         }
         catch (Exception ex)
         {
