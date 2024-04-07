@@ -9,7 +9,7 @@ public class ResponseFactory<DTO> : IResponseFactory<DTO>
     {
         return new(){
             Data = data is null ? [] : [data],
-            Message = message
+            Messages = [message]
         };
     }
 
@@ -17,11 +17,11 @@ public class ResponseFactory<DTO> : IResponseFactory<DTO>
     {
         return new(){
             Data = data,
-            Message = message
+            Messages = [message]
         };
     }
 
-    public Response<DTO> CreateResponse(DTO? data, IEnumerable<IdentityError> message)
+    public Response<DTO> CreateResponse(DTO? data, IEnumerable<object> message)
     {
         return new(){
             Data = data is null ? [] : [data],
@@ -29,7 +29,7 @@ public class ResponseFactory<DTO> : IResponseFactory<DTO>
         };
     }
 
-    public Response<DTO> CreateResponse(IEnumerable<DTO> data, IEnumerable<IdentityError> message)
+    public Response<DTO> CreateResponse(IEnumerable<DTO> data, IEnumerable<object> message)
     {
         return new(){
             Data = data,
