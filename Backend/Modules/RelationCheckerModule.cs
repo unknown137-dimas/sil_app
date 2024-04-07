@@ -16,6 +16,8 @@ public class RelationCheckerModule : IRelationCheckerModule
     private readonly IRepository<PatientCheckResult> _patientCheckResultRepository;
     private readonly IRepository<PatientSample> _patientSampleRepository;
     private readonly IRepository<PatientSampleResult> _patientSampleResultRepository;
+    private readonly IRepository<AuthAction> _authActionRepository;
+    private readonly IRepository<RoleAuthAction> _roleAuthActionRepository;
 
     public RelationCheckerModule(
         UserManager<User> userManager,
@@ -28,7 +30,9 @@ public class RelationCheckerModule : IRelationCheckerModule
         IRepository<PatientCheck> patientCheckRepository,
         IRepository<PatientCheckResult> patientCheckResultRepository,
         IRepository<PatientSample> patientSampleRepository,
-        IRepository<PatientSampleResult> patientSampleResultRepository
+        IRepository<PatientSampleResult> patientSampleResultRepository,
+        IRepository<AuthAction> authActionRepository,
+        IRepository<RoleAuthAction> roleAuthActionRepository
     )
     {
         _userManager = userManager;
@@ -42,6 +46,8 @@ public class RelationCheckerModule : IRelationCheckerModule
         _patientCheckResultRepository = patientCheckResultRepository;
         _patientSampleRepository = patientSampleRepository;
         _patientSampleResultRepository = patientSampleResultRepository;
+        _authActionRepository = authActionRepository;
+        _roleAuthActionRepository = roleAuthActionRepository;
     }
 
 
@@ -52,7 +58,13 @@ public class RelationCheckerModule : IRelationCheckerModule
 
     public IdentityRole? Check(IdentityRole role)
     {
-        throw new NotImplementedException();
+        var relationExist = _userManager.GetUsersInRoleAsync(role.Name!)
+            .Result
+            .Count
+            .Equals(0);
+        relationExist = _roleAuthActionRepository.GetEntities()
+                .FirstOrDefault(ra => ra.RoleId.Equals(role.Id)) is null;
+        return relationExist ? null : role;
     }
 
     public ModelBase? Check(CheckCategory checkCategory)
@@ -104,4 +116,9 @@ public class RelationCheckerModule : IRelationCheckerModule
         throw new NotImplementedException();
     }
 
+    public ModelBase? Check(AuthAction authAction)
+    {
+        return _roleAuthActionRepository.GetEntities()
+            .FirstOrDefault(ra => ra.AuthActionId == authAction.Id);
+    }
 }
