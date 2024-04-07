@@ -1,6 +1,7 @@
+using Database.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-public interface IRepository<TEntity> where TEntity : class
+public interface IRepository<TEntity> where TEntity : ModelBase
 {
     public IQueryable<TEntity> GetEntities();
     public Task<TEntity?> GetAsync(string id);
