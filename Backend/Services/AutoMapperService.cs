@@ -19,6 +19,11 @@ public class AutoMapperService : Profile
         CreateMap<SampleServiceDTO, SampleService>().ReverseMap();
         CreateMap<AuthActionDTO, AuthAction>().ReverseMap();
         CreateMap<RoleAuthActionDTO, RoleAuthAction>().ReverseMap();
+        CreateMap<PatientDTO, Patient>().ReverseMap();
+        CreateMap<PatientCheckDTO, PatientCheck>().ReverseMap();
+        CreateMap<PatientCheckResultDTO, PatientCheckResult>().ReverseMap();
+        CreateMap<PatientSampleDTO, PatientSample>().ReverseMap();
+        CreateMap<PatientSampleResultDTO, PatientSampleResult>().ReverseMap();
     }
 
     public static IMapper InitializeAutoMapper()
