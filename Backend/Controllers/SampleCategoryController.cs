@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("api/sample-category")]
+[Route("api/sample/category")]
 public class SampleCategoryController : ApiBaseController<SampleCategoryController, SampleCategoryDTO>
 {
     private readonly SampleCategoryModule _sampleCategoryModule;

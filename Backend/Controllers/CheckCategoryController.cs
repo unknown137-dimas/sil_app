@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("api/check-category")]
+[Route("api/check/category")]
 public class CheckCategoryController : ApiBaseController<CheckCategoryController, CheckCategoryDTO>
 {
     private readonly CheckCategoryModule _checkCategoryModule;
