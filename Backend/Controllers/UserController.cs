@@ -59,7 +59,7 @@ public class UserController : ApiBaseController<UserController, UserDTO>
         var result = await _userManager.CreateAsync(newItem, newUser.Password);
         if(result.Succeeded)
         {
-            var userCreated = _mapper.Map<UserDTO>(_userManager.FindByNameAsync(newUser.UserName));
+            var userCreated = _mapper.Map<UserDTO>(await _userManager.FindByNameAsync(newUser.UserName));
             return GeneratedResponse(userCreated, result.Errors);
         }
         return GeneratedResponse(null, result.Errors);

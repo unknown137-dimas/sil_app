@@ -57,7 +57,7 @@ public class RoleController : ApiBaseController<RoleController, RoleDTO>
         var result = await _roleManager.CreateAsync(newItem);
         if(result.Succeeded)
         {
-            var roleCreated = _mapper.Map<RoleDTO>(_roleManager.FindByNameAsync(newRole.Name));
+            var roleCreated = _mapper.Map<RoleDTO>(await _roleManager.FindByNameAsync(newRole.Name));
             return GeneratedResponse(roleCreated, result.Errors);
         }
         return GeneratedResponse(null, result.Errors);
@@ -76,7 +76,7 @@ public class RoleController : ApiBaseController<RoleController, RoleDTO>
         }
         if(result.Succeeded)
         {
-            var roleUpdated = _mapper.Map<RoleDTO>(_roleManager.FindByIdAsync(roleId));
+            var roleUpdated = _mapper.Map<RoleDTO>(await _roleManager.FindByIdAsync(roleId));
             return GeneratedResponse(roleUpdated, result.Errors);
         }
         return GeneratedResponse(null, result.Errors);
