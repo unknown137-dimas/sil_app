@@ -1,5 +1,6 @@
 API_HOST = "http://localhost:5056/api"
 API_USER = API_HOST + "/user"
+API_USER_LOGIN = API_USER + "/login"
 API_ROLE = API_HOST + "/role"
 API_MEDICAL_TOOL = API_HOST + "/medical-tool"
 API_REAGEN = API_HOST + "/reagen"
