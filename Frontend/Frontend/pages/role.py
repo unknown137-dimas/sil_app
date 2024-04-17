@@ -15,10 +15,10 @@ class RoleState(rx.State):
     selected_data: dict[str, str] = {}
     updating: bool = False
 
-    async def get_role_data(self):
+    async def get_data(self):
         response = await api_call.get(API_ROLE)
         self.raw_data = loads(response.text)["data"]
-        self.columns, self.data = converter.to_data_table(self.raw_data)
+        self.columns, self.data, _ = converter.to_data_table(self.raw_data)
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -27,16 +27,15 @@ class RoleState(rx.State):
     
     async def update_data(self, form_data: dict):
         self.selected_data.update(form_data)
-        print(self.selected_data)
         await api_call.post(
             f"{API_ROLE}/{self.selected_data['id']}",
             payload=dict(self.selected_data)
         )
-        await self.get_role_data()
+        await self.get_data()
 
     async def delete_data(self):
         await api_call.delete(f"{API_ROLE}/{self.selected_data['id']}")
-        await self.get_role_data()
+        await self.get_data()
         
 @template(route="/role", title="Role", image="/github.svg")
 def role() -> rx.Component:
@@ -91,6 +90,6 @@ def role() -> rx.Component:
                 column_select="none",
             ),
         ),
-        on_mount=RoleState.get_role_data
+        on_mount=RoleState.get_data
     )
 
