@@ -29,17 +29,58 @@ class RoleState(rx.State):
         self.selected_data.update(form_data)
         await api_call.post(
             f"{API_ROLE}/{self.selected_data['id']}",
-            payload=dict(self.selected_data)
+            payload=self.selected_data
         )
         await self.get_data()
 
     async def delete_data(self):
         await api_call.delete(f"{API_ROLE}/{self.selected_data['id']}")
         await self.get_data()
+
+    async def add_data(self, form_data: dict):
+        await api_call.post(
+            API_ROLE,
+            payload=form_data
+        )
+        await self.get_data()
         
 @template(route="/role", title="Role", image="/github.svg")
 def role() -> rx.Component:
     return rx.vstack(
+        rx.dialog.root(
+            rx.dialog.trigger(
+                rx.button("Add")
+            ),
+            rx.dialog.content(
+                rx.dialog.title("Add Role"),
+                rx.form(
+                    rx.input(
+                        placeholder="Enter role name",
+                        name="name"
+                    ),
+                    rx.flex(
+                        rx.dialog.close(
+                            rx.button(
+                                "Cancel",
+                                color_scheme="gray",
+                                variant="soft",
+                            ),
+                        ),
+                        rx.dialog.close(
+                            rx.button(
+                                "Add",
+                                type="submit"
+                            )
+                        ),
+                        spacing="3",
+                        margin_top="16px",
+                        justify="end",
+                    ),
+                    on_submit=RoleState.add_data,
+                    reset_on_submit=True,
+                ),
+            ),
+        ),
         rx.cond(
             RoleState.updating,
             rx.flex(
