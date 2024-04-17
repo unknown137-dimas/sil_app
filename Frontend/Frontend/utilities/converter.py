@@ -1,6 +1,6 @@
 from pandas import DataFrame
 
-def to_data_table(input_data: list) -> (list, list):
+def to_data_table(input_data: list) -> (list, list, DataFrame):
 
     if(input_data == []):
         return [], []
@@ -19,8 +19,7 @@ def to_data_table(input_data: list) -> (list, list):
         column = {
             "title": columnTitle,
             "type": columnType,
-            # "width": 25
         }
         columns.append(column)
 
-    return columns, data
+    return columns, data, dataframe
