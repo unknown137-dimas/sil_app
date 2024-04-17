@@ -2,6 +2,8 @@ from pandas import DataFrame
 
 def to_data_table(input_data: list) -> (list, list):
 
+    if(input_data == []):
+        return [], []
     ignored_columns = ["id"]
     table_columns = ["no"]
     table_columns += [column for column in list(input_data[0].keys()) if column not in ignored_columns]
