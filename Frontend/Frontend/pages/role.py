@@ -9,45 +9,88 @@ from pandas import DataFrame
 import reflex as rx
 
 class RoleState(rx.State):
-    columns: list
-    data: list
-    rawData: list
-    selectedRow: int
+    columns: list = []
+    data: list = []
+    raw_data: list
+    selected_data: dict[str, str] = {}
+    updating: bool = False
 
-    async def getRole(self):
+    async def get_role_data(self):
         response = await api_call.get(API_ROLE)
-        self.rawData = loads(response.text)["data"]
-        self.columns, self.data = converter.to_data_table(self.rawData)
+        self.raw_data = loads(response.text)["data"]
+        self.columns, self.data = converter.to_data_table(self.raw_data)
 
-    def getData(self, pos):
-        _, self.selectedRow = pos
+    def get_selected_data(self, pos):
+        self.updating = True
+        _, selectedRow = pos
+        self.selected_data = self.raw_data[selectedRow]
     
-    def printData(self):
-        print(self.rawData[self.selectedRow])
+    async def update_data(self, form_data: dict):
+        self.selected_data.update(form_data)
+        print(self.selected_data)
+        await api_call.post(
+            f"{API_ROLE}/{self.selected_data['id']}",
+            payload=dict(self.selected_data)
+        )
+        await self.get_role_data()
 
-
+    async def delete_data(self):
+        await api_call.delete(f"{API_ROLE}/{self.selected_data['id']}")
+        await self.get_role_data()
+        
 @template(route="/role", title="Role", image="/github.svg")
 def role() -> rx.Component:
     return rx.vstack(
-        rx.context_menu.root(
-            rx.context_menu.trigger(
-                rx.card(
-                    rx.data_editor(
-                        columns=RoleState.columns,
-                        data=RoleState.data,
-                        on_cell_context_menu=RoleState.getData,
-                        column_select="none",
-                    )
-                )
-            ),
-            rx.context_menu.content(
-                rx.context_menu.item("Edit",
-                on_click=RoleState.printData),
-                rx.context_menu.separator(),
-                rx.context_menu.item(
-                    "Delete", color="red",
+        rx.cond(
+            RoleState.updating,
+            rx.flex(
+                rx.dialog.root(
+                    rx.dialog.trigger(
+                        rx.button("Update")
+                    ),
+                    rx.dialog.content(
+                        rx.dialog.title("Update Role"),
+                        rx.form(
+                            rx.input(
+                                default_value=RoleState.selected_data["name"],
+                                placeholder="Enter role name",
+                                name="name"
+                            ),
+                            rx.flex(
+                                rx.dialog.close(
+                                    rx.button(
+                                        "Cancel",
+                                        color_scheme="gray",
+                                        variant="soft",
+                                    ),
+                                ),
+                                rx.dialog.close(
+                                    rx.button(
+                                        "Save",
+                                        type="submit"
+                                    )
+                                ),
+                                spacing="3",
+                                margin_top="16px",
+                                justify="end",
+                            ),
+                            on_submit=RoleState.update_data,
+                            reset_on_submit=True,
+                        ),
+                    ),
                 ),
+                rx.button("Delete", on_click=RoleState.delete_data),
+                spacing="3",
+            )
+        ),
+        rx.card(
+            rx.data_editor(
+                columns=RoleState.columns,
+                data=RoleState.data,
+                on_cell_clicked=RoleState.get_selected_data,
+                column_select="none",
             ),
         ),
-        on_mount=RoleState.getRole
+        on_mount=RoleState.get_role_data
     )
+
