@@ -3,10 +3,10 @@ from Frontend.templates import template
 from Frontend.const.api import API_MEDICAL_TOOL
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
-from Frontend.utilities.dynamic_form import FormModel
+from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType, CalibrationStatus
 from json import loads
-from Frontend.components.crud import crud_button
+from Frontend.components.crud_button import crud_button
 
 import reflex as rx
 

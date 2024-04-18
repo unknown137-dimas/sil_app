@@ -3,8 +3,8 @@ from Frontend.templates import template
 from Frontend.const.api import API_ROLE
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
-from Frontend.utilities.dynamic_form import FormModel
-from Frontend.components.crud import crud_button
+from Frontend.models.form_model import FormModel
+from Frontend.components.crud_button import crud_button
 from Frontend.enum.enums import FormType
 from json import loads
 from pandas import DataFrame

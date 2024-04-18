@@ -2,7 +2,8 @@ from Frontend import styles
 from Frontend.templates import template
 from Frontend.const.api import API_USER_LOGIN
 from Frontend.utilities import api_call
-from Frontend.utilities.dynamic_form import *
+from Frontend.models.form_model import FormModel
+from Frontend.components.dynamic_form import generate_form_field
 from Frontend.enum.enums import FormType
 from json import loads
 from pickle import dumps
