@@ -1,15 +1,21 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
 class FormType(Enum):
-    INPUT = "input"
-    PASSWORD = "password"
-    DATE = "date"
-    SELECT = "select"
+    Input = "input"
+    Password = "password"
+    Date = "date"
+    Select = "select"
 
-class CheckType(Enum):
-    NUMERIC = 0
-    STRING = 1
+class CheckType(IntEnum):
+    Numeric = 0
+    Text = 1
 
-class Gender(Enum):
-    MALE = 0
-    FEMALE = 1
+class Gender(IntEnum):
+    Male = 0
+    Female = 1
+
+class CalibrationStatus(IntEnum):
+    Good = 0,
+    NotOptimal = 1,
+    Calibrating = 2,
+    WaitingCalibration = 3,
