@@ -4,7 +4,7 @@ from Frontend.const.api import API_REAGEN
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
-from Frontend.enum.enums import FormType, CalibrationStatus
+from Frontend.enum.enums import FormType
 from json import loads
 from Frontend.components.crud_button import crud_button
 
@@ -74,7 +74,7 @@ class ReagenState(rx.State):
                 placeholder="Expired Date",
                 required=True,
                 form_type=FormType.Date.value,
-                default_value=converter.to_date_only(self.selected_data["expiredDate"])
+                default_value=converter.to_date_input(self.selected_data["expiredDate"])
             ),
             FormModel(
                 name="stock",
