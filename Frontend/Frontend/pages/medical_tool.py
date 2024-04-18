@@ -35,7 +35,13 @@ class MedicalToolState(rx.State):
     async def get_data(self):
         response = await api_call.get(API_MEDICAL_TOOL)
         self.raw_data = loads(response.text)["data"]
-        self.columns, self.data, dataFrame = converter.to_data_table(self.raw_data)
+        self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
+        for column in dataFrame.columns:
+            if "calibrationstatus" in column.lower():
+                dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(CalibrationStatus(data).name))
+
+        self.data = dataFrame.values.tolist()
+
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -61,15 +67,15 @@ class MedicalToolState(rx.State):
                 placeholder="Calibration Date",
                 required=True,
                 form_type=FormType.Date.value,
-                default_value=self.selected_data["calibrationDate"]
+                default_value=converter.to_date_input(self.selected_data["calibrationDate"])
             ),
             FormModel(
                 name="calibrationStatus",
                 placeholder="Calibration Status",
                 required=True,
                 form_type=FormType.Select.value,
-                options=[cs.name for cs in CalibrationStatus],
-                default_value=CalibrationStatus(self.selected_data["calibrationStatus"]).name
+                options=[converter.to_title_case(cs.name) for cs in CalibrationStatus],
+                default_value=converter.to_title_case(CalibrationStatus(self.selected_data["calibrationStatus"]).name)
             ),
             FormModel(
                 name="calibrationNote",
@@ -81,7 +87,7 @@ class MedicalToolState(rx.State):
         ]
     
     async def update_data(self, form_data: dict):
-        form_data["calibrationStatus"] = CalibrationStatus[form_data["calibrationStatus"]].value
+        form_data["calibrationStatus"] = CalibrationStatus[form_data["calibrationStatus"].replace(" ","")].value
         self.selected_data.update(form_data)
         await api_call.post(
             f"{API_MEDICAL_TOOL}/{self.selected_data['id']}",
