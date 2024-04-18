@@ -82,7 +82,9 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.PhoneNumber).IsRequired(true).HasMaxLength(20);
             _.Property(_ => _.Address).IsRequired(true).HasMaxLength(100);
             _.HasIndex(_ => _.Name).IsUnique();
+            _.HasIndex(_ => _.IdentityNumber).IsUnique();
             _.HasIndex(_ => _.MedicalRecordNumber).IsUnique();
+            _.HasIndex(_ => _.HealthInsuranceNumber).IsUnique();
         });
         modelBuilder.Entity<PatientCheck>(_ => 
         {
