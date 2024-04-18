@@ -55,6 +55,8 @@ builder.Services.AddDbContext<LisDbContext>(options =>
 	)
 );
 
+builder.Services.AddScoped<SampleCategoryModule>();
+builder.Services.AddScoped<MedicalToolModule>();
 builder.Services.AddScoped<CheckCategoryModule>();
 builder.Services.AddScoped(typeof(Module<,>));
 

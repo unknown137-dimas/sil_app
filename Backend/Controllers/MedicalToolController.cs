@@ -2,7 +2,6 @@ using Backend.DTOs;
 using Backend.Models;
 using Backend.Modules;
 using Backend.Utilities;
-using Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -11,11 +10,11 @@ namespace Backend.Controllers;
 [Route("api/medical-tool")]
 public class MedicalToolController : ApiBaseController<MedicalToolController, MedicalToolDTO>
 {
-    private readonly Module<MedicalToolDTO, MedicalTool> _medicalToolModule;
+    private readonly MedicalToolModule _medicalToolModule;
 
     public MedicalToolController(
         ILogger<MedicalToolController> logger,
-        Module<MedicalToolDTO, MedicalTool> medicalToolModule,
+        MedicalToolModule medicalToolModule,
         IResponseFactory<MedicalToolDTO> responseFactory
     ) : base(logger, responseFactory)
     {
