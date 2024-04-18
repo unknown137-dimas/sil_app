@@ -1,5 +1,6 @@
 from Frontend import styles
-from Frontend.utilities.dynamic_form import *
+from Frontend.models.form_model import FormModel
+from .dynamic_form import generate_form_field
 import reflex as rx
 
 
