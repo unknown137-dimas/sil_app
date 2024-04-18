@@ -12,7 +12,7 @@ def to_data_table(input_data: list) -> (list, list, DataFrame):
     dataframe = DataFrame(input_data, columns=table_columns)
     
     for column in dataframe.columns:
-        if "Date" in column:
+        if "date" in column.lower():
             dataframe[column] = to_datetime(dataframe[column], format="mixed")
             dataframe[column] = dataframe[column].dt.strftime("%d %B %Y")
 
