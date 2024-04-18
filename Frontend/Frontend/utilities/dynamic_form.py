@@ -11,52 +11,30 @@ class FormModel(rx.Base):
     required: bool
     form_type: str
     options: list[str] = []
-
-# class DynamicFormState(rx.State):
-#     form_data: dict = {}
-#     form_fields: list[FormModel]
-
-#     def handle_submit(self, form_data: dict):
-#         self.form_data = form_data
-
-#     def add_form_field(self, name, placeholder, form_type, required, options = []):
-#         self.form_fields.append(
-#             FormModel(
-#                 name = name,
-#                 placeholder = placeholder,
-#                 form_type = form_type,
-#                 required = required,
-#                 options = options
-#             )
-#         )
-#         yield
+    default_value: str = ""
 
 def generate_form_field(field: FormModel):
-    return rx.cond(
-        field.form_type == FormType.SELECT.value,
-        rx.select(
-            name=field.name,
-            placeholder=field.placeholder,
-            required=field.required,
-            items=field.options
+    return rx.flex(
+        rx.text(
+            field.placeholder,
+            align="center",
         ),
-        rx.input(
-            name=field.name,
-            placeholder=field.placeholder,
-            required=field.required,
-            type=field.form_type
-        )
+        rx.cond(
+            field.form_type == FormType.Select.value,
+            rx.select(
+                name=field.name,
+                placeholder=field.placeholder,
+                required=field.required,
+                items=field.options,
+                default_value=field.default_value
+            ),
+            rx.input(
+                name=field.name,
+                placeholder=field.placeholder,
+                required=field.required,
+                type=field.form_type,
+                default_value=field.default_value
+            )
+        ),
+        spacing="3",
     )
-
-# def dynamic_form(handler) -> rx.Component:
-#     return rx.form(
-#         rx.vstack(
-#             rx.foreach(
-#                 DynamicFormState.form_fields,
-#                 generate
-#             ),
-#             rx.button("Submit", type="submit"),
-#         ),
-#         on_submit=handler,
-#         reset_on_submit=True,
-#     )
