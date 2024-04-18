@@ -5,6 +5,7 @@ namespace Backend.DTOs;
 public class CheckServiceDTO : DTOBase
 {
     public string Name { get; set; } = null!;
+    public string CheckCategoryId { get; set; } = null!;
     public CheckType NormalValueType { get; set; }
     public string? CheckUnit { get; set; }
     public Gender Gender { get; set; }
