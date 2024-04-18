@@ -18,13 +18,13 @@ class LoginState(rx.State):
             name="userName",
             placeholder="Username",
             required=True,
-            form_type=FormType.INPUT.value
+            form_type=FormType.Input.value
         ),
         FormModel(
             name="password",
             placeholder="Password",
             required=True,
-            form_type=FormType.PASSWORD.value
+            form_type=FormType.Password.value
         ),
     ]
 
