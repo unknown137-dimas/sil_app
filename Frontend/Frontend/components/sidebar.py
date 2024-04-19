@@ -78,7 +78,7 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
         rx.Component: The sidebar item component.
     """
     # Whether the item is active.
-    active = (rx.State.router.page.path == f"/{text.lower()}") | (
+    active = (rx.State.router.page.path == f"/{text.lower().replace(' ', '_').replace('&_', '')}") | (
         (rx.State.router.page.path == "/") & text == "Home"
     )
 
