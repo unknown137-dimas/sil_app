@@ -21,6 +21,15 @@ public class SampleCategoryModule : Module<SampleCategoryDTO, SampleCategory>
         return Mapper.Map<IEnumerable<SampleCategoryDTO>>(Repository.GetEntities().Include(sc => sc.SampleServices));
     }
 
+    public override async Task<SampleCategoryDTO?> GetById(string id)
+    {
+        return Mapper.Map<SampleCategoryDTO>(
+            await Repository.GetEntities()
+                            .Include(cc => cc.SampleServices)
+                            .FirstOrDefaultAsync(cc => cc.Id == id)
+            );
+    }
+
     public override async Task<SampleCategoryDTO?> DeleteAsync(string id)
     {
         var sampleCategory = await base.GetById(id);

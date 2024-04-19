@@ -21,6 +21,15 @@ public class CheckCategoryModule : Module<CheckCategoryDTO, CheckCategory>
         return Mapper.Map<IEnumerable<CheckCategoryDTO>>(Repository.GetEntities().Include(cc => cc.CheckServices));
     }
 
+    public override async Task<CheckCategoryDTO?> GetById(string id)
+    {
+        return Mapper.Map<CheckCategoryDTO>(
+            await Repository.GetEntities()
+                            .Include(cc => cc.CheckServices)
+                            .FirstOrDefaultAsync(cc => cc.Id == id)
+            );
+    }
+
     public override async Task<CheckCategoryDTO?> DeleteAsync(string id)
     {
         var checkCategory = await base.GetById(id);
