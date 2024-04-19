@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.DTOs;
 using Database.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Modules;
 
@@ -13,6 +14,11 @@ public class CheckCategoryModule : Module<CheckCategoryDTO, CheckCategory>
         IRelationCheckerModule relationCheckerModule) : base(repository, mapper)
     {
         _relationCheckerModule = relationCheckerModule;
+    }
+
+    public override IEnumerable<CheckCategoryDTO> GetAll()
+    {
+        return Mapper.Map<IEnumerable<CheckCategoryDTO>>(Repository.GetEntities().Include(cc => cc.CheckServices));
     }
 
     public override async Task<CheckCategoryDTO?> DeleteAsync(string id)
