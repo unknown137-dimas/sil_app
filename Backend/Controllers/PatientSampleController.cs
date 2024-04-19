@@ -2,7 +2,6 @@ using Backend.DTOs;
 using Backend.Models;
 using Backend.Modules;
 using Backend.Utilities;
-using Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -11,11 +10,11 @@ namespace Backend.Controllers;
 [Route("api/patient/sample")]
 public class PatientSampleController : ApiBaseController<PatientSampleController, PatientSampleDTO>
 {
-    private readonly Module<PatientSampleDTO, PatientSample> _patientSampleModule;
+    private readonly PatientSampleModule _patientSampleModule;
 
     public PatientSampleController(
         ILogger<PatientSampleController> logger,
-        Module<PatientSampleDTO, PatientSample> patientSampleModule,
+        PatientSampleModule patientSampleModule,
         IResponseFactory<PatientSampleDTO> responseFactory
     ) : base(logger, responseFactory)
     {
