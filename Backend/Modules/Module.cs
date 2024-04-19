@@ -6,23 +6,23 @@ namespace Backend.Modules;
 
 public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model : ModelBase
 {
-    private readonly IRepository<Model> _repository;
+    protected readonly IRepository<Model> Repository;
     protected readonly IMapper Mapper;
 
     public Module(
         IRepository<Model> repository,
         IMapper mapper)
     {
-        _repository = repository;
+        Repository = repository;
         Mapper = mapper;
     }
 
 
     public virtual async Task<DTO?> AddAsync(DTO newItem)
     {
-        var entityEntry = await _repository.AddAsync(Mapper.Map<Model>(newItem));
+        var entityEntry = await Repository.AddAsync(Mapper.Map<Model>(newItem));
 
-        if(await _repository.CommitAsync() > 0)
+        if(await Repository.CommitAsync() > 0)
         {
             return Mapper.Map<DTO>(entityEntry.Entity);
         }
@@ -31,15 +31,15 @@ public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model :
 
     public virtual async Task<DTO?> DeleteAsync(string id)
     {
-        var itemDeleted = await _repository.GetAsync(id);
+        var itemDeleted = await Repository.GetAsync(id);
         if(itemDeleted is null)
         {
             throw new Exception("Item Not Found");
         }
 
-        var entityEntry = _repository.Delete(itemDeleted);
+        var entityEntry = Repository.Delete(itemDeleted);
 
-        if(await _repository.CommitAsync() > 0)
+        if(await Repository.CommitAsync() > 0)
         {
             return Mapper.Map<DTO>(entityEntry.Entity);;
         }
@@ -48,24 +48,24 @@ public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model :
 
     public virtual IEnumerable<DTO> GetAll()
     {
-        return Mapper.Map<IEnumerable<DTO>>(_repository.GetEntities());
+        return Mapper.Map<IEnumerable<DTO>>(Repository.GetEntities());
     }
 
 
     public virtual async Task<DTO?> GetById(string id)
     {
-        return Mapper.Map<DTO>(await _repository.GetAsync(id));
+        return Mapper.Map<DTO>(await Repository.GetAsync(id));
     }
 
     public virtual bool IsExisted(string id)
     {
-        return _repository.IsExisted(id);
+        return Repository.IsExisted(id);
     }
 
 
     public virtual async Task<DTO?> UpdateAsync(string id, DTO updatedItem)
     {
-        var existingItem = await _repository.GetAsync(id);
+        var existingItem = await Repository.GetAsync(id);
         if(existingItem is null)
         {
             throw new Exception("Item Not Found");
@@ -74,9 +74,9 @@ public class Module<DTO, Model> : IModule<DTO> where DTO : DTOBase where Model :
         updatedItem.Id = existingItem.Id;
 
         Mapper.Map(updatedItem, existingItem);
-        var entityEntry = _repository.Update(existingItem);
+        var entityEntry = Repository.Update(existingItem);
         
-        if(await _repository.CommitAsync() > 0)
+        if(await Repository.CommitAsync() > 0)
         {
             return Mapper.Map<DTO>(entityEntry.Entity);
         }
