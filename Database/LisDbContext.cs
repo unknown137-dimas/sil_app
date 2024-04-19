@@ -93,7 +93,8 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.CheckSchedule).IsRequired(true);
             _.Property(_ => _.ValidationStatus).IsRequired(true);
             _.Property(_ => _.CheckStatus).IsRequired(true);
-            _.HasOne(_ => _.CheckService);
+            _.HasMany(_ => _.CheckServices);
+            _.HasMany(_ => _.PatientCheckResults);
             _.HasOne(_ => _.Patient);
         });
         modelBuilder.Entity<PatientCheckResult>(_ => 
@@ -111,7 +112,8 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.SampleSchedule).IsRequired(true);
             _.HasOne(_ => _.Patient);
-            _.HasOne(_ => _.SampleService);
+            _.HasMany(_ => _.SampleServices);
+            _.HasMany(_ => _.PatientSampleResults);
         });
         modelBuilder.Entity<PatientSampleResult>(_ => 
         {
