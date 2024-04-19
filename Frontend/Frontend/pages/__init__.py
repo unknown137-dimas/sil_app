@@ -5,5 +5,6 @@ from .role import role
 from .login import login
 from .medical_tool import medical_tool
 from .reagen import reagen
-# from .category import category
+from .check_category_services import check_category_services
+from .sample_category_services import sample_category_services
 from .patient import patient
