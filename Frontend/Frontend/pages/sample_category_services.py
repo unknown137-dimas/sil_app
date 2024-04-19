@@ -55,6 +55,8 @@ class SampleCategoryState(rx.State):
             payload=self.selected_data
         )
         await self.get_data()
+        sample_service_state = await self.get_state(SampleServicesState)
+        await sample_service_state.get_data()
 
     async def delete_data(self):
         await api_call.delete(f"{API_SAMPLE_CATEGORY}/{self.selected_data['id']}")
