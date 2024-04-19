@@ -95,7 +95,6 @@ class ReagenState(rx.State):
         self.updating = False
 
     async def add_data(self, form_data: dict):
-        print(form_data)
         form_data["calibrationNote"] = ""
         await api_call.post(
             API_REAGEN,

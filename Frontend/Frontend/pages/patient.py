@@ -155,7 +155,6 @@ class PatientState(rx.State):
         self.updating = False
 
     async def add_data(self, form_data: dict):
-        print(form_data)
         form_data["gender"] = Gender[form_data["gender"]].value
         await api_call.post(
             API_PATIENT,
