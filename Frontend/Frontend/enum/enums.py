@@ -19,3 +19,7 @@ class CalibrationStatus(IntEnum):
     NotOptimal = 1,
     Calibrating = 2,
     WaitingCalibration = 3,
+
+class ValueType(IntEnum):
+    Numeric = 0,
+    Text = 1
