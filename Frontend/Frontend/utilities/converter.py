@@ -15,6 +15,8 @@ def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, 
         if "date" in column.lower():
             dataframe[column] = to_datetime(dataframe[column], format="mixed")
             dataframe[column] = dataframe[column].dt.strftime("%d %B %Y")
+        if "Id" in column:
+            dataframe.rename(columns={column: column.replace("Id", "")}, inplace=True)
 
     dataframe.insert(0, "no", [i+1 for i in range(len(input_data))])
 
