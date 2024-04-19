@@ -2,11 +2,11 @@ from pandas import DataFrame, to_datetime
 from datetime import datetime
 import re
 
-def to_data_table(input_data: list) -> (list, list, DataFrame):
+def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, DataFrame):
 
     if(input_data == []):
         return [], [], None
-    ignored_columns = ["id"]
+    ignored_columns = ["id"] + ignored_columns
     table_columns = [column for column in list(input_data[0].keys()) if column not in ignored_columns]
 
     dataframe = DataFrame(input_data, columns=table_columns)
