@@ -1,5 +1,6 @@
 using Database.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Modules;
 
@@ -58,13 +59,12 @@ public class RelationCheckerModule : IRelationCheckerModule
 
     public IdentityRole? Check(IdentityRole role)
     {
-        var relationExist = _userManager.GetUsersInRoleAsync(role.Name!)
+        var relationToUserExist = _userManager.GetUsersInRoleAsync(role.Name!)
             .Result
-            .Count
-            .Equals(0);
-        relationExist = _roleAuthActionRepository.GetEntities()
-                .FirstOrDefault(ra => ra.RoleId.Equals(role.Id)) is null;
-        return relationExist ? null : role;
+            .Count > 0;
+        var relationToAuthActionExist = _roleAuthActionRepository.GetEntities()
+                .FirstOrDefault(ra => ra.RoleId.Equals(role.Id)) is not null;
+        return relationToUserExist || relationToAuthActionExist ? role : null;
     }
 
     public ModelBase? Check(CheckCategory checkCategory)
@@ -76,7 +76,11 @@ public class RelationCheckerModule : IRelationCheckerModule
 
     public ModelBase? Check(CheckService checkService)
     {
-        throw new NotImplementedException();
+        return _patientCheckRepository.GetEntities()
+            .Include(pc => pc.CheckServices)
+            .SelectMany(pc => pc.CheckServices)
+            .Where(cs => cs.Id.Equals(checkService.Id))
+            .FirstOrDefault();
     }
 
     public ModelBase? Check(SampleCategory sampleCategory)
@@ -88,17 +92,33 @@ public class RelationCheckerModule : IRelationCheckerModule
 
     public ModelBase? Check(SampleService sampleService)
     {
-        throw new NotImplementedException();
+        return _patientSampleRepository.GetEntities()
+            .Include(pc => pc.SampleServices)
+            .SelectMany(pc => pc.SampleServices)
+            .Where(cs => cs.Id.Equals(sampleService.Id))
+            .FirstOrDefault();
     }
 
     public ModelBase? Check(Patient patient)
     {
-        throw new NotImplementedException();
+        var patientCheck = _patientCheckRepository.GetEntities()
+            .Where(pc => pc.PatientId.Equals(patient.Id))
+            .FirstOrDefault();
+
+        if (patientCheck != null) return patientCheck;
+
+        var patientsample = _patientSampleRepository.GetEntities()
+            .Where(pc => pc.PatientId.Equals(patient.Id))
+            .FirstOrDefault();
+
+        return patientsample;
     }
 
     public ModelBase? Check(PatientCheck patientCheck)
     {
-        throw new NotImplementedException();
+        return _patientCheckResultRepository.GetEntities()
+            .Where(pc => pc.PatientCheckId.Equals(patientCheck.Id))
+            .FirstOrDefault();
     }
 
     public ModelBase? Check(PatientCheckResult patientCheckResult)
@@ -108,7 +128,9 @@ public class RelationCheckerModule : IRelationCheckerModule
 
     public ModelBase? Check(PatientSample patientSample)
     {
-        throw new NotImplementedException();
+        return _patientSampleResultRepository.GetEntities()
+            .Where(pc => pc.PatientSampleId.Equals(patientSample.Id))
+            .FirstOrDefault();
     }
 
     public ModelBase? Check(PatientSampleResult patientSampleResult)
