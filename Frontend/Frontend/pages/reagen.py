@@ -121,11 +121,6 @@ class ReagenState(rx.State):
 @template(route="/reagen", title="Reagen")
 def reagen() -> rx.Component:
     return rx.vstack(
-        rx.form(
-            rx.input(name="test", pattern="*"),
-            rx.button("Submit", type="submit"),
-            on_submit=ReagenState.update_data
-        ),
         crud_button(
             "Reagen",
             ReagenState,
