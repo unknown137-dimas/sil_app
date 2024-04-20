@@ -23,7 +23,11 @@ def generate_form_field(field: FormModel):
                 placeholder=field.placeholder,
                 required=field.required,
                 type=field.form_type,
-                default_value=field.default_value
+                default_value=field.default_value,
+                min=field.min_value,
+                max=field.max_value,
+                min_length=field.min_length,
+                pattern=field.pattern
             )
         ),
         spacing="3",

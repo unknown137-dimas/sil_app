@@ -1,6 +1,7 @@
 from Frontend import styles
 from Frontend.templates import template
 from Frontend.const.api import API_MEDICAL_TOOL
+from Frontend.const.common_variables import TODAY_DATE_ONLY
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
@@ -21,13 +22,15 @@ class MedicalToolState(rx.State):
             name="name",
             placeholder="Name",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            min_length=5,
         ),
         FormModel(
             name="code",
             placeholder="Code",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            pattern="[A-Z]{3}-[0-9]{3}",
         ),
     ]
     update_medical_tool_form: list[FormModel] =  []
@@ -53,6 +56,7 @@ class MedicalToolState(rx.State):
                 placeholder="Name",
                 required=True,
                 form_type=FormType.Input.value,
+                min_length=5,
                 default_value=self.selected_data["name"]
             ),
             FormModel(
@@ -60,6 +64,7 @@ class MedicalToolState(rx.State):
                 placeholder="Code",
                 required=True,
                 form_type=FormType.Input.value,
+                pattern="[A-Z]{3}-[0-9]{3}",
                 default_value=self.selected_data["code"]
             ),
             FormModel(
@@ -67,7 +72,8 @@ class MedicalToolState(rx.State):
                 placeholder="Calibration Date",
                 required=True,
                 form_type=FormType.Date.value,
-                default_value=converter.to_date_input(self.selected_data["calibrationDate"])
+                default_value=converter.to_date_input(self.selected_data["calibrationDate"]),
+                min_value=TODAY_DATE_ONLY
             ),
             FormModel(
                 name="calibrationStatus",

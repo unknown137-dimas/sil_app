@@ -85,7 +85,8 @@ class CheckServicesState(rx.State):
                 name="name",
                 placeholder="Check Services Name",
                 required=True,
-                form_type=FormType.Input.value
+                form_type=FormType.Input.value,
+                min_length=5
             ),
             FormModel(
                 name="checkCategoryId",
@@ -118,13 +119,17 @@ class CheckServicesState(rx.State):
                 name="minNormalValue",
                 placeholder="Min Normal Value",
                 required=True,
-                form_type=FormType.Input.value
+                form_type=FormType.Input.value,
+                min_value=0,
+                max_value=200
             ),
             FormModel(
                 name="maxNormalValue",
                 placeholder="Max Normal Value",
                 required=True,
-                form_type=FormType.Input.value
+                form_type=FormType.Input.value,
+                min_value=0,
+                max_value=200
             ),
             FormModel(
                 name="normalValue",
@@ -174,6 +179,7 @@ class CheckServicesState(rx.State):
                 placeholder="Check Services Name",
                 required=True,
                 form_type=FormType.Input.value,
+                min_length=5,
                 default_value=self.selected_data["name"]
             ),
             FormModel(
@@ -212,6 +218,8 @@ class CheckServicesState(rx.State):
                 placeholder="Min Normal Value",
                 required=True,
                 form_type=FormType.Input.value,
+                min_value=0,
+                max_value=200,
                 default_value=self.selected_data["minNormalValue"]
             ),
             FormModel(
@@ -219,6 +227,8 @@ class CheckServicesState(rx.State):
                 placeholder="Max Normal Value",
                 required=True,
                 form_type=FormType.Input.value,
+                min_value=0,
+                max_value=200,
                 default_value=self.selected_data["maxNormalValue"]
             ),
             FormModel(

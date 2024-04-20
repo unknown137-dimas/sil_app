@@ -1,6 +1,7 @@
 from Frontend import styles
 from Frontend.templates import template
 from Frontend.const.api import API_REAGEN
+from Frontend.const.common_variables import TODAY_DATE_ONLY
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
@@ -21,29 +22,34 @@ class ReagenState(rx.State):
             name="name",
             placeholder="Name",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            min_length=5
         ),
         FormModel(
             name="code",
             placeholder="Code",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            pattern="[A-Z]{3}-[0-9]{3}"
         ),
         FormModel(
             name="expiredDate",
             placeholder="Expired Date",
             required=True,
-            form_type=FormType.Date.value
+            form_type=FormType.Date.value,
+            min_value=TODAY_DATE_ONLY
         ),
         FormModel(
             name="stock",
             placeholder="Stock",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Number.value,
+            min_value=0,
+            max_value=1000
         ),
     ]
     update_reagen_form: list[FormModel] =  []
-    date_test: str
+
 
     async def get_data(self):
         response = await api_call.get(API_REAGEN)
@@ -60,32 +66,38 @@ class ReagenState(rx.State):
                 placeholder="Name",
                 required=True,
                 form_type=FormType.Input.value,
-                default_value=self.selected_data["name"]
+                min_length=5,
+                default_value=self.selected_data["name"],
             ),
             FormModel(
                 name="code",
                 placeholder="Code",
                 required=True,
                 form_type=FormType.Input.value,
-                default_value=self.selected_data["code"]
+                pattern="[A-Z]{3}-[0-9]{3}",
+                default_value=self.selected_data["code"],
             ),
             FormModel(
                 name="expiredDate",
                 placeholder="Expired Date",
                 required=True,
                 form_type=FormType.Date.value,
-                default_value=converter.to_date_input(self.selected_data["expiredDate"])
+                min_value=TODAY_DATE_ONLY,
+                default_value=converter.to_date_input(self.selected_data["expiredDate"]),
             ),
             FormModel(
                 name="stock",
                 placeholder="Stock",
                 required=True,
-                form_type=FormType.Input.value,
+                form_type=FormType.Number.value,
+                min_value=0,
+                max_value=1000,
                 default_value=self.selected_data["stock"]
             ),
         ]
     
     async def update_data(self, form_data: dict):
+        print(form_data)
         self.selected_data.update(form_data)
         await api_call.post(
             f"{API_REAGEN}/{self.selected_data['id']}",
@@ -109,6 +121,11 @@ class ReagenState(rx.State):
 @template(route="/reagen", title="Reagen")
 def reagen() -> rx.Component:
     return rx.vstack(
+        rx.form(
+            rx.input(name="test", pattern="*"),
+            rx.button("Submit", type="submit"),
+            on_submit=ReagenState.update_data
+        ),
         crud_button(
             "Reagen",
             ReagenState,

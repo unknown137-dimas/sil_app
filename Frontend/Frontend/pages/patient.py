@@ -1,6 +1,7 @@
 from Frontend import styles
 from Frontend.templates import template
 from Frontend.const.api import API_PATIENT
+from Frontend.const.common_variables import TODAY_DATE_ONLY
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
@@ -21,19 +22,21 @@ class PatientState(rx.State):
             name="name",
             placeholder="Name",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            min_length=5,
         ),
         FormModel(
             name="medicalRecordNumber",
             placeholder="Medical Record Number (No. RM)",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
         ),
         FormModel(
             name="dateOfBirth",
             placeholder="Date of Birth",
             required=True,
-            form_type=FormType.Date.value
+            form_type=FormType.Date.value,
+            max_value=TODAY_DATE_ONLY,
         ),
         FormModel(
             name="gender",
@@ -46,7 +49,8 @@ class PatientState(rx.State):
             name="identityNumber",
             placeholder="Identity Number (NIK)",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            min_length=16,
         ),
         FormModel(
             name="healthInsuranceNumber",
@@ -58,13 +62,15 @@ class PatientState(rx.State):
             name="phoneNumber",
             placeholder="Phone Number",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            min_length=10,
         ),
         FormModel(
             name="address",
             placeholder="Address",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            min_length=10,
         ),
     ]
     update_patient_form: list[FormModel] =  []
@@ -90,6 +96,7 @@ class PatientState(rx.State):
                 placeholder="Name",
                 required=True,
                 form_type=FormType.Input.value,
+                min_length=5,
                 default_value=self.selected_data["name"]
             ),
             FormModel(
@@ -104,6 +111,7 @@ class PatientState(rx.State):
                 placeholder="Date of Birth",
                 required=True,
                 form_type=FormType.Date.value,
+                max_value=TODAY_DATE_ONLY,
                 default_value=converter.to_date_input(self.selected_data["dateOfBirth"])
             ),
             FormModel(
@@ -119,6 +127,7 @@ class PatientState(rx.State):
                 placeholder="Identity Number (NIK)",
                 required=True,
                 form_type=FormType.Input.value,
+                min_length=16,
                 default_value=self.selected_data["identityNumber"]
             ),
             FormModel(
@@ -133,6 +142,7 @@ class PatientState(rx.State):
                 placeholder="Phone Number",
                 required=True,
                 form_type=FormType.Input.value,
+                min_length=10,
                 default_value=self.selected_data["phoneNumber"]
             ),
             FormModel(
@@ -140,6 +150,7 @@ class PatientState(rx.State):
                 placeholder="Address",
                 required=True,
                 form_type=FormType.Input.value,
+                min_length=10,
                 default_value=self.selected_data["address"]
             ),
         ]

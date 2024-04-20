@@ -22,7 +22,8 @@ class RoleState(rx.State):
             name="name",
             placeholder="Role Name",
             required=True,
-            form_type=FormType.Input.value
+            form_type=FormType.Input.value,
+            min_length=5,
         ),
     ]
     update_role_form: list[FormModel] =  []
@@ -42,6 +43,7 @@ class RoleState(rx.State):
                 placeholder="Role Name",
                 required=True,
                 form_type=FormType.Input.value,
+                min_length=5,
                 default_value=self.selected_data["name"]
             ),
         ]
