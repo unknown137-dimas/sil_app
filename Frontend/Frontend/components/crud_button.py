@@ -16,7 +16,7 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
             ),
             rx.dialog.content(
                 rx.dialog.title(f"Add {title}"),
-                rx.form(
+                rx.form.root(
                     rx.flex(
                         rx.foreach(
                             new_form,
@@ -33,9 +33,9 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                                 variant="soft",
                             ),
                         ),
-                        rx.button(
-                            "Add",
-                            type="submit"
+                        rx.form.submit(
+                            rx.button("Add"),
+                            as_child=True
                         ),
                         spacing="3",
                         margin_top="16px",
@@ -56,7 +56,7 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                 ),
                 rx.dialog.content(
                     rx.dialog.title(f"Update {title}"),
-                    rx.form(
+                    rx.form.root(
                         rx.flex(
                             rx.foreach(
                                 update_form,
@@ -73,9 +73,9 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                                     variant="soft",
                                 ),
                             ),
-                            rx.button(
-                                "Save",
-                                type="submit"
+                            rx.form.submit(
+                                rx.button("Save"),
+                                as_child=True
                             ),
                             spacing="3",
                             margin_top="16px",
