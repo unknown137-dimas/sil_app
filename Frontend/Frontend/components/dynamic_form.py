@@ -34,13 +34,43 @@ def generate_form_field(field: FormModel):
                     as_child=True
                 )
             ),
+            rx.cond(
+                field.pattern != "*",
+                rx.form.message(
+                    f"Pattern mismatch",
+                    match="patternMismatch",
+                    color="var(--red-11)",
+                ),
+            ),
+            rx.cond(
+                field.min_length > 0,
+                rx.form.message(
+                    f"{field.placeholder} must more than {field.min_length}",
+                    match="tooShort",
+                    color="var(--red-11)",
+                ),
+            ),
+            rx.cond(
+                field.form_type == FormType.Number.value,
+                rx.fragment(
+                    rx.form.message(
+                        f"Value must not more than {field.max_value}",
+                        match="rangeOverflow",
+                        color="var(--red-11)",
+                    ),
+                    rx.form.message(
+                        f"Value must more than {field.min_value}",
+                        match="rangeUnderflow",
+                        color="var(--red-11)",
+                    ),
+                )
+            ),
             rx.form.message(
-                f"A valid {field.placeholder} is required",
+                f"{field.placeholder} is required",
                 match="valueMissing",
                 color="var(--red-11)",
             ),
             direction="column",
-            spacing="2"
         ),
         name=field.name,
     )
