@@ -33,11 +33,9 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                                 variant="soft",
                             ),
                         ),
-                        rx.dialog.close(
-                            rx.button(
-                                "Add",
-                                type="submit"
-                            )
+                        rx.button(
+                            "Add",
+                            type="submit"
                         ),
                         spacing="3",
                         margin_top="16px",
@@ -75,11 +73,9 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                                     variant="soft",
                                 ),
                             ),
-                            rx.dialog.close(
-                                rx.button(
-                                    "Save",
-                                    type="submit"
-                                )
+                            rx.button(
+                                "Save",
+                                type="submit"
                             ),
                             spacing="3",
                             margin_top="16px",
