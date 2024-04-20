@@ -22,7 +22,7 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                             new_form,
                             generate_form_field
                         ),
-                        spacing="3",
+                        spacing="4",
                         direction="column"
                     ),
                     rx.flex(
@@ -62,7 +62,7 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                                 update_form,
                                 generate_form_field
                             ),
-                            spacing="3",
+                            spacing="4",
                             direction="column"
                         ),
                         rx.flex(
