@@ -2,8 +2,11 @@ from enum import Enum, IntEnum
 
 class FormType(Enum):
     Input = "input"
+    Number = "number"
     Password = "password"
     Date = "date"
+    Time = "time"
+    Datetime = "datetime-local"
     Select = "select"
 
 class CheckType(IntEnum):
