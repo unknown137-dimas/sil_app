@@ -8,6 +8,7 @@ from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType
 from json import loads
 from Frontend.components.crud_button import crud_button
+from Frontend.components.table import table
 
 import reflex as rx
 
@@ -17,6 +18,7 @@ class ReagenState(rx.State):
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     new_reagen_form: list[FormModel] = [
         FormModel(
             name="name",
@@ -55,6 +57,7 @@ class ReagenState(rx.State):
         response = await api_call.get(API_REAGEN)
         self.raw_data = loads(response.text)["data"]
         self.columns, self.data, dataFrame = converter.to_data_table(self.raw_data)
+        self.loading = False
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -127,11 +130,6 @@ def reagen() -> rx.Component:
             ReagenState.new_reagen_form,
             ReagenState.update_reagen_form,
         ),
-        rx.data_editor(
-            columns=ReagenState.columns,
-            data=ReagenState.data,
-            on_cell_clicked=ReagenState.get_selected_data,
-            column_select="none",
-        ),
+        table(ReagenState),
         on_mount=ReagenState.get_data
     )

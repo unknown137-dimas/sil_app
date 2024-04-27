@@ -8,6 +8,7 @@ from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType, CalibrationStatus
 from json import loads
 from Frontend.components.crud_button import crud_button
+from Frontend.components.table import table
 
 import reflex as rx
 
@@ -17,6 +18,7 @@ class MedicalToolState(rx.State):
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     new_medical_tool_form: list[FormModel] = [
         FormModel(
             name="name",
@@ -44,6 +46,7 @@ class MedicalToolState(rx.State):
                 dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(CalibrationStatus(data).name))
 
         self.data = dataFrame.values.tolist()
+        self.loading = False
 
 
     def get_selected_data(self, pos):
@@ -123,11 +126,6 @@ def medical_tool() -> rx.Component:
             MedicalToolState.new_medical_tool_form,
             MedicalToolState.update_medical_tool_form,
         ),
-        rx.data_editor(
-            columns=MedicalToolState.columns,
-            data=MedicalToolState.data,
-            on_cell_clicked=MedicalToolState.get_selected_data,
-            column_select="none",
-        ),
+        table(MedicalToolState),
         on_mount=MedicalToolState.get_data
     )

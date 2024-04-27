@@ -5,6 +5,7 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.components.crud_button import crud_button
+from Frontend.components.table import table
 from Frontend.enum.enums import FormType, Gender, ValueType
 from json import loads
 from pandas import DataFrame
@@ -18,6 +19,7 @@ class SampleCategoryState(rx.State):
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     new_sample_category_form: list[FormModel] = [
         FormModel(
             name="name",
@@ -34,6 +36,7 @@ class SampleCategoryState(rx.State):
         self.columns, self.data, _ = converter.to_data_table(self.raw_data, ["sampleServices"])
         sample_service_state = await self.get_state(SampleServicesState)
         await sample_service_state.get_data()
+        self.loading = False
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -76,6 +79,7 @@ class SampleServicesState(rx.State):
     sample_categories_raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     update_sample_services_form: list[FormModel] =  []
 
     @rx.var
@@ -121,6 +125,7 @@ class SampleServicesState(rx.State):
                 dataFrame[column] = dataFrame[column].apply(lambda data: self.get_sample_category_name_by_id(data))
 
         self.data = dataFrame.values.tolist()
+        self.loading = False
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -176,12 +181,7 @@ def sample_category_services() -> rx.Component:
                 SampleCategoryState.new_sample_category_form,
                 SampleCategoryState.update_sample_category_form,
             ),
-            rx.data_editor(
-                columns=SampleCategoryState.columns,
-                data=SampleCategoryState.data,
-                on_cell_clicked=SampleCategoryState.get_selected_data,
-                column_select="none",
-            ),
+            table(SampleCategoryState),
             on_mount=SampleCategoryState.get_data(),
         ),
         rx.vstack(
@@ -191,12 +191,7 @@ def sample_category_services() -> rx.Component:
                 SampleServicesState.new_sample_services_form,
                 SampleServicesState.update_sample_services_form,
             ),
-            rx.data_editor(
-                columns=SampleServicesState.columns,
-                data=SampleServicesState.data,
-                on_cell_clicked=SampleServicesState.get_selected_data,
-                column_select="none",
-            ),
+            table(SampleServicesState),
             on_mount=SampleServicesState.get_data(),
         ),
     )

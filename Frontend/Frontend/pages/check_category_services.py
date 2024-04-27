@@ -5,6 +5,7 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.components.crud_button import crud_button
+from Frontend.components.table import table
 from Frontend.enum.enums import FormType, Gender, ValueType
 from json import loads
 from pandas import DataFrame
@@ -18,6 +19,7 @@ class CheckCategoryState(rx.State):
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     new_check_category_form: list[FormModel] = [
         FormModel(
             name="name",
@@ -34,6 +36,7 @@ class CheckCategoryState(rx.State):
         self.columns, self.data, _ = converter.to_data_table(self.raw_data, ["checkServices"])
         check_service_state = await self.get_state(CheckServicesState)
         await check_service_state.get_data()
+        self.loading = False
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -76,6 +79,7 @@ class CheckServicesState(rx.State):
     check_categories_raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     update_check_services_form: list[FormModel] =  []
 
     @rx.var
@@ -168,6 +172,7 @@ class CheckServicesState(rx.State):
                 dataFrame[column] = dataFrame[column].apply(lambda data: self.get_check_category_name_by_id(data))
 
         self.data = dataFrame.values.tolist()
+        self.loading = False
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -276,12 +281,7 @@ def check_category_services() -> rx.Component:
                 CheckCategoryState.new_check_category_form,
                 CheckCategoryState.update_check_category_form,
             ),
-            rx.data_editor(
-                columns=CheckCategoryState.columns,
-                data=CheckCategoryState.data,
-                on_cell_clicked=CheckCategoryState.get_selected_data,
-                column_select="none",
-            ),
+            table(CheckCategoryState),
             on_mount=CheckCategoryState.get_data(),
         ),
         rx.vstack(
@@ -291,12 +291,7 @@ def check_category_services() -> rx.Component:
                 CheckServicesState.new_check_services_form,
                 CheckServicesState.update_check_services_form,
             ),
-            rx.data_editor(
-                columns=CheckServicesState.columns,
-                data=CheckServicesState.data,
-                on_cell_clicked=CheckServicesState.get_selected_data,
-                column_select="none",
-            ),
+            table(CheckServicesState),
             on_mount=CheckServicesState.get_data(),
         ),
     )

@@ -5,6 +5,7 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.components.crud_button import crud_button
+from Frontend.components.table import table
 from Frontend.enum.enums import FormType
 from json import loads
 from pandas import DataFrame
@@ -17,6 +18,7 @@ class RoleState(rx.State):
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     new_role_form: list[FormModel] = [
         FormModel(
             name="name",
@@ -32,6 +34,7 @@ class RoleState(rx.State):
         response = await api_call.get(API_ROLE)
         self.raw_data = loads(response.text)["data"]
         self.columns, self.data, _ = converter.to_data_table(self.raw_data)
+        self.loading = False
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -76,12 +79,7 @@ def role() -> rx.Component:
             RoleState.new_role_form,
             RoleState.update_role_form,
         ),
-        rx.data_editor(
-            columns=RoleState.columns,
-            data=RoleState.data,
-            on_cell_clicked=RoleState.get_selected_data,
-            column_select="none",
-        ),
+        table(RoleState),
         on_mount=RoleState.get_data
     )
 

@@ -8,6 +8,7 @@ from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType, Gender
 from json import loads
 from Frontend.components.crud_button import crud_button
+from Frontend.components.table import table
 
 import reflex as rx
 
@@ -17,6 +18,7 @@ class PatientState(rx.State):
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
+    loading: bool = True
     new_patient_form: list[FormModel] = [
         FormModel(
             name="name",
@@ -85,6 +87,7 @@ class PatientState(rx.State):
                     dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(Gender(data).name))
 
             self.data = dataFrame.values.tolist()
+        self.loading = False
 
     def get_selected_data(self, pos):
         self.updating = True
@@ -186,11 +189,6 @@ def patient() -> rx.Component:
             PatientState.new_patient_form,
             PatientState.update_patient_form,
         ),
-        rx.data_editor(
-            columns=PatientState.columns,
-            data=PatientState.data,
-            on_cell_clicked=PatientState.get_selected_data,
-            column_select="none",
-        ),
+        table(PatientState),
         on_mount=PatientState.get_data
     )
