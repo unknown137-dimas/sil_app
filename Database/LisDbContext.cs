@@ -93,8 +93,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.CheckSchedule).IsRequired(true);
             _.Property(_ => _.ValidationStatus).IsRequired(true);
             _.Property(_ => _.CheckStatus).IsRequired(true);
-            _.HasMany(_ => _.CheckServices);
-            _.HasMany(_ => _.PatientCheckResults);
+            _.HasOne(_ => _.CheckService);
             _.HasOne(_ => _.Patient);
         });
         modelBuilder.Entity<PatientCheckResult>(_ => 
@@ -104,16 +103,14 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.NumericResult).IsRequired(false);
             _.Property(_ => _.StringResult).IsRequired(false);
             _.HasOne(_ => _.PatientCheck);
-            _.HasOne(_ => _.CheckService);
         });
         modelBuilder.Entity<PatientSample>(_ => 
         {
             _.HasKey(_ => _.Id);
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.SampleSchedule).IsRequired(true);
+            _.HasOne(_ => _.SampleService);
             _.HasOne(_ => _.Patient);
-            _.HasMany(_ => _.SampleServices);
-            _.HasMany(_ => _.PatientSampleResults);
         });
         modelBuilder.Entity<PatientSampleResult>(_ => 
         {
@@ -122,7 +119,6 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.SampleTakenDate).IsRequired(true);
             _.Property(_ => _.SampleNote).IsRequired(false);
             _.HasOne(_ => _.PatientSample);
-            _.HasOne(_ => _.SampleService);
         });
         modelBuilder.Entity<Reagen>(_ =>
         {
