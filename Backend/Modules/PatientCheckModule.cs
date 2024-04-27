@@ -17,25 +17,6 @@ public class PatientCheckModule : Module<PatientCheckDTO, PatientCheck>
         _relationCheckerModule = relationCheckerModule;
     }
 
-    public override IEnumerable<PatientCheckDTO> GetAll()
-    {
-        return Mapper.Map<IEnumerable<PatientCheckDTO>>(
-                Repository.GetEntities()
-                        .Include(pc => pc.CheckServices)
-                        .Include(pc => pc.PatientCheckResults)
-            );
-    }
-
-    public override async Task<PatientCheckDTO?> GetById(string id)
-    {
-        return Mapper.Map<PatientCheckDTO>(
-            await Repository.GetEntities()
-                            .Include(pc => pc.CheckServices)
-                            .Include(pc => pc.PatientCheckResults)
-                            .FirstOrDefaultAsync(pc => pc.Id == id)
-            );
-    }
-
     public override async Task<PatientCheckDTO?> DeleteAsync(string id)
     {
         var patientCheck = await Repository.GetAsync(id);

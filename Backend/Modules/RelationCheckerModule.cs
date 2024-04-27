@@ -77,8 +77,6 @@ public class RelationCheckerModule : IRelationCheckerModule
     public ModelBase? Check(CheckService checkService)
     {
         return _patientCheckRepository.GetEntities()
-            .Include(pc => pc.CheckServices)
-            .SelectMany(pc => pc.CheckServices)
             .Where(cs => cs.Id.Equals(checkService.Id))
             .FirstOrDefault();
     }
@@ -93,8 +91,6 @@ public class RelationCheckerModule : IRelationCheckerModule
     public ModelBase? Check(SampleService sampleService)
     {
         return _patientSampleRepository.GetEntities()
-            .Include(pc => pc.SampleServices)
-            .SelectMany(pc => pc.SampleServices)
             .Where(cs => cs.Id.Equals(sampleService.Id))
             .FirstOrDefault();
     }
