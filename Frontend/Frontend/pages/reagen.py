@@ -100,7 +100,6 @@ class ReagenState(rx.State):
         ]
     
     async def update_data(self, form_data: dict):
-        print(form_data)
         self.selected_data.update(form_data)
         await api_call.post(
             f"{API_REAGEN}/{self.selected_data['id']}",
