@@ -162,16 +162,17 @@ class CheckServicesState(rx.State):
         self.check_categories_raw_data = check_categories.raw_data
         response = await api_call.get(API_CHECK_SERVICE)
         self.raw_data = loads(response.text)["data"]
-        self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
-        for column in dataFrame.columns:
-            if "gender" in column.lower():
-                dataFrame[column] = dataFrame[column].apply(lambda data: Gender(data).name)
-            if "valuetype" in column.lower():
-                dataFrame[column] = dataFrame[column].apply(lambda data: ValueType(data).name)
-            if "checkcategory" in column.lower():
-                dataFrame[column] = dataFrame[column].apply(lambda data: self.get_check_category_name_by_id(data))
+        if self.raw_data:
+            self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
+            for column in dataFrame.columns:
+                if "gender" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: Gender(data).name)
+                if "valuetype" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: ValueType(data).name)
+                if "checkcategory" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: self.get_check_category_name_by_id(data))
 
-        self.data = dataFrame.values.tolist()
+            self.data = dataFrame.values.tolist()
         self.loading = False
 
     def get_selected_data(self, pos):

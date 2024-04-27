@@ -81,8 +81,8 @@ class PatientState(rx.State):
     async def get_data(self):
         response = await api_call.get(API_PATIENT)
         self.raw_data = loads(response.text)["data"]
-        self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
-        if(dataFrame is not None):
+        if self.raw_data:
+            self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
             for column in dataFrame.columns:
                 if "gender" in column.lower():
                     dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(Gender(data).name))

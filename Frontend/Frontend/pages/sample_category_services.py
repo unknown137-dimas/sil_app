@@ -33,9 +33,10 @@ class SampleCategoryState(rx.State):
     async def get_data(self):
         response = await api_call.get(API_SAMPLE_CATEGORY)
         self.raw_data = loads(response.text)["data"]
-        self.columns, self.data, _ = converter.to_data_table(self.raw_data, ["sampleServices"])
-        sample_service_state = await self.get_state(SampleServicesState)
-        await sample_service_state.get_data()
+        if self.raw_data:
+            self.columns, self.data, _ = converter.to_data_table(self.raw_data, ["sampleServices"])
+            sample_service_state = await self.get_state(SampleServicesState)
+            await sample_service_state.get_data()
         self.loading = False
 
     def get_selected_data(self, pos):
@@ -119,12 +120,13 @@ class SampleServicesState(rx.State):
         self.sample_categories_raw_data = sample_categories.raw_data
         response = await api_call.get(API_SAMPLE_SERVICE)
         self.raw_data = loads(response.text)["data"]
-        self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
-        for column in dataFrame.columns:
-            if "samplecategory" in column.lower():
-                dataFrame[column] = dataFrame[column].apply(lambda data: self.get_sample_category_name_by_id(data))
+        if self.raw_data:
+            self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
+            for column in dataFrame.columns:
+                if "samplecategory" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: self.get_sample_category_name_by_id(data))
 
-        self.data = dataFrame.values.tolist()
+            self.data = dataFrame.values.tolist()
         self.loading = False
 
     def get_selected_data(self, pos):

@@ -40,12 +40,13 @@ class MedicalToolState(rx.State):
     async def get_data(self):
         response = await api_call.get(API_MEDICAL_TOOL)
         self.raw_data = loads(response.text)["data"]
-        self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
-        for column in dataFrame.columns:
-            if "calibrationstatus" in column.lower():
-                dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(CalibrationStatus(data).name))
+        if self.raw_data:
+            self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
+            for column in dataFrame.columns:
+                if "calibrationstatus" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(CalibrationStatus(data).name))
 
-        self.data = dataFrame.values.tolist()
+            self.data = dataFrame.values.tolist()
         self.loading = False
 
 
