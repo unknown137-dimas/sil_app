@@ -53,6 +53,7 @@ class PatientState(rx.State):
             required=True,
             form_type=FormType.Input.value,
             min_length=16,
+            max_length=16
         ),
         FormModel(
             name="healthInsuranceNumber",
@@ -131,6 +132,7 @@ class PatientState(rx.State):
                 required=True,
                 form_type=FormType.Input.value,
                 min_length=16,
+                max_length=16,
                 default_value=self.selected_data["identityNumber"]
             ),
             FormModel(
