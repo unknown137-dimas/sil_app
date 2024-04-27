@@ -60,6 +60,7 @@ class CheckCategoryState(rx.State):
             payload=self.selected_data
         )
         await self.get_data()
+        self.updating = False
 
     async def delete_data(self):
         await api_call.delete(f"{API_CHECK_CATEGORY}/{self.selected_data['id']}")
@@ -256,6 +257,7 @@ class CheckServicesState(rx.State):
             payload=self.selected_data
         )
         await self.get_data()
+        self.updating = False
 
     async def delete_data(self):
         await api_call.delete(f"{API_CHECK_SERVICE}/{self.selected_data['id']}")

@@ -58,6 +58,7 @@ class RoleState(rx.State):
             payload=self.selected_data
         )
         await self.get_data()
+        self.updating = False
 
     async def delete_data(self):
         await api_call.delete(f"{API_ROLE}/{self.selected_data['id']}")
