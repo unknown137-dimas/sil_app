@@ -12,10 +12,14 @@ def table(state: rx.State) -> rx.Component:
                     size="lg",
                 ),
             ),
-            rx.data_editor(
-                columns=state.columns,
-                data=state.data,
-                on_cell_clicked=state.get_selected_data,
-                column_select="none",
-            ),
+            rx.cond(
+                state.data,
+                rx.data_editor(
+                    columns=state.columns,
+                    data=state.data,
+                    on_cell_clicked=state.get_selected_data,
+                    column_select="none",
+                ),
+                rx.text("No Data"),
+            )
         ),
