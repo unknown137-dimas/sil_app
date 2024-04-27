@@ -110,7 +110,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="checkUnit",
                 placeholder="Check Unit",
-                required=True,
                 form_type=FormType.Input.value
             ),
             FormModel(
@@ -123,7 +122,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="minNormalValue",
                 placeholder="Min Normal Value",
-                required=True,
                 form_type=FormType.Input.value,
                 min_value=0,
                 max_value=200
@@ -131,7 +129,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="maxNormalValue",
                 placeholder="Max Normal Value",
-                required=True,
                 form_type=FormType.Input.value,
                 min_value=0,
                 max_value=200
@@ -139,7 +136,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="normalValue",
                 placeholder="Normal Value",
-                required=True,
                 form_type=FormType.Input.value
             ),
         ]
@@ -180,6 +176,7 @@ class CheckServicesState(rx.State):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
+        self.normalValueType: str = ""
         self.update_check_services_form = [
             FormModel(
                 name="name",
@@ -208,7 +205,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="checkUnit",
                 placeholder="Check Unit",
-                required=True,
                 form_type=FormType.Input.value,
                 default_value=self.selected_data["checkUnit"]
             ),
@@ -223,7 +219,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="minNormalValue",
                 placeholder="Min Normal Value",
-                required=True,
                 form_type=FormType.Input.value,
                 min_value=0,
                 max_value=200,
@@ -232,7 +227,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="maxNormalValue",
                 placeholder="Max Normal Value",
-                required=True,
                 form_type=FormType.Input.value,
                 min_value=0,
                 max_value=200,
@@ -241,7 +235,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="normalValue",
                 placeholder="Normal Value",
-                required=True,
                 form_type=FormType.Input.value,
                 default_value=self.selected_data["normalValue"]
             ),
