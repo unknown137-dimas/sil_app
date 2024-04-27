@@ -26,3 +26,13 @@ class CalibrationStatus(IntEnum):
 class ValueType(IntEnum):
     Numeric = 0,
     Text = 1
+
+class CheckStatus(IntEnum):
+    Processing = 0,
+    Waiting = 1,
+    Done = 2
+
+class ValidationStatus(IntEnum):
+    WaitingValidation = 0,
+    Valid = 1,
+    NotValid = 2
