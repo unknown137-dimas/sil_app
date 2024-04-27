@@ -11,4 +11,5 @@ class FormModel(rx.Base):
     min_value = ""
     max_value = ""
     min_length: int = 0
+    max_length: int = 100
     pattern: str = "*"

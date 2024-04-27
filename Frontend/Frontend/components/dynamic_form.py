@@ -29,6 +29,7 @@ def generate_form_field(field: FormModel):
                         min=field.min_value,
                         max=field.max_value,
                         min_length=field.min_length,
+                        max_length=field.max_length,
                         pattern=field.pattern
                     ),
                     as_child=True
@@ -45,8 +46,16 @@ def generate_form_field(field: FormModel):
             rx.cond(
                 field.min_length > 0,
                 rx.form.message(
-                    f"{field.placeholder} must more than {field.min_length}",
+                    f"{field.placeholder} must more than or equal to {field.min_length}",
                     match="tooShort",
+                    color="var(--red-11)",
+                ),
+            ),
+            rx.cond(
+                field.max_length > 0,
+                rx.form.message(
+                    f"{field.placeholder} must lest than {field.max_length}",
+                    match="tooLong",
                     color="var(--red-11)",
                 ),
             ),
