@@ -17,54 +17,54 @@ default_meta = [
 ]
 
 
-def menu_item_link(text, href):
-    return rx.menu.item(
-        rx.link(
-            text,
-            href=href,
-            width="100%",
-            color="inherit",
-        ),
-        _hover={
-            "color": styles.accent_color,
-            "background_color": styles.accent_text_color,
-        },
-    )
+# def menu_item_link(text, href):
+#     return rx.menu.item(
+#         rx.link(
+#             text,
+#             href=href,
+#             width="100%",
+#             color="inherit",
+#         ),
+#         _hover={
+#             "color": styles.accent_color,
+#             "background_color": styles.accent_text_color,
+#         },
+#     )
 
 
-def menu_button() -> rx.Component:
-    """The menu button on the top right of the page.
+# def menu_button() -> rx.Component:
+#     """The menu button on the top right of the page.
 
-    Returns:
-        The menu button component.
-    """
-    from reflex.page import get_decorated_pages
+#     Returns:
+#         The menu button component.
+#     """
+#     from reflex.page import get_decorated_pages
 
-    return rx.box(
-        rx.menu.root(
-            rx.menu.trigger(
-                rx.icon(
-                    "menu",
-                    size=36,
-                    color=styles.accent_text_color,
-                ),
-                background_color=styles.accent_color,
-            ),
-            rx.menu.content(
-                *[
-                    menu_item_link(page["title"], page["route"])
-                    for page in get_decorated_pages()
-                ],
-                rx.menu.separator(),
-                menu_item_link("About", "https://github.com/reflex-dev"),
-                menu_item_link("Contact", "mailto:founders@=reflex.dev"),
-            ),
-        ),
-        position="fixed",
-        right="1.5em",
-        top="1.5em",
-        z_index="500",
-    )
+#     return rx.box(
+#         rx.menu.root(
+#             rx.menu.trigger(
+#                 rx.icon(
+#                     "menu",
+#                     size=36,
+#                     color=styles.accent_text_color,
+#                 ),
+#                 background_color=styles.accent_color,
+#             ),
+#             rx.menu.content(
+#                 *[
+#                     menu_item_link(page["title"], page["route"])
+#                     for page in get_decorated_pages()
+#                 ],
+#                 rx.menu.separator(),
+#                 menu_item_link("About", "https://github.com/reflex-dev"),
+#                 menu_item_link("Contact", "mailto:founders@=reflex.dev"),
+#             ),
+#         ),
+#         position="fixed",
+#         right="1.5em",
+#         top="1.5em",
+#         z_index="500",
+#     )
 
 
 class ThemeState(rx.State):
@@ -119,7 +119,7 @@ def template(
                     ),
                     **styles.template_page_style,
                 ),
-                menu_button(),
+                # menu_button(),
                 align="start",
                 transition="left 0.5s, width 0.5s",
                 position="relative",
