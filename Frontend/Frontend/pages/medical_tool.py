@@ -33,6 +33,7 @@ class MedicalToolState(BaseState):
     update_medical_tool_form: list[FormModel] =  []
 
     async def get_data(self):
+        self.clear_selected_data()
         response = await api_call.get(API_MEDICAL_TOOL)
         self.raw_data = loads(response.text)["data"]
         if self.raw_data:
@@ -49,47 +50,48 @@ class MedicalToolState(BaseState):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
-        self.update_medical_tool_form = [
-            FormModel(
-                name="name",
-                placeholder="Name",
-                required=True,
-                form_type=FormType.Input.value,
-                min_length=5,
-                default_value=self.selected_data["name"]
-            ),
-            FormModel(
-                name="code",
-                placeholder="Code",
-                required=True,
-                form_type=FormType.Input.value,
-                pattern="[A-Z]{3}-[0-9]{3}",
-                default_value=self.selected_data["code"]
-            ),
-            FormModel(
-                name="calibrationDate",
-                placeholder="Calibration Date",
-                required=True,
-                form_type=FormType.Date.value,
-                default_value=converter.to_date_input(self.selected_data["calibrationDate"]),
-                min_value=TODAY_DATE_ONLY
-            ),
-            FormModel(
-                name="calibrationStatus",
-                placeholder="Calibration Status",
-                required=True,
-                form_type=FormType.Select.value,
-                options=[converter.to_title_case(cs.name) for cs in CalibrationStatus],
-                default_value=converter.to_title_case(CalibrationStatus(self.selected_data["calibrationStatus"]).name)
-            ),
-            FormModel(
-                name="calibrationNote",
-                placeholder="Calibration Note",
-                required=True,
-                form_type=FormType.Input.value,
-                default_value=self.selected_data["calibrationNote"] if self.selected_data["calibrationNote"] != None else "" 
-            ),
-        ]
+        if self.selected_data:
+            self.update_medical_tool_form = [
+                FormModel(
+                    name="name",
+                    placeholder="Name",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    min_length=5,
+                    default_value=self.selected_data["name"]
+                ),
+                FormModel(
+                    name="code",
+                    placeholder="Code",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    pattern="[A-Z]{3}-[0-9]{3}",
+                    default_value=self.selected_data["code"]
+                ),
+                FormModel(
+                    name="calibrationDate",
+                    placeholder="Calibration Date",
+                    required=True,
+                    form_type=FormType.Date.value,
+                    default_value=converter.to_date_input(self.selected_data["calibrationDate"]),
+                    min_value=TODAY_DATE_ONLY
+                ),
+                FormModel(
+                    name="calibrationStatus",
+                    placeholder="Calibration Status",
+                    required=True,
+                    form_type=FormType.Select.value,
+                    options=[converter.to_title_case(cs.name) for cs in CalibrationStatus],
+                    default_value=converter.to_title_case(CalibrationStatus(self.selected_data["calibrationStatus"]).name)
+                ),
+                FormModel(
+                    name="calibrationNote",
+                    placeholder="Calibration Note",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    default_value=self.selected_data["calibrationNote"] if self.selected_data["calibrationNote"] != None else "" 
+                ),
+            ]
     
     async def update_data(self, form_data: dict):
         form_data["calibrationStatus"] = CalibrationStatus[form_data["calibrationStatus"].replace(" ","")].value

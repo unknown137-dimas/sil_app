@@ -49,6 +49,7 @@ class ReagenState(BaseState):
 
 
     async def get_data(self):
+        self.clear_selected_data()
         response = await api_call.get(API_REAGEN)
         self.raw_data = loads(response.text)["data"]
         self.columns, self.data, dataFrame = converter.to_data_table(self.raw_data)
@@ -58,41 +59,42 @@ class ReagenState(BaseState):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
-        self.update_reagen_form = [
-            FormModel(
-                name="name",
-                placeholder="Name",
-                required=True,
-                form_type=FormType.Input.value,
-                min_length=5,
-                default_value=self.selected_data["name"],
-            ),
-            FormModel(
-                name="code",
-                placeholder="Code",
-                required=True,
-                form_type=FormType.Input.value,
-                pattern="[A-Z]{3}-[0-9]{3}",
-                default_value=self.selected_data["code"],
-            ),
-            FormModel(
-                name="expiredDate",
-                placeholder="Expired Date",
-                required=True,
-                form_type=FormType.Date.value,
-                min_value=TODAY_DATE_ONLY,
-                default_value=converter.to_date_input(self.selected_data["expiredDate"]),
-            ),
-            FormModel(
-                name="stock",
-                placeholder="Stock",
-                required=True,
-                form_type=FormType.Number.value,
-                min_value=0,
-                max_value=1000,
-                default_value=self.selected_data["stock"]
-            ),
-        ]
+        if self.selected_data:
+            self.update_reagen_form = [
+                FormModel(
+                    name="name",
+                    placeholder="Name",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    min_length=5,
+                    default_value=self.selected_data["name"],
+                ),
+                FormModel(
+                    name="code",
+                    placeholder="Code",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    pattern="[A-Z]{3}-[0-9]{3}",
+                    default_value=self.selected_data["code"],
+                ),
+                FormModel(
+                    name="expiredDate",
+                    placeholder="Expired Date",
+                    required=True,
+                    form_type=FormType.Date.value,
+                    min_value=TODAY_DATE_ONLY,
+                    default_value=converter.to_date_input(self.selected_data["expiredDate"]),
+                ),
+                FormModel(
+                    name="stock",
+                    placeholder="Stock",
+                    required=True,
+                    form_type=FormType.Number.value,
+                    min_value=0,
+                    max_value=1000,
+                    default_value=self.selected_data["stock"]
+                ),
+            ]
     
     async def update_data(self, form_data: dict):
         self.selected_data.update(form_data)

@@ -74,6 +74,7 @@ class PatientState(BaseState):
     update_patient_form: list[FormModel] =  []
 
     async def get_data(self):
+        self.clear_selected_data()
         response = await api_call.get(API_PATIENT)
         self.raw_data = loads(response.text)["data"]
         if self.raw_data:
@@ -89,71 +90,72 @@ class PatientState(BaseState):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
-        self.update_patient_form = [
-            FormModel(
-                name="name",
-                placeholder="Name",
-                required=True,
-                form_type=FormType.Input.value,
-                min_length=5,
-                default_value=self.selected_data["name"]
-            ),
-            FormModel(
-                name="medicalRecordNumber",
-                placeholder="Medical Record Number (No. RM)",
-                required=True,
-                form_type=FormType.Input.value,
-                default_value=self.selected_data["medicalRecordNumber"]
-            ),
-            FormModel(
-                name="dateOfBirth",
-                placeholder="Date of Birth",
-                required=True,
-                form_type=FormType.Date.value,
-                max_value=TODAY_DATE_ONLY,
-                default_value=converter.to_date_input(self.selected_data["dateOfBirth"])
-            ),
-            FormModel(
-                name="gender",
-                placeholder="Gender",
-                required=True,
-                form_type=FormType.Select.value,
-                options=[g.name for g in Gender],
-                default_value=Gender(self.selected_data["gender"]).name
-            ),
-            FormModel(
-                name="identityNumber",
-                placeholder="Identity Number (NIK)",
-                required=True,
-                form_type=FormType.Input.value,
-                min_length=16,
-                max_length=16,
-                default_value=self.selected_data["identityNumber"]
-            ),
-            FormModel(
-                name="healthInsuranceNumber",
-                placeholder="Health Insurance Number",
-                required=True,
-                form_type=FormType.Input.value,
-                default_value=self.selected_data["healthInsuranceNumber"]
-            ),
-            FormModel(
-                name="phoneNumber",
-                placeholder="Phone Number",
-                required=True,
-                form_type=FormType.Input.value,
-                min_length=10,
-                default_value=self.selected_data["phoneNumber"]
-            ),
-            FormModel(
-                name="address",
-                placeholder="Address",
-                required=True,
-                form_type=FormType.Input.value,
-                min_length=10,
-                default_value=self.selected_data["address"]
-            ),
-        ]
+        if self.selected_data:
+            self.update_patient_form = [
+                FormModel(
+                    name="name",
+                    placeholder="Name",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    min_length=5,
+                    default_value=self.selected_data["name"]
+                ),
+                FormModel(
+                    name="medicalRecordNumber",
+                    placeholder="Medical Record Number (No. RM)",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    default_value=self.selected_data["medicalRecordNumber"]
+                ),
+                FormModel(
+                    name="dateOfBirth",
+                    placeholder="Date of Birth",
+                    required=True,
+                    form_type=FormType.Date.value,
+                    max_value=TODAY_DATE_ONLY,
+                    default_value=converter.to_date_input(self.selected_data["dateOfBirth"])
+                ),
+                FormModel(
+                    name="gender",
+                    placeholder="Gender",
+                    required=True,
+                    form_type=FormType.Select.value,
+                    options=[g.name for g in Gender],
+                    default_value=Gender(self.selected_data["gender"]).name
+                ),
+                FormModel(
+                    name="identityNumber",
+                    placeholder="Identity Number (NIK)",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    min_length=16,
+                    max_length=16,
+                    default_value=self.selected_data["identityNumber"]
+                ),
+                FormModel(
+                    name="healthInsuranceNumber",
+                    placeholder="Health Insurance Number",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    default_value=self.selected_data["healthInsuranceNumber"]
+                ),
+                FormModel(
+                    name="phoneNumber",
+                    placeholder="Phone Number",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    min_length=10,
+                    default_value=self.selected_data["phoneNumber"]
+                ),
+                FormModel(
+                    name="address",
+                    placeholder="Address",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    min_length=10,
+                    default_value=self.selected_data["address"]
+                ),
+            ]
     
     async def update_data(self, form_data: dict):
         form_data["gender"] = Gender[form_data["gender"]].value
@@ -195,5 +197,6 @@ def patient() -> rx.Component:
             spacing="8"
         ),
         table(PatientState),
+        on_blur=PatientState.clear_selected_data,
         on_mount=PatientState.get_data,
     )

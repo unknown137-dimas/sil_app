@@ -26,6 +26,7 @@ class RoleState(BaseState):
     update_role_form: list[FormModel] =  []
 
     async def get_data(self):
+        self.clear_selected_data()
         response = await api_call.get(API_ROLE)
         self.raw_data = loads(response.text)["data"]
         self.columns, self.data, _ = converter.to_data_table(self.raw_data)
@@ -35,16 +36,17 @@ class RoleState(BaseState):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
-        self.update_role_form = [
-            FormModel(
-                name="name",
-                placeholder="Role Name",
-                required=True,
-                form_type=FormType.Input.value,
-                min_length=5,
-                default_value=self.selected_data["name"]
-            ),
-        ]
+        if self.selected_data:
+            self.update_role_form = [
+                FormModel(
+                    name="name",
+                    placeholder="Role Name",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    min_length=5,
+                    default_value=self.selected_data["name"]
+                ),
+            ]
     
     async def update_data(self, form_data: dict):
         self.selected_data.update(form_data)

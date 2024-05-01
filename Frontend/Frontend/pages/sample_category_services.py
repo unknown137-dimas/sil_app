@@ -26,6 +26,7 @@ class SampleCategoryState(BaseState):
     update_sample_category_form: list[FormModel] =  []
 
     async def get_data(self):
+        self.clear_selected_data()
         response = await api_call.get(API_SAMPLE_CATEGORY)
         self.raw_data = loads(response.text)["data"]
         if self.raw_data:
@@ -38,15 +39,16 @@ class SampleCategoryState(BaseState):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
-        self.update_sample_category_form = [
-            FormModel(
-                name="name",
-                placeholder="Category Name",
-                required=True,
-                form_type=FormType.Input.value,
-                default_value=self.selected_data["name"]
-            ),
-        ]
+        if self.selected_data:
+            self.update_sample_category_form = [
+                FormModel(
+                    name="name",
+                    placeholder="Category Name",
+                    required=True,
+                    form_type=FormType.Input.value,
+                    default_value=self.selected_data["name"]
+                ),
+            ]
     
     async def update_data(self, form_data: dict):
         self.selected_data.update(form_data)

@@ -49,6 +49,7 @@ class PatientSampleState(BaseState):
                     service.selected = value
 
     async def get_data(self):
+        self.clear_selected_data()
         sample_categories_states = await self.get_state(SampleCategoryState)
         await sample_categories_states.get_data()
         self.sample_options = [converter.to_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
@@ -66,15 +67,16 @@ class PatientSampleState(BaseState):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
-        self.update_patient_sample_form = [
-            FormModel(
-                name="sampleSchedule",
-                placeholder="Sample Schedule",
-                required=True,
-                form_type=FormType.Datetime.value,
-                min_value=TODAY_DATE_ONLY
-            ),
-        ]
+        if self.selected_data:
+            self.update_patient_sample_form = [
+                FormModel(
+                    name="sampleSchedule",
+                    placeholder="Sample Schedule",
+                    required=True,
+                    form_type=FormType.Datetime.value,
+                    min_value=TODAY_DATE_ONLY
+                ),
+            ]
     
     async def update_data(self, form_data: dict):
         print(form_data)
