@@ -9,17 +9,12 @@ from Frontend.components.table import table
 from Frontend.enum.enums import FormType, Gender, ValueType
 from json import loads
 from pandas import DataFrame
+from Frontend.base_state import BaseState
 
 import reflex as rx
 
 
-class SampleCategoryState(rx.State):
-    columns: list = []
-    data: list = []
-    raw_data: list
-    selected_data: dict[str, str] = {}
-    updating: bool = False
-    loading: bool = True
+class SampleCategoryState(BaseState):
     new_sample_category_form: list[FormModel] = [
         FormModel(
             name="name",

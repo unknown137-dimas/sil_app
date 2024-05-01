@@ -9,16 +9,11 @@ from Frontend.enum.enums import FormType
 from json import loads
 from Frontend.components.crud_button import crud_button
 from Frontend.components.table import table
+from Frontend.base_state import BaseState
 
 import reflex as rx
 
-class ReagenState(rx.State):
-    columns: list = []
-    data: list = []
-    raw_data: list
-    selected_data: dict[str, str] = {}
-    updating: bool = False
-    loading: bool = True
+class ReagenState(BaseState):
     new_reagen_form: list[FormModel] = [
         FormModel(
             name="name",

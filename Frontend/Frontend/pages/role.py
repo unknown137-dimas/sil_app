@@ -9,16 +9,11 @@ from Frontend.components.table import table
 from Frontend.enum.enums import FormType
 from json import loads
 from pandas import DataFrame
+from Frontend.base_state import BaseState
 
 import reflex as rx
 
-class RoleState(rx.State):
-    columns: list = []
-    data: list = []
-    raw_data: list
-    selected_data: dict[str, str] = {}
-    updating: bool = False
-    loading: bool = True
+class RoleState(BaseState):
     new_role_form: list[FormModel] = [
         FormModel(
             name="name",
