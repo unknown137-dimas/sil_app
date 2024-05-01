@@ -1,6 +1,7 @@
 from pandas import DataFrame, to_datetime
 from datetime import datetime
 import re
+from Frontend.models.services_model import ServicesModel, ServiceModel
 
 def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, DataFrame):
 
@@ -38,3 +39,9 @@ def to_date_input(date_string: str) -> str:
 
 def to_title_case(input: str) -> str:
     return re.sub(r"([A-Z])", r" \1", input).title().strip()
+
+def to_services_model(category: str, services: list[dict]) -> ServicesModel:
+    return ServicesModel(
+        name=category,
+        services=[ServiceModel(id=service["id"], name=service["name"]) for service in services]
+    )
