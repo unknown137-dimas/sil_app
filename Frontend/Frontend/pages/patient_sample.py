@@ -53,18 +53,32 @@ class PatientSampleState(rx.State):
                 if service.id == service_id:
                     service.selected = value
 
+    def get_sample_service(self, service_id: str) -> ServiceModel:
+        for category in self.sample_options:
+            for service in category.services:
+                if service.id == service_id:
+                    return service
+
     async def get_data(self):
         sample_categories_states = await self.get_state(SampleCategoryState)
         await sample_categories_states.get_data()
         self.sample_options = [converter.to_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
 
         patient_states = await self.get_state(PatientState)
+        await patient_states.get_data()
         if patient_states.selected_data:
             self.selected_patient_data = patient_states.selected_data
 
         response = await api_call.get(API_PATIENT_SAMPLE)
         self.raw_data = loads(response.text)["data"]
-        self.columns, self.data, dataFrame = converter.to_data_table(self.raw_data)
+        if self.raw_data:
+            self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
+            for column in dataFrame.columns:
+                if "patient" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: [patient["name"] for patient in patient_states.raw_data if patient["id"] == data])
+                if "sampleservice" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: self.get_sample_service(data).name)
+            self.data = dataFrame.values.tolist()
         self.loading = False
 
     def get_selected_data(self, pos):
@@ -93,11 +107,13 @@ class PatientSampleState(rx.State):
         self.updating = False
 
     async def add_data(self, form_data: dict):
-        form_data["patientId"] = ""
-        await api_call.post(
-            API_PATIENT_SAMPLE,
-            payload=form_data
-        )
+        form_data["patientId"] = self.selected_patient_data["id"]
+        for service_id in self.selected_service_ids:
+            form_data["sampleServiceId"] = service_id
+            await api_call.post(
+                API_PATIENT_SAMPLE,
+                payload=form_data
+            )
         await self.get_data()
 
     async def delete_data(self):
@@ -109,13 +125,6 @@ def patient_sample() -> rx.Component:
     return rx.vstack(
         rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
         rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
-        crud_button(
-            "Patient Sample",
-            PatientSampleState,
-            PatientSampleState.new_patient_sample_form,
-            PatientSampleState.update_patient_sample_form,
-        ),
-        table(PatientSampleState),
         multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
         rx.flex(
             rx.foreach(
@@ -124,5 +133,12 @@ def patient_sample() -> rx.Component:
             ),
             spacing="2"
         ),
+        crud_button(
+            "Patient Sample",
+            PatientSampleState,
+            PatientSampleState.new_patient_sample_form,
+            PatientSampleState.update_patient_sample_form,
+        ),
+        table(PatientSampleState),
         on_mount=PatientSampleState.get_data
     )
