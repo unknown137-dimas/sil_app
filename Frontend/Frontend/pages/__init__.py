@@ -8,3 +8,4 @@ from .reagen import reagen
 from .check_category_services import check_category_services
 from .sample_category_services import sample_category_services
 from .patient import patient
+from .patient_sample import patient_sample
