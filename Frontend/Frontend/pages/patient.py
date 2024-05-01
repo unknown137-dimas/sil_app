@@ -79,7 +79,6 @@ class PatientState(rx.State):
     update_patient_form: list[FormModel] =  []
 
     async def get_data(self):
-        self.clear_selected_data()
         response = await api_call.get(API_PATIENT)
         self.raw_data = loads(response.text)["data"]
         if self.raw_data:
@@ -187,11 +186,19 @@ class PatientState(rx.State):
 @template(route="/patient", title="Patient")
 def patient() -> rx.Component:
     return rx.vstack(
-        crud_button(
-            "Patient",
-            PatientState,
-            PatientState.new_patient_form,
-            PatientState.update_patient_form,
+        rx.hstack(
+            crud_button(
+                "Patient",
+                PatientState,
+                PatientState.new_patient_form,
+                PatientState.update_patient_form,
+            ),
+            rx.button(
+                "Patient Sample", 
+                disabled=~PatientState.updating,
+                on_click=rx.redirect("/patient_sample")
+            ),
+            spacing="8"
         ),
         table(PatientState),
         on_mount=PatientState.get_data

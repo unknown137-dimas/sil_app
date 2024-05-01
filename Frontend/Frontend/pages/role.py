@@ -31,7 +31,6 @@ class RoleState(rx.State):
     update_role_form: list[FormModel] =  []
 
     async def get_data(self):
-        self.clear_selected_data()
         response = await api_call.get(API_ROLE)
         self.raw_data = loads(response.text)["data"]
         self.columns, self.data, _ = converter.to_data_table(self.raw_data)

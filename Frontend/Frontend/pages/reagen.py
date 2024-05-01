@@ -54,7 +54,6 @@ class ReagenState(rx.State):
 
 
     async def get_data(self):
-        self.clear_selected_data()
         response = await api_call.get(API_REAGEN)
         self.raw_data = loads(response.text)["data"]
         self.columns, self.data, dataFrame = converter.to_data_table(self.raw_data)

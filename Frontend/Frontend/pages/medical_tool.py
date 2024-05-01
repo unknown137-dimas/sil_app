@@ -38,7 +38,6 @@ class MedicalToolState(rx.State):
     update_medical_tool_form: list[FormModel] =  []
 
     async def get_data(self):
-        self.clear_selected_data()
         response = await api_call.get(API_MEDICAL_TOOL)
         self.raw_data = loads(response.text)["data"]
         if self.raw_data:

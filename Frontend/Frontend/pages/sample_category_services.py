@@ -31,7 +31,6 @@ class SampleCategoryState(rx.State):
     update_sample_category_form: list[FormModel] =  []
 
     async def get_data(self):
-        self.clear_selected_data()
         response = await api_call.get(API_SAMPLE_CATEGORY)
         self.raw_data = loads(response.text)["data"]
         if self.raw_data:

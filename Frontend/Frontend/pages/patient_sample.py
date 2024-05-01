@@ -13,12 +13,17 @@ from Frontend.components.table import table
 from Frontend.components.multiple_selections import multiple_selections
 from .sample_category_services import SampleCategoryState
 from .patient import PatientState
-from Frontend.base_state import BaseState
 
 import reflex as rx
 
 
-class PatientSampleState(BaseState):
+class PatientSampleState(rx.State):
+    columns: list = []
+    data: list = []
+    raw_data: list
+    selected_data: dict[str, str] = {}
+    updating: bool = False
+    loading: bool = True
     sample_options: list[ServicesModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
@@ -49,7 +54,6 @@ class PatientSampleState(BaseState):
                     service.selected = value
 
     async def get_data(self):
-        self.clear_selected_data()
         sample_categories_states = await self.get_state(SampleCategoryState)
         await sample_categories_states.get_data()
         self.sample_options = [converter.to_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
