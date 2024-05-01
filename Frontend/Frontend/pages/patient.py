@@ -9,11 +9,16 @@ from Frontend.enum.enums import FormType, Gender
 from json import loads
 from Frontend.components.crud_button import crud_button
 from Frontend.components.table import table
-from Frontend.base_state import BaseState
 
 import reflex as rx
 
-class PatientState(BaseState):
+class PatientState(rx.State):
+    columns: list = []
+    data: list = []
+    raw_data: list
+    selected_data: dict[str, str] = {}
+    updating: bool = False
+    loading: bool = True
     new_patient_form: list[FormModel] = [
         FormModel(
             name="name",
@@ -182,21 +187,12 @@ class PatientState(BaseState):
 @template(route="/patient", title="Patient")
 def patient() -> rx.Component:
     return rx.vstack(
-        rx.hstack(
-            crud_button(
-                "Patient",
-                PatientState,
-                PatientState.new_patient_form,
-                PatientState.update_patient_form,
-            ),
-            rx.button(
-                "Request Sample",
-                disabled=~PatientState.updating,
-                on_click=rx.redirect("/patient_sample")
-            ),
-            spacing="8"
+        crud_button(
+            "Patient",
+            PatientState,
+            PatientState.new_patient_form,
+            PatientState.update_patient_form,
         ),
         table(PatientState),
-        on_blur=PatientState.clear_selected_data,
-        on_mount=PatientState.get_data,
+        on_mount=PatientState.get_data
     )
