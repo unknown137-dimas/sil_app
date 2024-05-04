@@ -50,7 +50,6 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.MaxNormalValue).IsRequired(false);
             _.Property(_ => _.NormalValue).IsRequired(false);
             _.HasOne(_ => _.CheckCategory);
-            _.HasIndex(_ => _.Name).IsUnique();
         });
         modelBuilder.Entity<MedicalTool>(_ => 
         {
