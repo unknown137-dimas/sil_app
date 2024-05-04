@@ -13,8 +13,6 @@ public interface IRelationCheckerModule
     ModelBase? Check(SampleService sampleService);
     ModelBase? Check(Patient patient);
     ModelBase? Check(PatientCheck patientCheck);
-    ModelBase? Check(PatientCheckResult patientCheckResult);
     ModelBase? Check(PatientSample patientSample);
-    ModelBase? Check(PatientSampleResult patientSampleResult);
     ModelBase? Check(AuthAction authAction);
 }

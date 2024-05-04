@@ -9,9 +9,7 @@ public interface ILisDbContext
     public DbSet<MedicalTool> MedicalTools { get; set; }
     public DbSet<Patient> Patients { get; set; }
     public DbSet<PatientCheck> PatientChecks { get; set; }
-    public DbSet<PatientCheckResult> PatientCheckResults { get; set; }
     public DbSet<PatientSample> PatientSamples { get; set; }
-    public DbSet<PatientSampleResult> PatientSampleResults { get; set; }
     public DbSet<Reagen> Reagens { get; set; }
     public DbSet<SampleCategory> SampleCategories { get; set; }
     public DbSet<SampleService> SampleServices { get; set; }

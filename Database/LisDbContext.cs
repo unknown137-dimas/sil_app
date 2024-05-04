@@ -11,9 +11,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
     public DbSet<MedicalTool> MedicalTools { get; set; }
     public DbSet<Patient> Patients { get; set; }
     public DbSet<PatientCheck> PatientChecks { get; set; }
-    public DbSet<PatientCheckResult> PatientCheckResults { get; set; }
     public DbSet<PatientSample> PatientSamples { get; set; }
-    public DbSet<PatientSampleResult> PatientSampleResults { get; set; }
     public DbSet<Reagen> Reagens { get; set; }
     public DbSet<SampleCategory> SampleCategories { get; set; }
     public DbSet<SampleService> SampleServices { get; set; }
@@ -93,32 +91,20 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.CheckSchedule).IsRequired(true);
             _.Property(_ => _.ValidationStatus).IsRequired(true);
             _.Property(_ => _.CheckStatus).IsRequired(true);
-            _.HasOne(_ => _.CheckService);
-            _.HasOne(_ => _.Patient);
-        });
-        modelBuilder.Entity<PatientCheckResult>(_ => 
-        {
-            _.HasKey(_ => _.Id);
-            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.NumericResult).IsRequired(false);
             _.Property(_ => _.StringResult).IsRequired(false);
-            _.HasOne(_ => _.PatientCheck);
+            _.HasOne(_ => _.CheckService);
+            _.HasOne(_ => _.Patient);
         });
         modelBuilder.Entity<PatientSample>(_ => 
         {
             _.HasKey(_ => _.Id);
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.SampleSchedule).IsRequired(true);
-            _.HasOne(_ => _.SampleService);
-            _.HasOne(_ => _.Patient);
-        });
-        modelBuilder.Entity<PatientSampleResult>(_ => 
-        {
-            _.HasKey(_ => _.Id);
-            _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.SampleTakenDate).IsRequired(true);
             _.Property(_ => _.SampleNote).IsRequired(false);
-            _.HasOne(_ => _.PatientSample);
+            _.HasOne(_ => _.SampleService);
+            _.HasOne(_ => _.Patient);
         });
         modelBuilder.Entity<Reagen>(_ =>
         {

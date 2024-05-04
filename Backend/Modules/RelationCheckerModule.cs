@@ -14,9 +14,7 @@ public class RelationCheckerModule : IRelationCheckerModule
     private readonly IRepository<SampleService> _sampleServiceRepository;
     private readonly IRepository<Patient> _patientRepository;
     private readonly IRepository<PatientCheck> _patientCheckRepository;
-    private readonly IRepository<PatientCheckResult> _patientCheckResultRepository;
     private readonly IRepository<PatientSample> _patientSampleRepository;
-    private readonly IRepository<PatientSampleResult> _patientSampleResultRepository;
     private readonly IRepository<AuthAction> _authActionRepository;
     private readonly IRepository<RoleAuthAction> _roleAuthActionRepository;
 
@@ -29,9 +27,7 @@ public class RelationCheckerModule : IRelationCheckerModule
         IRepository<SampleService> sampleServiceRepository,
         IRepository<Patient> patientRepository,
         IRepository<PatientCheck> patientCheckRepository,
-        IRepository<PatientCheckResult> patientCheckResultRepository,
         IRepository<PatientSample> patientSampleRepository,
-        IRepository<PatientSampleResult> patientSampleResultRepository,
         IRepository<AuthAction> authActionRepository,
         IRepository<RoleAuthAction> roleAuthActionRepository
     )
@@ -44,9 +40,7 @@ public class RelationCheckerModule : IRelationCheckerModule
         _sampleServiceRepository = sampleServiceRepository;
         _patientRepository = patientRepository;
         _patientCheckRepository = patientCheckRepository;
-        _patientCheckResultRepository = patientCheckResultRepository;
         _patientSampleRepository = patientSampleRepository;
-        _patientSampleResultRepository = patientSampleResultRepository;
         _authActionRepository = authActionRepository;
         _roleAuthActionRepository = roleAuthActionRepository;
     }
@@ -112,26 +106,12 @@ public class RelationCheckerModule : IRelationCheckerModule
 
     public ModelBase? Check(PatientCheck patientCheck)
     {
-        return _patientCheckResultRepository.GetEntities()
-            .Where(pc => pc.PatientCheckId.Equals(patientCheck.Id))
-            .FirstOrDefault();
-    }
-
-    public ModelBase? Check(PatientCheckResult patientCheckResult)
-    {
-        throw new NotImplementedException();
+        return null;
     }
 
     public ModelBase? Check(PatientSample patientSample)
     {
-        return _patientSampleResultRepository.GetEntities()
-            .Where(pc => pc.PatientSampleId.Equals(patientSample.Id))
-            .FirstOrDefault();
-    }
-
-    public ModelBase? Check(PatientSampleResult patientSampleResult)
-    {
-        throw new NotImplementedException();
+        return null;
     }
 
     public ModelBase? Check(AuthAction authAction)

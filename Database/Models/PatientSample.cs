@@ -7,4 +7,6 @@ public class PatientSample : ModelBase
     public Patient Patient { get; set; } = null!;
     public string SampleServiceId { get; set; } = null!;
     public SampleService SampleService { get; set; } = null!;
+     public DateTime? SampleTakenDate { get; set; }
+    public string? SampleNote { get; set; }
 }
