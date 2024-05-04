@@ -25,7 +25,7 @@ public class CheckServiceController : ApiBaseController<CheckServiceController, 
     [HttpGet()]
     public ActionResult<Response<CheckServiceDTO>> GetAllCheckService()
     {
-        var item = _checkServiceModule.GetAll();
+        var item = _checkServiceModule.GetAll().OrderBy(cs => cs.Name);
         return GeneratedResponse(item, "");
     }
 
