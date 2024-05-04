@@ -45,7 +45,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.Property(_ => _.NormalValueType).IsRequired(true);
             _.Property(_ => _.CheckUnit).IsRequired(false).HasMaxLength(15);
-            _.Property(_ => _.Gender).IsRequired(true);
+            _.Property(_ => _.Gender);
             _.Property(_ => _.MinNormalValue).IsRequired(false);
             _.Property(_ => _.MaxNormalValue).IsRequired(false);
             _.Property(_ => _.NormalValue).IsRequired(false);
