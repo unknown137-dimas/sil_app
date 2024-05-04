@@ -99,7 +99,7 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.HasKey(_ => _.Id);
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.SampleSchedule).IsRequired(true);
-            _.Property(_ => _.SampleTakenDate).IsRequired(true);
+            _.Property(_ => _.SampleTakenDate).IsRequired(false);
             _.Property(_ => _.SampleNote).IsRequired(false);
             _.HasOne(_ => _.SampleService);
             _.HasOne(_ => _.Patient);
