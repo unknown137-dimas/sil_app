@@ -25,6 +25,7 @@ def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, 
 
     dataframe.insert(0, "no", [i+1 for i in range(len(input_data))])
     dataframe.replace(NaN, "-", regex=True, inplace=True)
+    dataframe.replace("", "-", regex=True, inplace=True)
     dataframe.fillna("-", inplace=True)
 
     columns = []
