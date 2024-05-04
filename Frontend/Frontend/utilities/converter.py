@@ -1,4 +1,5 @@
 from pandas import DataFrame, to_datetime
+from numpy import NaN
 from datetime import datetime
 import re
 from Frontend.models.services_model import ServicesModel, ServiceModel
@@ -20,6 +21,8 @@ def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, 
             dataframe.rename(columns={column: column.replace("Id", "")}, inplace=True)
 
     dataframe.insert(0, "no", [i+1 for i in range(len(input_data))])
+    dataframe.replace(NaN, "-", regex=True, inplace=True)
+    dataframe.fillna("-", inplace=True)
 
     columns = []
     data = dataframe.values.tolist()
