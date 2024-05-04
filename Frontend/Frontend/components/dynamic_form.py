@@ -4,7 +4,7 @@ from Frontend.utilities.converter import to_title_case
 import reflex as rx
 
 
-def generate_form_field(field: FormModel):
+def generate_form_field(field: FormModel) -> rx.Component:
     return rx.form.field(
         rx.flex(
             rx.form.label(
@@ -83,3 +83,32 @@ def generate_form_field(field: FormModel):
         ),
         name=field.name,
     )
+
+def dynamic_form(form_type: str, form: list[FormModel], submit_callback: rx.event.EventHandler) -> rx.Component:
+    return rx.form.root(
+        rx.flex(
+            rx.foreach(
+                form,
+                generate_form_field
+            ),
+            spacing="4",
+            direction="column"
+        ),
+        rx.flex(
+            rx.dialog.close(
+                rx.button(
+                    "Cancel",
+                    color_scheme="gray",
+                    variant="soft",
+                ),
+            ),
+            rx.form.submit(
+                rx.button(form_type),
+                as_child=True
+            ),
+            spacing="3",
+            margin_top="16px",
+            justify="end",
+        ),
+        on_submit=submit_callback,
+    ),

@@ -1,6 +1,6 @@
 from Frontend import styles
 from Frontend.models.form_model import FormModel
-from .dynamic_form import generate_form_field
+from .dynamic_form import dynamic_form
 import reflex as rx
 
 
@@ -12,33 +12,7 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
             ),
             rx.dialog.content(
                 rx.dialog.title(f"Add {title}"),
-                rx.form.root(
-                    rx.flex(
-                        rx.foreach(
-                            new_form,
-                            generate_form_field
-                        ),
-                        spacing="4",
-                        direction="column"
-                    ),
-                    rx.flex(
-                        rx.dialog.close(
-                            rx.button(
-                                "Cancel",
-                                color_scheme="gray",
-                                variant="soft",
-                            ),
-                        ),
-                        rx.form.submit(
-                            rx.button("Add"),
-                            as_child=True
-                        ),
-                        spacing="3",
-                        margin_top="16px",
-                        justify="end",
-                    ),
-                    on_submit=state.add_data,
-                ),
+                dynamic_form("Add", new_form, state.add_data),
             ),
         ),
         rx.cond(
@@ -51,33 +25,7 @@ def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_f
                 ),
                 rx.dialog.content(
                     rx.dialog.title(f"Update {title}"),
-                    rx.form.root(
-                        rx.flex(
-                            rx.foreach(
-                                update_form,
-                                generate_form_field
-                            ),
-                            spacing="4",
-                            direction="column"
-                        ),
-                        rx.flex(
-                            rx.dialog.close(
-                                rx.button(
-                                    "Cancel",
-                                    color_scheme="gray",
-                                    variant="soft",
-                                ),
-                            ),
-                            rx.form.submit(
-                                rx.button("Save"),
-                                as_child=True
-                            ),
-                            spacing="3",
-                            margin_top="16px",
-                            justify="end",
-                        ),
-                        on_submit=state.update_data,
-                    ),
+                    dynamic_form("Update", update_form, state.update_data),
                 ),
             ),
             rx.button("Update", disabled=True)
