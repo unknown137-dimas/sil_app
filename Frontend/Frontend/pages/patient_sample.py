@@ -1,18 +1,19 @@
 from Frontend import styles
 from Frontend.templates import template
-from Frontend.const.api import API_PATIENT_SAMPLE, API_PATIENT_SAMPLE_RESULT
-from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY
+from Frontend.const.api import API_PATIENT_SAMPLE, API_SAMPLE_SERVICE
+from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY, TODAY_DATETIME
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.models.services_model import ServicesModel, ServiceModel
 from Frontend.enum.enums import FormType
-from json import loads
 from Frontend.components.crud_button import crud_button
+from Frontend.components.dynamic_form import dynamic_form_dialog
 from Frontend.components.table import table
 from Frontend.components.multiple_selections import multiple_selections
 from .sample_category_services import SampleCategoryState
 from .patient import PatientState
+from datetime import datetime
 
 import reflex as rx
 
@@ -27,6 +28,7 @@ class PatientSampleState(rx.State):
     sample_options: list[ServicesModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
+    service_detail: dict[str, str] = {}
     new_patient_sample_form: list[FormModel] = [
         FormModel(
             name="sampleSchedule",
@@ -36,7 +38,16 @@ class PatientSampleState(rx.State):
             min_value=TODAY_DATE_ONLY
         ),
     ]
+    new_patient_sample_result_form: list[FormModel] = [
+        FormModel(
+            name="sampleNote",
+            placeholder="Sample Note",
+            required=True,
+            form_type=FormType.Input.value,
+        ),
+    ]
     update_patient_sample_form: list[FormModel] =  []
+    update_patient_sample_result_form: list[FormModel] = []
 
     @rx.var
     def selected_service_ids(self) -> list[str]:
@@ -46,6 +57,11 @@ class PatientSampleState(rx.State):
                 if service.selected:
                     result.append(service.id)
         return result
+
+    @rx.var
+    def is_patient_data_empty(self) -> bool:
+        return self.selected_patient_data == {}
+
     
     def select_service(self, service_id: str, value):
         for category in self.sample_options:
@@ -69,8 +85,7 @@ class PatientSampleState(rx.State):
         if patient_states.selected_data:
             self.selected_patient_data = patient_states.selected_data
 
-        response = await api_call.get(API_PATIENT_SAMPLE)
-        self.raw_data = loads(response.text)["data"]
+        _, self.raw_data = await api_call.get(API_PATIENT_SAMPLE)
         if self.raw_data:
             self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
             for column in dataFrame.columns:
@@ -80,21 +95,35 @@ class PatientSampleState(rx.State):
                     dataFrame[column] = dataFrame[column].apply(lambda data: self.get_sample_service(data).name)
             self.data = dataFrame.values.tolist()
         self.loading = False
+        self.updating = False
+        self.selected_data = {}
 
-    def get_selected_data(self, pos):
+    async def get_selected_data(self, pos):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
         if self.selected_data:
+            _, self.service_detail = await api_call.get(f"{API_SAMPLE_SERVICE}/{self.selected_data['sampleServiceId']}")
             self.update_patient_sample_form = [
                 FormModel(
                     name="sampleSchedule",
                     placeholder="Sample Schedule",
                     required=True,
-                    form_type=FormType.Datetime.value,
-                    min_value=TODAY_DATE_ONLY
+                    form_type=FormType.Date.value,
+                    min_value=TODAY_DATE_ONLY,
+                    default_value=converter.to_date_input(self.selected_data["sampleSchedule"])
                 ),
             ]
+            if self.selected_data["sampleNote"] is not None:
+                self.update_patient_sample_result_form = [
+                    FormModel(
+                        name="sampleNote",
+                        placeholder="Sample Note",
+                        required=True,
+                        form_type=FormType.Input.value,
+                        default_value=self.selected_data["sampleNote"]
+                    ),
+                ]
     
     async def update_data(self, form_data: dict):
         print(form_data)
@@ -104,7 +133,6 @@ class PatientSampleState(rx.State):
             payload=dict(self.selected_data)
         )
         await self.get_data()
-        self.updating = False
 
     async def add_data(self, form_data: dict):
         form_data["patientId"] = self.selected_patient_data["id"]
@@ -116,6 +144,15 @@ class PatientSampleState(rx.State):
             )
         await self.get_data()
 
+    async def submit_sample_data(self, form_data: dict):
+        self.selected_data.update(form_data)
+        self.selected_data["sampleTakenDate"] = TODAY_DATETIME
+        await api_call.post(
+            f"{API_PATIENT_SAMPLE}/{self.selected_data['id']}",
+            payload=dict(self.selected_data)
+        )
+        await self.get_data()
+
     async def delete_data(self):
         await api_call.delete(f"{API_PATIENT_SAMPLE}/{self.selected_data['id']}")
         await self.get_data()
@@ -123,7 +160,6 @@ class PatientSampleState(rx.State):
 @template(route="/patient_sample", title="Patient Sample")
 def patient_sample() -> rx.Component:
     return rx.vstack(
-        rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
         rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
         multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
         rx.flex(
@@ -133,11 +169,23 @@ def patient_sample() -> rx.Component:
             ),
             spacing="2"
         ),
-        crud_button(
-            "Patient Sample",
-            PatientSampleState,
-            PatientSampleState.new_patient_sample_form,
-            PatientSampleState.update_patient_sample_form,
+        rx.hstack(
+            rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
+            crud_button(
+                "Patient Sample",
+                PatientSampleState,
+                PatientSampleState.new_patient_sample_form,
+                PatientSampleState.update_patient_sample_form,
+                PatientSampleState.is_patient_data_empty
+            ),
+            dynamic_form_dialog(
+                ~PatientSampleState.updating,
+                "Submit Sample Result",
+                "Submit Sample",
+                PatientSampleState.new_patient_sample_result_form,
+                PatientSampleState.submit_sample_data
+            ),
+            spacing="8"
         ),
         table(PatientSampleState),
         on_mount=PatientSampleState.get_data
