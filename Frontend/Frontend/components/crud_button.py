@@ -12,10 +12,10 @@ def delete_button(disabled: bool, callback: rx.event.EventHandler) -> rx.Compone
         color_scheme="red"
     )
 
-def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_form: list[FormModel]) -> rx.Component:
+def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_form: list[FormModel], disable_add_button: bool = False) -> rx.Component:
     return rx.flex(
-        dynamic_form_dialog(True, f"Add {title}", "Add", new_form, state.add_data),
-        dynamic_form_dialog(state.updating, f"Update {title}", "Update", update_form, state.update_data),
+        dynamic_form_dialog(disable_add_button, f"Add {title}", "Add", new_form, state.add_data),
+        dynamic_form_dialog(~state.updating, f"Update {title}", "Update", update_form, state.update_data),
         delete_button(~state.updating, state.delete_data),
         spacing="3",
     ),

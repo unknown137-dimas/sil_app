@@ -116,6 +116,7 @@ def dynamic_form(form_type: str, form: list[FormModel], submit_callback: rx.even
 def dynamic_form_dialog(disabled: bool, title: str, form_type: str, form: list[FormModel], callback: rx.event.EventHandler) -> rx.Component:
     return rx.cond(
         disabled,
+        rx.button(form_type, disabled=True),
         rx.dialog.root(
             rx.dialog.trigger(
                 rx.button(form_type)
@@ -124,6 +125,5 @@ def dynamic_form_dialog(disabled: bool, title: str, form_type: str, form: list[F
                 rx.dialog.title(title),
                 dynamic_form(form_type, form, callback),
             ),
-        ),
-        rx.button(form_type, disabled=True)
+        )
     )
