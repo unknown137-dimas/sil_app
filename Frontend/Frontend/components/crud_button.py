@@ -6,10 +6,6 @@ import reflex as rx
 
 def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_form: list[FormModel]) -> rx.Component:
     return rx.flex(
-        rx.button(
-            rx.icon("rotate-cw"),
-            on_click=state.get_data,
-        ),
         rx.dialog.root(
             rx.dialog.trigger(
                 rx.button("Add")
