@@ -6,7 +6,6 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType
-from json import loads
 from Frontend.components.crud_button import crud_button
 from Frontend.components.table import table
 
@@ -54,8 +53,7 @@ class ReagenState(rx.State):
 
 
     async def get_data(self):
-        response = await api_call.get(API_REAGEN)
-        self.raw_data = loads(response.text)["data"]
+        _, self.raw_data = await api_call.get(API_REAGEN)
         self.columns, self.data, dataFrame = converter.to_data_table(self.raw_data)
         self.loading = False
 

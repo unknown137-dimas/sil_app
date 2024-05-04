@@ -7,7 +7,6 @@ from Frontend.models.form_model import FormModel
 from Frontend.components.crud_button import crud_button
 from Frontend.components.table import table
 from Frontend.enum.enums import FormType
-from json import loads
 from pandas import DataFrame
 
 import reflex as rx
@@ -31,8 +30,7 @@ class RoleState(rx.State):
     update_role_form: list[FormModel] =  []
 
     async def get_data(self):
-        response = await api_call.get(API_ROLE)
-        self.raw_data = loads(response.text)["data"]
+        _, self.raw_data = await api_call.get(API_ROLE)
         self.columns, self.data, _ = converter.to_data_table(self.raw_data)
         self.loading = False
 

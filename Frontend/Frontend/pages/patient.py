@@ -6,7 +6,6 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType, Gender
-from json import loads
 from Frontend.components.crud_button import crud_button
 from Frontend.components.table import table
 
@@ -79,8 +78,7 @@ class PatientState(rx.State):
     update_patient_form: list[FormModel] =  []
 
     async def get_data(self):
-        response = await api_call.get(API_PATIENT)
-        self.raw_data = loads(response.text)["data"]
+        _, self.raw_data = await api_call.get(API_PATIENT)
         if self.raw_data:
             self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
             for column in dataFrame.columns:

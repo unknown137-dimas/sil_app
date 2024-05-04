@@ -7,7 +7,6 @@ from Frontend.models.form_model import FormModel
 from Frontend.components.crud_button import crud_button
 from Frontend.components.table import table
 from Frontend.enum.enums import FormType, Gender, ValueType
-from json import loads
 from pandas import DataFrame
 
 import reflex as rx
@@ -31,8 +30,7 @@ class SampleCategoryState(rx.State):
     update_sample_category_form: list[FormModel] =  []
 
     async def get_data(self):
-        response = await api_call.get(API_SAMPLE_CATEGORY)
-        self.raw_data = loads(response.text)["data"]
+        _, self.raw_data = await api_call.get(API_SAMPLE_CATEGORY)
         if self.raw_data:
             self.columns, self.data, _ = converter.to_data_table(self.raw_data, ["sampleServices"])
             sample_service_state = await self.get_state(SampleServicesState)
@@ -120,8 +118,7 @@ class SampleServicesState(rx.State):
     async def get_data(self):
         sample_categories = await self.get_state(SampleCategoryState)
         self.sample_categories_raw_data = sample_categories.raw_data
-        response = await api_call.get(API_SAMPLE_SERVICE)
-        self.raw_data = loads(response.text)["data"]
+        _, self.raw_data = await api_call.get(API_SAMPLE_SERVICE)
         if self.raw_data:
             self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
             for column in dataFrame.columns:
