@@ -1,11 +1,10 @@
 from Frontend import styles
-from Frontend.templates import template
+from Frontend.templates import ThemeState
 from Frontend.const.api import API_USER_LOGIN
 from Frontend.utilities import api_call, token
 from Frontend.models.form_model import FormModel
 from Frontend.components.dynamic_form import generate_form_field
 from Frontend.enum.enums import FormType
-from json import loads
 from pickle import dumps
 
 import reflex as rx
@@ -35,17 +34,17 @@ class LoginState(rx.State):
         return token != ""
 
     async def login(self, form_data: dict):
-        response = await api_call.post(API_USER_LOGIN, form_data)
-        response_data = loads(response.text)["data"]
-        if(response_data):
+        error_messages, response_data = await api_call.post(API_USER_LOGIN, form_data)
+        if response_data:
             self.decoded_token = token.decode(response_data[0]["token"])
             if(self.decoded_token != {}):
                 self.userName = self.decoded_token["unique_name"]
                 self.role = self.decoded_token["role"]
                 self.token = response_data[0]["token"]
+                rx.redirect("/")
         else:
-            error_messages = loads(response.text)["messages"]
             for error in error_messages:
+                print(error)
                 rx.window_alert(error)
 
     def logout(self):
@@ -54,16 +53,25 @@ class LoginState(rx.State):
         rx.redirect("/login")
 
 
-@template(route="/login", title="Login", image="/github.svg")
+@rx.page(route="/login", title="Login", image="/github.svg")
 def login() -> rx.Component:
-    return rx.form(
-                rx.vstack(
-                    rx.foreach(
-                        LoginState.login_form,
-                        generate_form_field
+    return rx.theme(
+        rx.flex(
+            rx.card(
+                rx.form(
+                    rx.vstack(
+                        rx.foreach(
+                            LoginState.login_form,
+                            generate_form_field
+                        ),
+                        rx.button("Submit", type="submit"),
                     ),
-                    rx.button("Submit", type="submit"),
+                    on_submit=LoginState.login,
+                    reset_on_submit=True,
                 ),
-                on_submit=LoginState.login,
-                reset_on_submit=True,
             ),
+            justify="center",
+            align="center"
+        ),
+        accent_color=ThemeState.accent_color
+    )
