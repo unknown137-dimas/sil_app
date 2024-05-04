@@ -114,7 +114,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="gender",
                 placeholder="Gender",
-                required=True,
                 form_type=FormType.Select.value,
                 options=[g.name for g in Gender]
             ),
@@ -209,7 +208,6 @@ class CheckServicesState(rx.State):
             FormModel(
                 name="gender",
                 placeholder="Gender",
-                required=True,
                 form_type=FormType.Select.value,
                 options=[g.name for g in Gender],
                 default_value=Gender(self.selected_data["gender"]).name
