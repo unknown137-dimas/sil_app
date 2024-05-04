@@ -90,7 +90,7 @@ class CheckServicesState(rx.State):
                 placeholder="Check Services Name",
                 required=True,
                 form_type=FormType.Input.value,
-                min_length=5
+                min_length=3
             ),
             FormModel(
                 name="checkCategoryId",
@@ -181,7 +181,7 @@ class CheckServicesState(rx.State):
                 placeholder="Check Services Name",
                 required=True,
                 form_type=FormType.Input.value,
-                min_length=5,
+                min_length=3,
                 default_value=self.selected_data["name"]
             ),
             FormModel(
