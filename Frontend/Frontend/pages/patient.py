@@ -196,6 +196,11 @@ def patient() -> rx.Component:
                 disabled=~PatientState.updating,
                 on_click=rx.redirect("/patient_sample")
             ),
+            rx.button(
+                "Patient Check", 
+                disabled=~PatientState.updating,
+                on_click=rx.redirect("/patient_check")
+            ),
             spacing="8"
         ),
         table(PatientState),
