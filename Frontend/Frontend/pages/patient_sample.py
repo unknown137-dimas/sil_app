@@ -28,26 +28,37 @@ class PatientSampleState(rx.State):
     sample_options: list[ServicesModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
-    service_detail: dict[str, str] = {}
-    new_patient_sample_form: list[FormModel] = [
-        FormModel(
-            name="sampleSchedule",
-            placeholder="Sample Schedule",
-            required=True,
-            form_type=FormType.Date.value,
-            min_value=TODAY_DATE_ONLY
-        ),
-    ]
-    new_patient_sample_result_form: list[FormModel] = [
-        FormModel(
-            name="sampleNote",
-            placeholder="Sample Note",
-            required=True,
-            form_type=FormType.Input.value,
-        ),
-    ]
-    update_patient_sample_form: list[FormModel] =  []
-    update_patient_sample_result_form: list[FormModel] = []
+
+    @rx.var
+    def patient_sample_form(self) -> list[FormModel]:
+        forms = [
+            FormModel(
+                name="sampleSchedule",
+                placeholder="Sample Schedule",
+                required=True,
+                form_type=FormType.Date.value,
+                min_value=TODAY_DATE_ONLY
+            )
+        ]
+        for form in forms:
+            if self.selected_data and self.selected_data[form.name]:
+                form.default_value = converter.to_date_input(self.selected_data[form.name])
+        return forms
+    
+    @rx.var
+    def patient_sample_result_form(self) -> list[FormModel]:
+        forms = [
+            FormModel(
+                name="sampleNote",
+                placeholder="Sample Note",
+                required=True,
+                form_type=FormType.Input.value,
+            )
+        ]
+        for form in forms:
+            if self.selected_data and self.selected_data[form.name]:
+                form.default_value = self.selected_data[form.name]
+        return forms
 
     @rx.var
     def selected_service_ids(self) -> list[str]:
@@ -102,31 +113,8 @@ class PatientSampleState(rx.State):
         self.updating = True
         _, selectedRow = pos
         self.selected_data = self.raw_data[selectedRow]
-        if self.selected_data:
-            _, self.service_detail = await api_call.get(f"{API_SAMPLE_SERVICE}/{self.selected_data['sampleServiceId']}")
-            self.update_patient_sample_form = [
-                FormModel(
-                    name="sampleSchedule",
-                    placeholder="Sample Schedule",
-                    required=True,
-                    form_type=FormType.Date.value,
-                    min_value=TODAY_DATE_ONLY,
-                    default_value=converter.to_date_input(self.selected_data["sampleSchedule"])
-                ),
-            ]
-            if self.selected_data["sampleNote"] is not None:
-                self.update_patient_sample_result_form = [
-                    FormModel(
-                        name="sampleNote",
-                        placeholder="Sample Note",
-                        required=True,
-                        form_type=FormType.Input.value,
-                        default_value=self.selected_data["sampleNote"]
-                    ),
-                ]
     
     async def update_data(self, form_data: dict):
-        print(form_data)
         self.selected_data.update(form_data)
         await api_call.post(
             f"{API_PATIENT_SAMPLE}/{self.selected_data['id']}",
@@ -174,15 +162,15 @@ def patient_sample() -> rx.Component:
             crud_button(
                 "Patient Sample",
                 PatientSampleState,
-                PatientSampleState.new_patient_sample_form,
-                PatientSampleState.update_patient_sample_form,
+                PatientSampleState.patient_sample_form,
+                PatientSampleState.patient_sample_form,
                 PatientSampleState.is_patient_data_empty
             ),
             dynamic_form_dialog(
                 ~PatientSampleState.updating,
                 "Submit Sample Result",
                 "Submit Sample",
-                PatientSampleState.new_patient_sample_result_form,
+                PatientSampleState.patient_sample_result_form,
                 PatientSampleState.submit_sample_data
             ),
             spacing="8"
