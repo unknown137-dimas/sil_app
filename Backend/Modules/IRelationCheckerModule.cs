@@ -14,5 +14,4 @@ public interface IRelationCheckerModule
     ModelBase? Check(Patient patient);
     ModelBase? Check(PatientCheck patientCheck);
     ModelBase? Check(PatientSample patientSample);
-    ModelBase? Check(AuthAction authAction);
 }

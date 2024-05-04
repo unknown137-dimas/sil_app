@@ -1,6 +1,5 @@
 using Database.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Modules;
 
@@ -15,8 +14,6 @@ public class RelationCheckerModule : IRelationCheckerModule
     private readonly IRepository<Patient> _patientRepository;
     private readonly IRepository<PatientCheck> _patientCheckRepository;
     private readonly IRepository<PatientSample> _patientSampleRepository;
-    private readonly IRepository<AuthAction> _authActionRepository;
-    private readonly IRepository<RoleAuthAction> _roleAuthActionRepository;
 
     public RelationCheckerModule(
         UserManager<User> userManager,
@@ -27,9 +24,7 @@ public class RelationCheckerModule : IRelationCheckerModule
         IRepository<SampleService> sampleServiceRepository,
         IRepository<Patient> patientRepository,
         IRepository<PatientCheck> patientCheckRepository,
-        IRepository<PatientSample> patientSampleRepository,
-        IRepository<AuthAction> authActionRepository,
-        IRepository<RoleAuthAction> roleAuthActionRepository
+        IRepository<PatientSample> patientSampleRepository
     )
     {
         _userManager = userManager;
@@ -41,8 +36,6 @@ public class RelationCheckerModule : IRelationCheckerModule
         _patientRepository = patientRepository;
         _patientCheckRepository = patientCheckRepository;
         _patientSampleRepository = patientSampleRepository;
-        _authActionRepository = authActionRepository;
-        _roleAuthActionRepository = roleAuthActionRepository;
     }
 
 
@@ -56,9 +49,7 @@ public class RelationCheckerModule : IRelationCheckerModule
         var relationToUserExist = _userManager.GetUsersInRoleAsync(role.Name!)
             .Result
             .Count > 0;
-        var relationToAuthActionExist = _roleAuthActionRepository.GetEntities()
-                .FirstOrDefault(ra => ra.RoleId.Equals(role.Id)) is not null;
-        return relationToUserExist || relationToAuthActionExist ? role : null;
+        return relationToUserExist ? role : null;
     }
 
     public ModelBase? Check(CheckCategory checkCategory)
@@ -112,11 +103,5 @@ public class RelationCheckerModule : IRelationCheckerModule
     public ModelBase? Check(PatientSample patientSample)
     {
         return null;
-    }
-
-    public ModelBase? Check(AuthAction authAction)
-    {
-        return _roleAuthActionRepository.GetEntities()
-            .FirstOrDefault(ra => ra.AuthActionId == authAction.Id);
     }
 }

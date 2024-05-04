@@ -15,8 +15,6 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
     public DbSet<Reagen> Reagens { get; set; }
     public DbSet<SampleCategory> SampleCategories { get; set; }
     public DbSet<SampleService> SampleServices { get; set; }
-    public DbSet<AuthAction> AuthActions { get; set; }
-    public DbSet<RoleAuthAction> RoleAuthActions { get; set; }
 
     protected readonly IConfiguration _configuration;
 
@@ -132,15 +130,6 @@ public class LisDbContext : IdentityDbContext, ILisDbContext
             _.Property(_ => _.Name).IsRequired(true).HasMaxLength(30);
             _.HasOne(_ => _.SampleCategory);
             _.HasIndex(_ => _.Name).IsUnique(); ;
-        });
-        modelBuilder.Entity<AuthAction>(_ =>
-        {
-            _.HasKey(_ => _.Id);
-            _.Property(_ => _.Id).ValueGeneratedOnAdd();
-            _.Property(_ => _.Action).IsRequired(true).HasMaxLength(30);
-        });
-        modelBuilder.Entity<RoleAuthAction>(_ =>
-        {
         });
     }
 

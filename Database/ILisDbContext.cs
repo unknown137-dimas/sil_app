@@ -13,7 +13,5 @@ public interface ILisDbContext
     public DbSet<Reagen> Reagens { get; set; }
     public DbSet<SampleCategory> SampleCategories { get; set; }
     public DbSet<SampleService> SampleServices { get; set; }
-    public DbSet<AuthAction> AuthActions { get; set; }
-    public DbSet<RoleAuthAction> RoleAuthActions { get; set; }
     public Task<int> SaveChangesAsync();
 }

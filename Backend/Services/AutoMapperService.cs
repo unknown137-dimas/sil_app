@@ -17,8 +17,6 @@ public class AutoMapperService : Profile
         CreateMap<RoleDTO, IdentityRole>().ReverseMap();
         CreateMap<SampleCategoryDTO, SampleCategory>().ReverseMap();
         CreateMap<SampleServiceDTO, SampleService>().ReverseMap();
-        CreateMap<AuthActionDTO, AuthAction>().ReverseMap();
-        CreateMap<RoleAuthActionDTO, RoleAuthAction>().ReverseMap();
         CreateMap<PatientDTO, Patient>().ReverseMap();
         CreateMap<PatientCheckDTO, PatientCheck>().ReverseMap();
         CreateMap<PatientSampleDTO, PatientSample>().ReverseMap();
