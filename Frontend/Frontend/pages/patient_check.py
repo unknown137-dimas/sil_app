@@ -6,7 +6,7 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.models.services_model import ServicesModel, ServiceModel
-from Frontend.enum.enums import FormType
+from Frontend.enum.enums import FormType, ValidationStatus, CheckStatus
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
 from Frontend.components.table import table
@@ -109,6 +109,10 @@ class PatientCheckState(rx.State):
                     dataFrame[column] = dataFrame[column].apply(lambda data: [patient["name"] for patient in patient_states.raw_data if patient["id"] == data])
                 if "checkservice" in column.lower():
                     dataFrame[column] = dataFrame[column].apply(lambda data: self.get_check_service(data).name)
+                if "validationstatus" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(ValidationStatus(data).name))
+                if "checkstatus" in column.lower():
+                    dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(CheckStatus(data).name))
             self.data = dataFrame.values.tolist()
         self.loading = False
         self.updating = False
