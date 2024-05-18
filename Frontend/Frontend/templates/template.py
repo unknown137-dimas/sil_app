@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from Frontend import styles
+from Frontend.states.auth_state import AuthState
+from Frontend.const.allowed_path import path_config
 from Frontend.components.sidebar import sidebar
 from typing import Callable
-from Frontend.const.api import API_USER
-from Frontend.utilities import api_call
 
 import reflex as rx
 
@@ -23,31 +23,6 @@ class ThemeState(rx.State):
     """The state for the theme of the app."""
 
     accent_color: str = "teal"
-
-class AuthState(rx.State):
-    userName: str = ""
-    token: str = ""
-    role: str = ""
-    firstName: str = ""
-    lastName: str = ""
-    decoded_token: dict = {}
-
-    @rx.var
-    def FullName(self) -> str:
-        return f"{self.firstName} {self.lastName}"
-
-    async def authentication_check(self):
-        if self.token == "" and self.userName == "" and self.role == "":
-            return rx.redirect("/login")
-
-        error_messages, response_data = await api_call.get(f"{API_USER}/{self.decoded_token['nameid']}")
-        if response_data:
-            self.firstName = response_data[0]["firstName"]
-            self.lastName = response_data[0]["lastName"]
-
-    def logout(self):
-        self.reset()
-        return rx.redirect("/login")
 
 def template(
     route: str | None = None,
@@ -92,9 +67,9 @@ def template(
                     rx.flex(
                         rx.spacer(),
                         rx.flex(
-                            rx.avatar(rx.icon("user-round"), size="3", radius="full"),
+                            rx.avatar(rx.icon("user-round"), fallback="X", size="3", radius="full"),
                             rx.flex(
-                                rx.text(AuthState.FullName, weight="bold", size="4"),
+                                rx.text(AuthState.full_name, weight="bold", size="4"),
                                 rx.text(AuthState.role, color_scheme="gray"),
                                 direction="column",
                             ),
