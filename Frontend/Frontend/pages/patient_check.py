@@ -93,14 +93,19 @@ class PatientCheckState(rx.State):
                     return service
 
     async def get_data(self):
-        check_categories_states = await self.get_state(CheckCategoryState)
-        await check_categories_states.get_data()
-        self.check_options = [converter.to_services_model(item["name"], item["checkServices"]) for item in check_categories_states.raw_data]
-
         patient_states = await self.get_state(PatientState)
         await patient_states.get_data()
         if patient_states.selected_data:
             self.selected_patient_data = patient_states.selected_data
+
+            check_categories_states = await self.get_state(CheckCategoryState)
+            await check_categories_states.get_data()
+            check_data = []
+            for item in check_categories_states.raw_data:
+                item["checkServices"] = [service for service in item["checkServices"] if service["gender"] == patient_states.selected_data["gender"]]
+                check_data.append(item)
+                        
+            self.check_options = [converter.to_services_model(item["name"], item["checkServices"]) for item in check_data]
 
         _, self.raw_data = await api_call.get(API_PATIENT_CHECK)
         if self.raw_data:
