@@ -164,32 +164,30 @@ def patient_sample() -> rx.Component:
             ),
             rx.flex()
         ),
-        rx.hstack(
-            rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
-            rx.cond(
-                AuthState.is_regis_staff,
-                rx.flex(
-                    crud_button(
-                        "Patient Sample",
-                        PatientSampleState,
-                        PatientSampleState.patient_sample_form,
-                        PatientSampleState.patient_sample_form,
-                        PatientSampleState.is_patient_data_empty
-                    ),
+        rx.cond(
+            AuthState.is_regis_staff,
+            rx.hstack(
+                rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
+                crud_button(
+                    "Patient Sample",
+                    PatientSampleState,
+                    PatientSampleState.patient_sample_form,
+                    PatientSampleState.patient_sample_form,
+                    PatientSampleState.is_patient_data_empty
                 ),
-                rx.cond(
-                    AuthState.is_sampling_staff,
-                    dynamic_form_dialog(
-                        ~PatientSampleState.updating,
-                        "Submit Sample Result",
-                        "Submit Sample",
-                        PatientSampleState.patient_sample_result_form,
-                        PatientSampleState.submit_sample_data
-                    ),
-                    rx.flex(),
-                ),
+                spacing="8"
             ),
-            spacing="8"
+            rx.cond(
+                AuthState.is_sampling_staff,
+                dynamic_form_dialog(
+                    ~PatientSampleState.updating,
+                    "Submit Sample Result",
+                    "Submit Sample",
+                    PatientSampleState.patient_sample_result_form,
+                    PatientSampleState.submit_sample_data
+                ),
+                rx.flex(),
+            ),
         ),
         table(PatientSampleState),
         on_mount=PatientSampleState.get_data

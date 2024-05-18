@@ -34,10 +34,6 @@ class AuthState(rx.State):
     def is_lab_staff(self) -> bool:
         return self.role == UserRoles.Lab.value
 
-    @rx.var
-    def get_allowed_path(self) -> list[str]:
-        return allowed_path.path_config[self.role]
-
 
     async def authentication_check(self):
         if self.token == "" and self.userName == "" and self.role == "":

@@ -176,32 +176,30 @@ def patient_check() -> rx.Component:
             ),
             rx.flex()
         ),
-        rx.hstack(
-            rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
-            rx.cond(
-                AuthState.is_regis_staff,
-                rx.flex(
-                    crud_button(
-                        "Patient Check",
-                        PatientCheckState,
-                        PatientCheckState.patient_check_form,
-                        PatientCheckState.patient_check_form,
-                        PatientCheckState.is_patient_data_empty
-                    ),
+        rx.cond(
+            AuthState.is_regis_staff,
+            rx.hstack(
+                rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
+                crud_button(
+                    "Patient Check",
+                    PatientCheckState,
+                    PatientCheckState.patient_check_form,
+                    PatientCheckState.patient_check_form,
+                    PatientCheckState.is_patient_data_empty
                 ),
-                rx.cond(
-                    AuthState.is_lab_staff,
-                    dynamic_form_dialog(
-                        ~PatientCheckState.updating,
-                        "Submit Check Result",
-                        "Submit Check",
-                        PatientCheckState.patient_check_result_form,
-                        PatientCheckState.submit_check_data
-                    ),
-                    rx.flex(),
-                ),
+                spacing="8"
             ),
-            spacing="8"
+            rx.cond(
+                AuthState.is_lab_staff,
+                dynamic_form_dialog(
+                    ~PatientCheckState.updating,
+                    "Submit Check Result",
+                    "Submit Check",
+                    PatientCheckState.patient_check_result_form,
+                    PatientCheckState.submit_check_data
+                ),
+                rx.flex(),
+            ),
         ),
         table(PatientCheckState),
         on_mount=PatientCheckState.get_data
