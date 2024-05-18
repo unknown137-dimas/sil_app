@@ -1,5 +1,6 @@
 from Frontend import styles
 from Frontend.templates import template
+from Frontend.states.auth_state import AuthState
 from Frontend.const.api import API_PATIENT_CHECK, API_CHECK_SERVICE
 from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY, TODAY_DATETIME
 from Frontend.utilities import api_call
@@ -160,30 +161,45 @@ class PatientCheckState(rx.State):
 @template(route="/patient_check", title="Patient Check")
 def patient_check() -> rx.Component:
     return rx.vstack(
-        rx.flex(rx.text(PatientCheckState.selected_patient_data["name"])),
-        multiple_selections(PatientCheckState.check_options, PatientCheckState.select_service),
-        rx.flex(
-            rx.foreach(
-                PatientCheckState.selected_service_ids,
-                rx.badge
+        rx.cond(
+            AuthState.is_regis_staff,
+            rx.fragment(
+                rx.flex(rx.text(PatientCheckState.selected_patient_data["name"])),
+                multiple_selections(PatientCheckState.check_options, PatientCheckState.select_service),
+                rx.flex(
+                    rx.foreach(
+                        PatientCheckState.selected_service_ids,
+                        rx.badge
+                    ),
+                    spacing="2"
+                ),
             ),
-            spacing="2"
+            rx.flex()
         ),
         rx.hstack(
             rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
-            crud_button(
-                "Patient Check",
-                PatientCheckState,
-                PatientCheckState.patient_check_form,
-                PatientCheckState.patient_check_form,
-                PatientCheckState.is_patient_data_empty
-            ),
-            dynamic_form_dialog(
-                ~PatientCheckState.updating,
-                "Submit Check Result",
-                "Submit Check",
-                PatientCheckState.patient_check_result_form,
-                PatientCheckState.submit_check_data
+            rx.cond(
+                AuthState.is_regis_staff,
+                rx.flex(
+                    crud_button(
+                        "Patient Check",
+                        PatientCheckState,
+                        PatientCheckState.patient_check_form,
+                        PatientCheckState.patient_check_form,
+                        PatientCheckState.is_patient_data_empty
+                    ),
+                ),
+                rx.cond(
+                    AuthState.is_lab_staff,
+                    dynamic_form_dialog(
+                        ~PatientCheckState.updating,
+                        "Submit Check Result",
+                        "Submit Check",
+                        PatientCheckState.patient_check_result_form,
+                        PatientCheckState.submit_check_data
+                    ),
+                    rx.flex(),
+                ),
             ),
             spacing="8"
         ),

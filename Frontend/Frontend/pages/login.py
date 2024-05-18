@@ -1,5 +1,7 @@
 from Frontend import styles
-from Frontend.templates.template import ThemeState, AuthState
+from Frontend.templates.template import ThemeState
+from Frontend.states.auth_state import AuthState
+from Frontend.const import allowed_path
 from Frontend.const.api import API_USER_LOGIN
 from Frontend.utilities import api_call, token
 from Frontend.models.form_model import FormModel
@@ -33,7 +35,7 @@ class LoginState(AuthState):
                 self.userName = self.decoded_token["unique_name"]
                 self.role = self.decoded_token["role"]
                 self.token = response_data[0]["token"]
-                return rx.redirect("/")
+                return rx.redirect(allowed_path.path_config[self.role][0])
         else:
             for error in error_messages:
                 print(error)

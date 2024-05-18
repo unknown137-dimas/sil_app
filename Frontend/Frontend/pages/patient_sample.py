@@ -1,5 +1,6 @@
 from Frontend import styles
 from Frontend.templates import template
+from Frontend.states.auth_state import AuthState
 from Frontend.const.api import API_PATIENT_SAMPLE, API_SAMPLE_SERVICE
 from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY, TODAY_DATETIME
 from Frontend.utilities import api_call
@@ -148,30 +149,45 @@ class PatientSampleState(rx.State):
 @template(route="/patient_sample", title="Patient Sample")
 def patient_sample() -> rx.Component:
     return rx.vstack(
-        rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
-        multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
-        rx.flex(
-            rx.foreach(
-                PatientSampleState.selected_service_ids,
-                rx.badge
+        rx.cond(
+            AuthState.is_regis_staff,
+            rx.fragment(
+                rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
+                multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
+                rx.flex(
+                    rx.foreach(
+                        PatientSampleState.selected_service_ids,
+                        rx.badge
+                    ),
+                    spacing="2"
+                ),
             ),
-            spacing="2"
+            rx.flex()
         ),
         rx.hstack(
             rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
-            crud_button(
-                "Patient Sample",
-                PatientSampleState,
-                PatientSampleState.patient_sample_form,
-                PatientSampleState.patient_sample_form,
-                PatientSampleState.is_patient_data_empty
-            ),
-            dynamic_form_dialog(
-                ~PatientSampleState.updating,
-                "Submit Sample Result",
-                "Submit Sample",
-                PatientSampleState.patient_sample_result_form,
-                PatientSampleState.submit_sample_data
+            rx.cond(
+                AuthState.is_regis_staff,
+                rx.flex(
+                    crud_button(
+                        "Patient Sample",
+                        PatientSampleState,
+                        PatientSampleState.patient_sample_form,
+                        PatientSampleState.patient_sample_form,
+                        PatientSampleState.is_patient_data_empty
+                    ),
+                ),
+                rx.cond(
+                    AuthState.is_sampling_staff,
+                    dynamic_form_dialog(
+                        ~PatientSampleState.updating,
+                        "Submit Sample Result",
+                        "Submit Sample",
+                        PatientSampleState.patient_sample_result_form,
+                        PatientSampleState.submit_sample_data
+                    ),
+                    rx.flex(),
+                ),
             ),
             spacing="8"
         ),

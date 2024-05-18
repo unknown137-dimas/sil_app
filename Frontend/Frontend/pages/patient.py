@@ -1,5 +1,6 @@
 from Frontend import styles
 from Frontend.templates import template
+from Frontend.states.auth_state import AuthState
 from Frontend.const.api import API_PATIENT
 from Frontend.const.common_variables import TODAY_DATE_ONLY
 from Frontend.utilities import api_call
@@ -184,24 +185,27 @@ class PatientState(rx.State):
 @template(route="/patient", title="Patient")
 def patient() -> rx.Component:
     return rx.vstack(
-        rx.hstack(
-            crud_button(
-                "Patient",
-                PatientState,
-                PatientState.new_patient_form,
-                PatientState.update_patient_form,
+        rx.cond(
+            AuthState.is_regis_staff,
+            rx.hstack(
+                crud_button(
+                    "Patient",
+                    PatientState,
+                    PatientState.new_patient_form,
+                    PatientState.update_patient_form,
+                ),
+                rx.button(
+                    "Patient Sample", 
+                    disabled=~PatientState.updating,
+                    on_click=rx.redirect("/patient_sample")
+                ),
+                rx.button(
+                    "Patient Check", 
+                    disabled=~PatientState.updating,
+                    on_click=rx.redirect("/patient_check")
+                ),
+                spacing="8"
             ),
-            rx.button(
-                "Patient Sample", 
-                disabled=~PatientState.updating,
-                on_click=rx.redirect("/patient_sample")
-            ),
-            rx.button(
-                "Patient Check", 
-                disabled=~PatientState.updating,
-                on_click=rx.redirect("/patient_check")
-            ),
-            spacing="8"
         ),
         table(PatientState),
         on_mount=PatientState.get_data
