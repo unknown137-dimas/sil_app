@@ -1,6 +1,8 @@
 """Sidebar component for the app."""
 
 from Frontend import styles
+from Frontend.const import allowed_path
+from Frontend.enum.enums import UserRoles
 
 import reflex as rx
 
@@ -12,29 +14,11 @@ def sidebar_header() -> rx.Component:
         The sidebar header component.
     """
     return rx.hstack(
-        # The logo.
-        rx.color_mode_cond(
-            rx.image(src="/reflex_black.svg", height="2em"),
-            rx.image(src="/reflex_white.svg", height="2em"),
+        rx.heading(
+            "Pelayanan Laboratorium",
+            weight="bold",
         ),
         rx.spacer(),
-        # Link to Reflex GitHub repo.
-        rx.link(
-            rx.center(
-                rx.image(
-                    src="/github.svg",
-                    height="3em",
-                    padding="0.5em",
-                ),
-                box_shadow=styles.box_shadow,
-                bg="transparent",
-                border_radius=styles.border_radius,
-                _hover={
-                    "bg": styles.accent_color,
-                },
-            ),
-            href="https://github.com/reflex-dev/reflex",
-        ),
         align="center",
         width="100%",
         border_bottom=styles.border,
@@ -50,16 +34,7 @@ def sidebar_footer() -> rx.Component:
     """
     return rx.hstack(
         rx.spacer(),
-        rx.link(
-            rx.text("Docs"),
-            href="https://reflex.dev/docs/getting-started/introduction/",
-            style=styles.link_style,
-        ),
-        rx.link(
-            rx.text("Blog"),
-            href="https://reflex.dev/blog/",
-            style=styles.link_style,
-        ),
+        rx.button(rx.icon("log-out")),
         width="100%",
         border_top=styles.border,
         padding="1em",
@@ -113,7 +88,7 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     )
 
 
-def sidebar() -> rx.Component:
+def sidebar(role: str) -> rx.Component:
     """The sidebar.
 
     Returns:
@@ -121,6 +96,10 @@ def sidebar() -> rx.Component:
     """
     # Get all the decorated pages and add them to the sidebar.
     from reflex.page import get_decorated_pages
+
+    pages = [page for page in get_decorated_pages() if page["route"] != "/login"]
+    if(role != UserRoles.Admin and role != ""):
+        pages = [page for page in pages if page["route"] in allowed_path.path_config[role]]
 
     return rx.box(
         rx.vstack(
@@ -132,7 +111,7 @@ def sidebar() -> rx.Component:
                         icon=page.get("image", "/github.svg"),
                         url=page["route"],
                     )
-                    for page in get_decorated_pages()
+                    for page in pages
                 ],
                 width="100%",
                 overflow_y="auto",
