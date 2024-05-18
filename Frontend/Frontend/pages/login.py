@@ -1,5 +1,5 @@
 from Frontend import styles
-from Frontend.templates import ThemeState
+from Frontend.templates.template import ThemeState, AuthState
 from Frontend.const.api import API_USER_LOGIN
 from Frontend.utilities import api_call, token
 from Frontend.models.form_model import FormModel
@@ -9,11 +9,7 @@ from pickle import dumps
 
 import reflex as rx
 
-class LoginState(rx.State):
-    userName: str = ""
-    token: str = ""
-    decoded_token: dict = {}
-    role: str = ""
+class LoginState(AuthState):
     login_form: list[FormModel] = [
         FormModel(
             name="userName",
@@ -29,10 +25,6 @@ class LoginState(rx.State):
         ),
     ]
 
-    @rx.var
-    def is_authenticated(self) -> bool:
-        return token != ""
-
     async def login(self, form_data: dict):
         error_messages, response_data = await api_call.post(API_USER_LOGIN, form_data)
         if response_data:
@@ -41,17 +33,11 @@ class LoginState(rx.State):
                 self.userName = self.decoded_token["unique_name"]
                 self.role = self.decoded_token["role"]
                 self.token = response_data[0]["token"]
-                rx.redirect("/")
+                return rx.redirect("/")
         else:
             for error in error_messages:
                 print(error)
                 rx.window_alert(error)
-
-    def logout(self):
-        rx.window_alert(self.token)
-        self.reset()
-        rx.redirect("/login")
-
 
 @rx.page(route="/login", title="Login", image="/github.svg")
 def login() -> rx.Component:
@@ -64,7 +50,7 @@ def login() -> rx.Component:
                             LoginState.login_form,
                             generate_form_field
                         ),
-                        rx.button("Submit", type="submit"),
+                        rx.button("Login", type="submit"),
                     ),
                     on_submit=LoginState.login,
                     reset_on_submit=True,

@@ -5,6 +5,8 @@ from __future__ import annotations
 from Frontend import styles
 from Frontend.components.sidebar import sidebar
 from typing import Callable
+from Frontend.const.api import API_USER
+from Frontend.utilities import api_call
 
 import reflex as rx
 
@@ -17,61 +19,35 @@ default_meta = [
 ]
 
 
-# def menu_item_link(text, href):
-#     return rx.menu.item(
-#         rx.link(
-#             text,
-#             href=href,
-#             width="100%",
-#             color="inherit",
-#         ),
-#         _hover={
-#             "color": styles.accent_color,
-#             "background_color": styles.accent_text_color,
-#         },
-#     )
-
-
-# def menu_button() -> rx.Component:
-#     """The menu button on the top right of the page.
-
-#     Returns:
-#         The menu button component.
-#     """
-#     from reflex.page import get_decorated_pages
-
-#     return rx.box(
-#         rx.menu.root(
-#             rx.menu.trigger(
-#                 rx.icon(
-#                     "menu",
-#                     size=36,
-#                     color=styles.accent_text_color,
-#                 ),
-#                 background_color=styles.accent_color,
-#             ),
-#             rx.menu.content(
-#                 *[
-#                     menu_item_link(page["title"], page["route"])
-#                     for page in get_decorated_pages()
-#                 ],
-#                 rx.menu.separator(),
-#                 menu_item_link("About", "https://github.com/reflex-dev"),
-#                 menu_item_link("Contact", "mailto:founders@=reflex.dev"),
-#             ),
-#         ),
-#         position="fixed",
-#         right="1.5em",
-#         top="1.5em",
-#         z_index="500",
-#     )
-
-
 class ThemeState(rx.State):
     """The state for the theme of the app."""
 
     accent_color: str = "teal"
 
+class AuthState(rx.State):
+    userName: str = ""
+    token: str = ""
+    role: str = ""
+    firstName: str = ""
+    lastName: str = ""
+    decoded_token: dict = {}
+
+    @rx.var
+    def FullName(self) -> str:
+        return f"{self.firstName} {self.lastName}"
+
+    async def authentication_check(self):
+        if self.token == "" and self.userName == "" and self.role == "":
+            return rx.redirect("/login")
+
+        error_messages, response_data = await api_call.get(f"{API_USER}/{self.decoded_token['nameid']}")
+        if response_data:
+            self.firstName = response_data[0]["firstName"]
+            self.lastName = response_data[0]["lastName"]
+
+    def logout(self):
+        self.reset()
+        return rx.redirect("/login")
 
 def template(
     route: str | None = None,
@@ -112,18 +88,32 @@ def template(
         def templated_page():
             return rx.hstack(
                 sidebar(),
-                rx.box(
-                    rx.box(
-                        page_content(),
-                        **styles.template_content_style,
+                rx.vstack(
+                    rx.flex(
+                        rx.spacer(),
+                        rx.flex(
+                            rx.avatar(rx.icon("user-round"), size="3", radius="full"),
+                            rx.flex(
+                                rx.text(AuthState.FullName, weight="bold", size="4"),
+                                rx.text(AuthState.role, color_scheme="gray"),
+                                direction="column",
+                            ),
+                            spacing="2",
+                            align="center"
+                        ),
                     ),
-                    **styles.template_page_style,
+                    rx.box(
+                        rx.box(
+                            page_content(),
+                            **styles.template_content_style,
+                        ),
+                        **styles.template_page_style,
+                    ),
                 ),
-                # menu_button(),
                 align="start",
-                transition="left 0.5s, width 0.5s",
-                position="relative",
             )
+
+        on_load = AuthState.authentication_check
 
         @rx.page(
             route=route,

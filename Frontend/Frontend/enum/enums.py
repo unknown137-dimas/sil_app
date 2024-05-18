@@ -36,3 +36,9 @@ class ValidationStatus(IntEnum):
     WaitingValidation = 0,
     Valid = 1,
     NotValid = 2
+
+class UserRoles(Enum):
+    Admin = "Administrator",
+    Regis = "Registration Staff",
+    Sampling = "Sampling Staff",
+    Lab = "Lab Staff"
