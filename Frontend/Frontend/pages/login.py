@@ -54,7 +54,7 @@ def login() -> rx.Component:
                         ),
                         rx.button(
                             "Login",
-                            rx.icon("log-in"),
+                            rx.icon("log-in", size=20),
                             type="submit",
                             radius="full"
                         ),
