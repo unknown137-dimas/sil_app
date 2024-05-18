@@ -100,10 +100,14 @@ def dynamic_form(form_type: str, form: list[FormModel], submit_callback: rx.even
                     "Cancel",
                     color_scheme="gray",
                     variant="soft",
+                    radius="full"
                 ),
             ),
             rx.form.submit(
-                rx.button(form_type),
+                rx.button(
+                    form_type,
+                    radius="full"
+                ),
                 as_child=True
             ),
             spacing="3",
@@ -116,10 +120,27 @@ def dynamic_form(form_type: str, form: list[FormModel], submit_callback: rx.even
 def dynamic_form_dialog(disabled: bool, title: str, form_type: str, form: list[FormModel], callback: rx.event.EventHandler) -> rx.Component:
     return rx.cond(
         disabled,
-        rx.button(form_type, disabled=True),
+        rx.button(
+            rx.match(
+                form_type,
+                ("Add", rx.icon("circle-plus", size=20)),
+                ("Update", rx.icon("pencil", size=20)),
+            ),
+            form_type,
+            disabled=True,
+            radius="full"
+        ),
         rx.dialog.root(
             rx.dialog.trigger(
-                rx.button(form_type)
+                rx.button(
+                    rx.match(
+                        form_type,
+                        ("Add", rx.icon("circle-plus", size=20)),
+                        ("Update", rx.icon("pencil", size=20)),
+                    ),
+                    form_type,
+                    radius="full"
+                )
             ),
             rx.dialog.content(
                 rx.dialog.title(title),

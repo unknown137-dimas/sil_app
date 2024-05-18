@@ -184,7 +184,12 @@ def patient_check() -> rx.Component:
         rx.cond(
             AuthState.is_regis_staff,
             rx.hstack(
-                rx.button(rx.icon("chevron-left"), "Back", on_click=rx.redirect("/patient")),
+                rx.button(
+                    rx.icon("chevron-left"),
+                    "Back", 
+                    on_click=rx.redirect("/patient"),
+                    radius="full"
+                ),
                 crud_button(
                     "Patient Check",
                     PatientCheckState,

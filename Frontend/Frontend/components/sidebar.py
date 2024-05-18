@@ -34,7 +34,12 @@ def sidebar_footer() -> rx.Component:
     """
     return rx.hstack(
         rx.spacer(),
-        rx.button(rx.icon("log-out")),
+        rx.button(
+            rx.icon("log-out"),
+            "Logout",
+            on_click=AuthState.logout,
+            radius="full"
+        ),
         width="100%",
         border_top=styles.border,
         padding="1em",

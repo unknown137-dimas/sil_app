@@ -6,10 +6,10 @@ def table(state: rx.State) -> rx.Component:
     return rx.cond(
             state.loading,
             rx.center(
-                rx.chakra.spinner(
+                rx.spinner(
                     color=ThemeState.accent_color,
                     thickness=3,
-                    size="lg",
+                    size="3",
                 ),
             ),
             rx.cond(

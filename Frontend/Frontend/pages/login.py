@@ -44,7 +44,7 @@ class LoginState(AuthState):
 @rx.page(route="/login", title="Login", image="/github.svg")
 def login() -> rx.Component:
     return rx.theme(
-        rx.flex(
+        rx.box(
             rx.card(
                 rx.form(
                     rx.vstack(
@@ -52,14 +52,23 @@ def login() -> rx.Component:
                             LoginState.login_form,
                             generate_form_field
                         ),
-                        rx.button("Login", type="submit"),
+                        rx.button(
+                            "Login",
+                            rx.icon("log-in"),
+                            type="submit",
+                            radius="full"
+                        ),
+                        align="center"
                     ),
                     on_submit=LoginState.login,
                     reset_on_submit=True,
                 ),
             ),
-            justify="center",
-            align="center"
+            display="flex",
+            justify_content="center",
+            align_items="center",
+            height="100vh",
+            background_color="gray.100",
         ),
         accent_color=ThemeState.accent_color
     )

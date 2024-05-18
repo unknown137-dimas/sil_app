@@ -197,12 +197,14 @@ def patient() -> rx.Component:
                 rx.button(
                     "Patient Sample", 
                     disabled=~PatientState.updating,
-                    on_click=rx.redirect("/patient_sample")
+                    on_click=rx.redirect("/patient_sample"),
+                    radius="full"
                 ),
                 rx.button(
                     "Patient Check", 
                     disabled=~PatientState.updating,
-                    on_click=rx.redirect("/patient_check")
+                    on_click=rx.redirect("/patient_check"),
+                    radius="full"
                 ),
                 spacing="8"
             ),

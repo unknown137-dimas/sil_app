@@ -6,10 +6,12 @@ import reflex as rx
 
 def delete_button(disabled: bool, callback: rx.event.EventHandler) -> rx.Component:
     return rx.button(
+        rx.icon("trash-2", size=20),
         "Delete",
         on_click=callback,
         disabled=disabled,
-        color_scheme="red"
+        color_scheme="red",
+        radius="full"
     )
 
 def crud_button(title: str, state: rx.State, new_form: list[FormModel], update_form: list[FormModel], disable_add_button: bool = False) -> rx.Component:
