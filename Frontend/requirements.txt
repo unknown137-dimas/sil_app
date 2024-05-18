@@ -4,10 +4,12 @@ backports.tarfile==1.0.0
 bidict==0.23.1
 build==1.1.1
 certifi==2024.2.2
+cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
 cloudpickle==2.2.1
 colorama==0.4.6
+cryptography==42.0.7
 dill==0.3.8
 docopt==0.6.2
 docutils==0.20.1
@@ -38,8 +40,10 @@ pipreqs==0.4.13
 pkginfo==1.10.0
 platformdirs==3.11.0
 psutil==5.9.8
+pycparser==2.22
 pydantic==1.10.14
 Pygments==2.17.2
+PyJWT==2.8.0
 pyproject_hooks==1.0.0
 python-dateutil==2.9.0.post0
 python-engineio==4.9.0
