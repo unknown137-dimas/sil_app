@@ -27,6 +27,7 @@ class PatientCheckState(rx.State):
     updating: bool = False
     loading: bool = True
     check_options: list[ServicesModel]
+    check_services: list[ServicesModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
     service_detail: dict[str, str] = {}
@@ -87,7 +88,7 @@ class PatientCheckState(rx.State):
                     service.selected = value
 
     def get_check_service(self, service_id: str) -> ServiceModel:
-        for category in self.check_options:
+        for category in self.check_services:
             for service in category.services:
                 if service.id == service_id:
                     return service
@@ -95,11 +96,13 @@ class PatientCheckState(rx.State):
     async def get_data(self):
         patient_states = await self.get_state(PatientState)
         await patient_states.get_data()
+        
+        check_categories_states = await self.get_state(CheckCategoryState)
+        await check_categories_states.get_data()
+        self.check_services = [converter.to_services_model(item["name"], item["checkServices"]) for item in check_categories_states.raw_data]
+        
         if patient_states.selected_data:
             self.selected_patient_data = patient_states.selected_data
-
-            check_categories_states = await self.get_state(CheckCategoryState)
-            await check_categories_states.get_data()
             check_data = []
             for item in check_categories_states.raw_data:
                 item["checkServices"] = [service for service in item["checkServices"] if service["gender"] == patient_states.selected_data["gender"]]
