@@ -3,6 +3,7 @@ from numpy import NaN
 from datetime import datetime
 import re
 from Frontend.models.services_model import ServicesModel, ServiceModel
+from Frontend.enum.enums import CheckType
 
 def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, DataFrame):
 
@@ -50,5 +51,5 @@ def to_title_case(input: str) -> str:
 def to_services_model(category: str, services: list[dict]) -> ServicesModel:
     return ServicesModel(
         name=category,
-        services=[ServiceModel(id=service["id"], name=service["name"]) for service in services]
+        services=[ServiceModel(id=service["id"], name=service["name"], normal_value_type=CheckType(service["normalValueType"])) for service in services]
     )
