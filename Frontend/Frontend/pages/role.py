@@ -70,7 +70,7 @@ class RoleState(rx.State):
         )
         await self.get_data()
         
-@template(route="/role", title="Role", image="/github.svg")
+@template(route="/role", title="Role")
 def role() -> rx.Component:
     return rx.vstack(
         crud_button(

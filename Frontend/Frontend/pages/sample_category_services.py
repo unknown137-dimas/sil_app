@@ -173,7 +173,7 @@ class SampleServicesState(rx.State):
         await self.get_data()
 
         
-@template(route="/sample_category_services", title="Sample Category & Services", image="/github.svg")
+@template(route="/sample_category_services", title="Sample Category & Services")
 def sample_category_services() -> rx.Component:
     return rx.vstack(
         rx.vstack(

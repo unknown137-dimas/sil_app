@@ -263,7 +263,7 @@ class CheckServicesState(rx.State):
         await self.get_data()
 
         
-@template(route="/check_category_services", title="Check Category & Services", image="/github.svg")
+@template(route="/check_category_services", title="Check Category & Services")
 def check_category_services() -> rx.Component:
     return rx.vstack(
         rx.vstack(

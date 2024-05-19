@@ -41,7 +41,7 @@ class LoginState(AuthState):
                 print(error)
                 rx.window_alert(error)
 
-@rx.page(route="/login", title="Login", image="/github.svg")
+@rx.page(route="/login", title="Login")
 def login() -> rx.Component:
     return rx.theme(
         rx.box(

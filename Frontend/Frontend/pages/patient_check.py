@@ -157,7 +157,6 @@ class PatientCheckState(rx.State):
             _, self.service_detail = await api_call.get(f"{API_CHECK_SERVICE}/{self.selected_data['checkServiceId']}")
     
     async def update_data(self, form_data: dict):
-        print(form_data)
         self.selected_data.update(form_data)
         await api_call.post(
             f"{API_PATIENT_CHECK}/{self.selected_data['id']}",
@@ -189,7 +188,7 @@ class PatientCheckState(rx.State):
         await api_call.delete(f"{API_PATIENT_CHECK}/{self.selected_data['id']}")
         await self.get_data()
 
-@template(route="/patient_check", title="Patient Check")
+@template(route="/patient_check", title="Patient Check", image="/stethoscope.svg")
 def patient_check() -> rx.Component:
     return rx.vstack(
         rx.cond(

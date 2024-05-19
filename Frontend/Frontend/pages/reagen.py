@@ -119,7 +119,7 @@ class ReagenState(rx.State):
         await api_call.delete(f"{API_REAGEN}/{self.selected_data['id']}")
         await self.get_data()
 
-@template(route="/reagen", title="Reagen")
+@template(route="/reagen", title="Reagen", image="/dna.svg")
 def reagen() -> rx.Component:
     return rx.vstack(
         crud_button(

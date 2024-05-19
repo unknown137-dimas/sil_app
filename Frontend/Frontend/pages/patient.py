@@ -182,7 +182,7 @@ class PatientState(rx.State):
         await api_call.delete(f"{API_PATIENT}/{self.selected_data['id']}")
         await self.get_data()
 
-@template(route="/patient", title="Patient")
+@template(route="/patient", title="Patient", image="/user-round.svg")
 def patient() -> rx.Component:
     return rx.vstack(
         rx.cond(

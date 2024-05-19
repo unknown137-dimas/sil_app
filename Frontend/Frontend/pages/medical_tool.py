@@ -117,7 +117,7 @@ class MedicalToolState(rx.State):
         await api_call.delete(f"{API_MEDICAL_TOOL}/{self.selected_data['id']}")
         await self.get_data()
 
-@template(route="/medical_tool", title="Medical Tool")
+@template(route="/medical_tool", title="Medical Tool", image="/microscope.svg")
 def medical_tool() -> rx.Component:
     return rx.vstack(
         crud_button(
