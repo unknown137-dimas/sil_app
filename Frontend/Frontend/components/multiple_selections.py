@@ -14,13 +14,18 @@ def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandl
         rx.foreach(
             data,
             lambda items: rx.tabs.content(
-                rx.foreach(
-                    items.services,
-                    lambda item: rx.checkbox(
-                        item.name,
-                        checked=item.selected,
-                        on_change=lambda value: callback(item.id, value)
-                        )
+                rx.flex(
+                    rx.foreach(
+                        items.services,
+                        lambda item: rx.checkbox(
+                            item.name,
+                            checked=item.selected,
+                            on_change=lambda value: callback(item.id, value)
+                            )
+                    ),
+                    direction="column",
+                    spacing="2",
+                    padding="10px"
                 ),
                 value=items.name
             )

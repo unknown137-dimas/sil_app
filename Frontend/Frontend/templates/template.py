@@ -65,17 +65,15 @@ def template(
                 sidebar(),
                 rx.vstack(
                     rx.flex(
-                        rx.spacer(),
+                        rx.avatar(rx.icon("user-round"), fallback="X", size="3", radius="full"),
                         rx.flex(
-                            rx.avatar(rx.icon("user-round"), fallback="X", size="3", radius="full"),
-                            rx.flex(
-                                rx.text(AuthState.full_name, weight="bold", size="4"),
-                                rx.text(AuthState.role, color_scheme="gray"),
-                                direction="column",
-                            ),
-                            spacing="2",
-                            align="center"
+                            rx.text(AuthState.full_name, weight="bold", size="4"),
+                            rx.text(AuthState.role, color_scheme="gray"),
+                            direction="column",
                         ),
+                        spacing="2",
+                        align="center",
+                        padding="10px"
                     ),
                     rx.box(
                         rx.box(

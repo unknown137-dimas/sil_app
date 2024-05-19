@@ -68,7 +68,6 @@ def login() -> rx.Component:
             justify_content="center",
             align_items="center",
             height="100vh",
-            background_color="gray.100",
         ),
         accent_color=ThemeState.accent_color
     )
