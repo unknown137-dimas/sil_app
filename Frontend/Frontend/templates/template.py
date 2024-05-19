@@ -21,7 +21,7 @@ default_meta = [
 class ThemeState(rx.State):
     """The state for the theme of the app."""
 
-    accent_color: str = "teal"
+    accent_color: str = "grass"
 
 def template(
     route: str | None = None,
@@ -81,6 +81,7 @@ def template(
                         ),
                         **styles.template_page_style,
                     ),
+                    align="end"
                 ),
                 align="start",
             )
