@@ -46,12 +46,12 @@ class AuthState(rx.State):
                         image=page.get("image", "/github.svg"),
                         route=page["route"]
                     ) for page in get_decorated_pages() if page["route"] in allowed_path.path_config[self.role]]
-            return [
-                PageModel(
-                    title=page.get("title", page["route"].strip("/").capitalize()),
-                    image=page.get("image", "/github.svg"),
-                    route=page["route"]
-                ) for page in get_decorated_pages() if page["route"] != "/login"]
+        return [
+            PageModel(
+                title=page.get("title", page["route"].strip("/").capitalize()),
+                image=page.get("image", "/github.svg"),
+                route=page["route"]
+            ) for page in get_decorated_pages() if page["route"] != "/login"]
 
     async def authentication_check(self):
         if self.token == "" and self.userName == "" and self.role == "":
