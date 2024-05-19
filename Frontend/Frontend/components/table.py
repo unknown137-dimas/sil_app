@@ -10,6 +10,9 @@ def sort_table(state: rx.State, sort_key: str):
     state.dataFrame["no"] = [i + 1 for i in range(len(state.dataFrame["no"]))]
     state.data = state.dataFrame.values.tolist()
 
+def get_columns(state: rx.State) -> list[str]:
+    return [column["title"] for column in state.columns if column["title"] != "No"]
+
 def table(state: rx.State, sorting: list[str] = [], sort_table: rx.event.EventHandler = None) -> rx.Component:
     return rx.cond(
             state.loading,
