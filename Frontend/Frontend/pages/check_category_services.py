@@ -5,7 +5,7 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.components.crud_button import crud_button
-from Frontend.components.table import table
+from Frontend.components.table import table, sort_table
 from Frontend.enum.enums import FormType, Gender, ValueType
 from pandas import DataFrame
 
@@ -75,6 +75,7 @@ class CheckCategoryState(rx.State):
 class CheckServicesState(rx.State):
     columns: list = []
     data: list = []
+    dataFrame: DataFrame
     raw_data: list
     check_categories_raw_data: list
     selected_data: dict[str, str] = {}
@@ -167,6 +168,7 @@ class CheckServicesState(rx.State):
                     dataFrame[column] = dataFrame[column].apply(lambda data: self.get_check_category_name_by_id(data))
 
             self.data = dataFrame.values.tolist()
+            self.dataFrame = dataFrame
         self.loading = False
 
     def get_selected_data(self, pos):
@@ -262,7 +264,9 @@ class CheckServicesState(rx.State):
         )
         await self.get_data()
 
-        
+    def sort_table(self, sort_key: str):
+        sort_table(self, sort_key)
+
 @template(route="/check_category_services", title="Check Category & Services")
 def check_category_services() -> rx.Component:
     return rx.vstack(
@@ -283,7 +287,7 @@ def check_category_services() -> rx.Component:
                 CheckServicesState.new_check_services_form,
                 CheckServicesState.update_check_services_form,
             ),
-            table(CheckServicesState),
+            table(CheckServicesState, ["Name", "Check Category"], CheckServicesState.sort_table),
             on_mount=CheckServicesState.get_data(),
         ),
     )

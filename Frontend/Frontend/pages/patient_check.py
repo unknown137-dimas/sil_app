@@ -10,11 +10,12 @@ from Frontend.models.services_model import CheckServicesModel, CheckServiceModel
 from Frontend.enum.enums import FormType, ValidationStatus, CheckStatus, CheckType
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
-from Frontend.components.table import table
+from Frontend.components.table import table, sort_table, get_columns
 from Frontend.components.multiple_selections import multiple_selections
 from .check_category_services import CheckCategoryState
 from .patient import PatientState
 from datetime import datetime
+from pandas import DataFrame
 
 import numpy as np
 import reflex as rx
@@ -23,6 +24,7 @@ import reflex as rx
 class PatientCheckState(rx.State):
     columns: list = []
     data: list = []
+    dataFrame: DataFrame
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
@@ -91,7 +93,10 @@ class PatientCheckState(rx.State):
     def is_patient_data_empty(self) -> bool:
         return self.selected_patient_data == {}
 
-    
+    @rx.var
+    def get_columns(self) -> list[str]:
+        return get_columns(self)
+
     def select_service(self, service_id: str, value):
         for category in self.check_options:
             for service in category.services:
@@ -145,6 +150,7 @@ class PatientCheckState(rx.State):
             )
             self.columns = columns
             self.data = dataFrame.values.tolist()
+            self.dataFrame = dataFrame
         self.loading = False
         self.updating = False
         self.selected_data = {}
@@ -187,6 +193,9 @@ class PatientCheckState(rx.State):
     async def delete_data(self):
         await api_call.delete(f"{API_PATIENT_CHECK}/{self.selected_data['id']}")
         await self.get_data()
+
+    def sort_table(self, sort_key: str):
+        sort_table(self, sort_key)
 
 @template(route="/patient_check", title="Patient Check", image="/stethoscope.svg")
 def patient_check() -> rx.Component:
@@ -236,6 +245,6 @@ def patient_check() -> rx.Component:
                 rx.flex(),
             ),
         ),
-        table(PatientCheckState),
+        table(PatientCheckState, PatientCheckState.get_columns, PatientCheckState.sort_table),
         on_mount=PatientCheckState.get_data
     )

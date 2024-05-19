@@ -10,11 +10,12 @@ from Frontend.models.services_model import SampleServicesModel, SampleServiceMod
 from Frontend.enum.enums import FormType
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
-from Frontend.components.table import table
+from Frontend.components.table import table, sort_table, get_columns
 from Frontend.components.multiple_selections import multiple_selections
 from .sample_category_services import SampleCategoryState
 from .patient import PatientState
 from datetime import datetime
+from pandas import DataFrame
 
 import reflex as rx
 
@@ -22,6 +23,7 @@ import reflex as rx
 class PatientSampleState(rx.State):
     columns: list = []
     data: list = []
+    dataFrame: DataFrame
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
@@ -74,6 +76,9 @@ class PatientSampleState(rx.State):
     def is_patient_data_empty(self) -> bool:
         return self.selected_patient_data == {}
 
+    @rx.var
+    def get_columns(self) -> list[str]:
+        return get_columns(self)
     
     def select_service(self, service_id: str, value):
         for category in self.sample_options:
@@ -106,6 +111,7 @@ class PatientSampleState(rx.State):
                 if "sampleservice" in column.lower():
                     dataFrame[column] = dataFrame[column].apply(lambda data: self.get_sample_service(data).name)
             self.data = dataFrame.values.tolist()
+            self.dataFrame = dataFrame
         self.loading = False
         self.updating = False
         self.selected_data = {}
@@ -145,6 +151,9 @@ class PatientSampleState(rx.State):
     async def delete_data(self):
         await api_call.delete(f"{API_PATIENT_SAMPLE}/{self.selected_data['id']}")
         await self.get_data()
+
+    def sort_table(self, sort_key: str):
+        sort_table(self, sort_key)
 
 @template(route="/patient_sample", title="Patient Sample", image="/pipette.svg")
 def patient_sample() -> rx.Component:
@@ -194,6 +203,6 @@ def patient_sample() -> rx.Component:
                 rx.flex(),
             ),
         ),
-        table(PatientSampleState),
+        table(PatientSampleState, PatientSampleState.get_columns, PatientSampleState.sort_table),
         on_mount=PatientSampleState.get_data
     )

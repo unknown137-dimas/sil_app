@@ -8,13 +8,15 @@ from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType, Gender
 from Frontend.components.crud_button import crud_button
-from Frontend.components.table import table
+from Frontend.components.table import table, sort_table, get_columns
+from pandas import DataFrame
 
 import reflex as rx
 
 class PatientState(rx.State):
     columns: list = []
     data: list = []
+    dataFrame: DataFrame
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
@@ -78,6 +80,10 @@ class PatientState(rx.State):
     ]
     update_patient_form: list[FormModel] =  []
 
+    @rx.var
+    def get_columns(self) -> list[str]:
+        return get_columns(self)
+
     async def get_data(self):
         _, self.raw_data = await api_call.get(API_PATIENT)
         if self.raw_data:
@@ -87,6 +93,7 @@ class PatientState(rx.State):
                     dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(Gender(data).name))
 
             self.data = dataFrame.values.tolist()
+            self.dataFrame = dataFrame
         self.loading = False
 
     def get_selected_data(self, pos):
@@ -182,6 +189,9 @@ class PatientState(rx.State):
         await api_call.delete(f"{API_PATIENT}/{self.selected_data['id']}")
         await self.get_data()
 
+    def sort_table(self, sort_key: str):
+        sort_table(self, sort_key)
+
 @template(route="/patient", title="Patient", image="/user-round.svg")
 def patient() -> rx.Component:
     return rx.vstack(
@@ -209,6 +219,6 @@ def patient() -> rx.Component:
                 spacing="8"
             ),
         ),
-        table(PatientState),
+        table(PatientState, PatientState.get_columns, PatientState.sort_table),
         on_mount=PatientState.get_data
     )

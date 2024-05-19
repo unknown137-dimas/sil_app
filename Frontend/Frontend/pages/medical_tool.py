@@ -7,13 +7,15 @@ from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType, CalibrationStatus
 from Frontend.components.crud_button import crud_button
-from Frontend.components.table import table
+from Frontend.components.table import table, sort_table, get_columns
+from pandas import DataFrame
 
 import reflex as rx
 
 class MedicalToolState(rx.State):
     columns: list = []
     data: list = []
+    dataFrame: DataFrame
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
@@ -36,6 +38,10 @@ class MedicalToolState(rx.State):
     ]
     update_medical_tool_form: list[FormModel] =  []
 
+    @rx.var
+    def get_columns(self) -> list[str]:
+        return get_columns(self)
+
     async def get_data(self):
         _, self.raw_data = await api_call.get(API_MEDICAL_TOOL)
         if self.raw_data:
@@ -45,6 +51,7 @@ class MedicalToolState(rx.State):
                     dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(CalibrationStatus(data).name))
 
             self.data = dataFrame.values.tolist()
+            self.dataFrame = dataFrame
         self.loading = False
 
 
@@ -117,6 +124,9 @@ class MedicalToolState(rx.State):
         await api_call.delete(f"{API_MEDICAL_TOOL}/{self.selected_data['id']}")
         await self.get_data()
 
+    def sort_table(self, sort_key: str):
+        sort_table(self, sort_key)
+
 @template(route="/medical_tool", title="Medical Tool", image="/microscope.svg")
 def medical_tool() -> rx.Component:
     return rx.vstack(
@@ -126,6 +136,6 @@ def medical_tool() -> rx.Component:
             MedicalToolState.new_medical_tool_form,
             MedicalToolState.update_medical_tool_form,
         ),
-        table(MedicalToolState),
+        table(MedicalToolState, MedicalToolState.get_columns, MedicalToolState.sort_table),
         on_mount=MedicalToolState.get_data
     )

@@ -7,13 +7,15 @@ from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType
 from Frontend.components.crud_button import crud_button
-from Frontend.components.table import table
+from Frontend.components.table import table, sort_table, get_columns
+from pandas import DataFrame
 
 import reflex as rx
 
 class ReagenState(rx.State):
     columns: list = []
     data: list = []
+    dataFrame: DataFrame
     raw_data: list
     selected_data: dict[str, str] = {}
     updating: bool = False
@@ -52,9 +54,14 @@ class ReagenState(rx.State):
     update_reagen_form: list[FormModel] =  []
 
 
+    @rx.var
+    def get_columns(self) -> list[str]:
+        return get_columns(self)
+
     async def get_data(self):
         _, self.raw_data = await api_call.get(API_REAGEN)
         self.columns, self.data, dataFrame = converter.to_data_table(self.raw_data)
+        self.dataFrame = dataFrame
         self.loading = False
 
     def get_selected_data(self, pos):
@@ -119,6 +126,9 @@ class ReagenState(rx.State):
         await api_call.delete(f"{API_REAGEN}/{self.selected_data['id']}")
         await self.get_data()
 
+    def sort_table(self, sort_key: str):
+        sort_table(self, sort_key)
+
 @template(route="/reagen", title="Reagen", image="/dna.svg")
 def reagen() -> rx.Component:
     return rx.vstack(
@@ -128,6 +138,6 @@ def reagen() -> rx.Component:
             ReagenState.new_reagen_form,
             ReagenState.update_reagen_form,
         ),
-        table(ReagenState),
+        table(ReagenState, ReagenState.get_columns, ReagenState.sort_table),
         on_mount=ReagenState.get_data
     )
