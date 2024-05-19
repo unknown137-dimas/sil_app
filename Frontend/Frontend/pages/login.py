@@ -35,7 +35,7 @@ class LoginState(AuthState):
                 self.userName = self.decoded_token["unique_name"]
                 self.role = self.decoded_token["role"]
                 self.token = response_data[0]["token"]
-                return rx.redirect(allowed_path.path_config[self.role][0])
+                return rx.redirect(self.get_allowed_pages[0].route)
         else:
             for error in error_messages:
                 print(error)

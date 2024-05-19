@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from Frontend import styles
 from Frontend.states.auth_state import AuthState
-from Frontend.const.allowed_path import path_config
 from Frontend.components.sidebar import sidebar
 from typing import Callable
 

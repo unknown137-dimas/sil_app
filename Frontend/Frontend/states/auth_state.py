@@ -38,23 +38,27 @@ class AuthState(rx.State):
 
     @rx.var
     def get_allowed_pages(self) -> list[PageModel]:
-        pages = []
         if(self.role != ""):
-            pages = [
+            if(self.role != UserRoles.Admin.value):
+                return [
+                    PageModel(
+                        title=page.get("title", page["route"].strip("/").capitalize()),
+                        image=page.get("image", "/github.svg"),
+                        route=page["route"]
+                    ) for page in get_decorated_pages() if page["route"] in allowed_path.path_config[self.role]]
+            return [
                 PageModel(
                     title=page.get("title", page["route"].strip("/").capitalize()),
                     image=page.get("image", "/github.svg"),
                     route=page["route"]
-                ) for page in get_decorated_pages() if page["route"] in allowed_path.path_config[self.role]]
-        return pages
-
+                ) for page in get_decorated_pages() if page["route"] != "/login"]
 
     async def authentication_check(self):
         if self.token == "" and self.userName == "" and self.role == "":
             return rx.redirect("/login")
 
-        if self.router.page.path not in allowed_path.path_config[self.role]:
-            return rx.redirect(allowed_path.path_config[self.role][0])
+        if self.router.page.path not in [page.route for page in self.get_allowed_pages]:
+            return rx.redirect(self.get_allowed_pages[0].route)
 
         error_messages, response_data = await api_call.get(f"{API_USER}/{self.decoded_token['nameid']}")
         if response_data:
