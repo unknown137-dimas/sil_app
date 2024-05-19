@@ -16,6 +16,7 @@ from .check_category_services import CheckCategoryState
 from .patient import PatientState
 from datetime import datetime
 
+import numpy as np
 import reflex as rx
 
 
@@ -50,18 +51,28 @@ class PatientCheckState(rx.State):
     
     @rx.var
     def patient_check_result_form(self) -> list[FormModel]:
-        forms = [
-            FormModel(
-                name="numericResult",
-                placeholder="NumericResult",
-                form_type=FormType.Input.value,
-            ),
-            FormModel(
-                name="stringResult",
-                placeholder="StringResult",
-                form_type=FormType.Input.value,
-            )
-        ]
+        forms = []
+        if self.selected_data:
+            checkServiceType = self.get_check_service(self.selected_data["checkServiceId"]).normal_value_type
+            if checkServiceType == CheckType.Numeric:
+                forms.append(
+                    FormModel(
+                        name="numericResult",
+                        placeholder="Result",
+                        form_type=FormType.Input.value,
+                        required=True
+                    )
+                )
+            else:
+                forms.append(
+                    FormModel(
+                        name="stringResult",
+                        placeholder="Result",
+                        form_type=FormType.Input.value,
+                        required=True
+                    )
+                )
+
         for form in forms:
             if self.selected_data and self.selected_data[form.name]:
                 form.default_value = self.selected_data[form.name]
@@ -112,7 +123,10 @@ class PatientCheckState(rx.State):
 
         _, self.raw_data = await api_call.get(API_PATIENT_CHECK)
         if self.raw_data:
-            self.columns, _, dataFrame = converter.to_data_table(self.raw_data)
+            columns, _, dataFrame = converter.to_data_table(self.raw_data)
+            dataFrame["result"] = np.where(dataFrame["checkService"].apply(lambda x: self.get_check_service(x).normal_value_type) == CheckType.Numeric, dataFrame["numericResult"], dataFrame["stringResult"])
+            dataFrame["result"] = dataFrame["result"].astype("string")
+            dataFrame.drop(columns=["numericResult", "stringResult"], inplace=True)
             for column in dataFrame.columns:
                 if "patient" in column.lower():
                     dataFrame[column] = dataFrame[column].apply(lambda data: [patient["name"] for patient in patient_states.raw_data if patient["id"] == data])
@@ -122,6 +136,14 @@ class PatientCheckState(rx.State):
                     dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(ValidationStatus(data).name))
                 if "checkstatus" in column.lower():
                     dataFrame[column] = dataFrame[column].apply(lambda data: converter.to_title_case(CheckStatus(data).name))
+            columns = [column for column in columns if "Result" not in column["title"]]
+            columns.append(
+                {
+                    "title": "Result",
+                    "type": "str",
+                }
+            )
+            self.columns = columns
             self.data = dataFrame.values.tolist()
         self.loading = False
         self.updating = False
@@ -154,6 +176,7 @@ class PatientCheckState(rx.State):
         await self.get_data()
 
     async def submit_check_data(self, form_data: dict):
+        form_data["checkStatus"] = CheckStatus.Done.value
         for key, value in form_data.items():
             self.selected_data[key] = value if value else None
         await api_call.post(
