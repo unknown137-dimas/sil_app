@@ -6,7 +6,7 @@ from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY, TO
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
-from Frontend.models.services_model import ServicesModel, ServiceModel
+from Frontend.models.services_model import SampleServicesModel, SampleServiceModel
 from Frontend.enum.enums import FormType
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
@@ -26,7 +26,7 @@ class PatientSampleState(rx.State):
     selected_data: dict[str, str] = {}
     updating: bool = False
     loading: bool = True
-    sample_options: list[ServicesModel]
+    sample_options: list[SampleServicesModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
 
@@ -81,7 +81,7 @@ class PatientSampleState(rx.State):
                 if service.id == service_id:
                     service.selected = value
 
-    def get_sample_service(self, service_id: str) -> ServiceModel:
+    def get_sample_service(self, service_id: str) -> SampleServiceModel:
         for category in self.sample_options:
             for service in category.services:
                 if service.id == service_id:
@@ -90,7 +90,7 @@ class PatientSampleState(rx.State):
     async def get_data(self):
         sample_categories_states = await self.get_state(SampleCategoryState)
         await sample_categories_states.get_data()
-        self.sample_options = [converter.to_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
+        self.sample_options = [converter.to_sample_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
 
         patient_states = await self.get_state(PatientState)
         await patient_states.get_data()

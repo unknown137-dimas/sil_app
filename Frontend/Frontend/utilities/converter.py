@@ -2,8 +2,8 @@ from pandas import DataFrame, to_datetime
 from numpy import NaN
 from datetime import datetime
 import re
-from Frontend.models.services_model import ServicesModel, ServiceModel
-from Frontend.enum.enums import CheckType
+from Frontend.models.services_model import CheckServiceModel, CheckServicesModel, SampleServiceModel, SampleServicesModel
+from Frontend.enum.enums import CheckType, Gender
 
 def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, DataFrame):
 
@@ -48,8 +48,26 @@ def to_date_input(date_string: str) -> str:
 def to_title_case(input: str) -> str:
     return re.sub(r"([A-Z])", r" \1", input).title().strip()
 
-def to_services_model(category: str, services: list[dict]) -> ServicesModel:
-    return ServicesModel(
+def to_check_services_model(category: str, services: list[dict]) -> CheckServicesModel:
+    return CheckServicesModel(
         name=category,
-        services=[ServiceModel(id=service["id"], name=service["name"], normal_value_type=CheckType(service["normalValueType"])) for service in services]
+        services=[CheckServiceModel(
+            id=service["id"],
+            name=service["name"],
+            normal_value_type=CheckType(service["normalValueType"]),
+            unit=service["checkUnit"],
+            gender=Gender(service["gender"]),
+            min_normal_value=service["minNormalValue"],
+            max_normal_value=service["maxNormalValue"],
+            normal_value=service["normalValue"]
+        ) for service in services]
+    )
+
+def to_sample_services_model(category: str, services: list[dict]) -> SampleServicesModel:
+    return SampleServicesModel(
+        name=category,
+        services=[SampleServiceModel(
+            id=service["id"],
+            name=service["name"]
+        ) for service in services]
     )

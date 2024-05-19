@@ -6,8 +6,8 @@ from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY, TO
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
-from Frontend.models.services_model import ServicesModel, ServiceModel
-from Frontend.enum.enums import FormType, ValidationStatus, CheckStatus
+from Frontend.models.services_model import CheckServicesModel, CheckServiceModel
+from Frontend.enum.enums import FormType, ValidationStatus, CheckStatus, CheckType
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
 from Frontend.components.table import table
@@ -26,8 +26,8 @@ class PatientCheckState(rx.State):
     selected_data: dict[str, str] = {}
     updating: bool = False
     loading: bool = True
-    check_options: list[ServicesModel]
-    check_services: list[ServicesModel]
+    check_options: list[CheckServicesModel]
+    check_services: list[CheckServicesModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
     service_detail: dict[str, str] = {}
@@ -87,7 +87,7 @@ class PatientCheckState(rx.State):
                 if service.id == service_id:
                     service.selected = value
 
-    def get_check_service(self, service_id: str) -> ServiceModel:
+    def get_check_service(self, service_id: str) -> CheckServiceModel:
         for category in self.check_services:
             for service in category.services:
                 if service.id == service_id:
@@ -99,7 +99,7 @@ class PatientCheckState(rx.State):
         
         check_categories_states = await self.get_state(CheckCategoryState)
         await check_categories_states.get_data()
-        self.check_services = [converter.to_services_model(item["name"], item["checkServices"]) for item in check_categories_states.raw_data]
+        self.check_services = [converter.to_check_services_model(item["name"], item["checkServices"]) for item in check_categories_states.raw_data]
         
         if patient_states.selected_data:
             self.selected_patient_data = patient_states.selected_data
@@ -108,7 +108,7 @@ class PatientCheckState(rx.State):
                 item["checkServices"] = [service for service in item["checkServices"] if service["gender"] == patient_states.selected_data["gender"]]
                 check_data.append(item)
                         
-            self.check_options = [converter.to_services_model(item["name"], item["checkServices"]) for item in check_data]
+            self.check_options = [converter.to_check_services_model(item["name"], item["checkServices"]) for item in check_data]
 
         _, self.raw_data = await api_call.get(API_PATIENT_CHECK)
         if self.raw_data:
