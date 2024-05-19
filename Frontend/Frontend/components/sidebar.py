@@ -1,6 +1,7 @@
 """Sidebar component for the app."""
 
 from Frontend import styles
+from Frontend.states.auth_state import AuthState
 from Frontend.const import allowed_path
 from Frontend.enum.enums import UserRoles
 
@@ -58,7 +59,7 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
         rx.Component: The sidebar item component.
     """
     # Whether the item is active.
-    active = (rx.State.router.page.path == f"/{text.lower().replace(' ', '_').replace('&_', '')}") | (
+    active = (rx.State.router.page.path == url) | (
         (rx.State.router.page.path == "/") & text == "Home"
     )
 
@@ -93,31 +94,28 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     )
 
 
-def sidebar(role: str) -> rx.Component:
+def sidebar() -> rx.Component:
     """The sidebar.
 
     Returns:
         The sidebar component.
     """
-    # Get all the decorated pages and add them to the sidebar.
-    from reflex.page import get_decorated_pages
 
-    pages = [page for page in get_decorated_pages() if page["route"] != "/login"]
-    if(role != UserRoles.Admin and role != ""):
-        pages = [page for page in pages if page["route"] in allowed_path.path_config[role]]
+    pages = AuthState.get_allowed_pages
 
     return rx.box(
         rx.vstack(
             sidebar_header(),
             rx.vstack(
-                *[
+                rx.foreach(
+                    pages,
+                    lambda page:
                     sidebar_item(
-                        text=page.get("title", page["route"].strip("/").capitalize()),
-                        icon=page.get("image", "/github.svg"),
-                        url=page["route"],
+                        text=page.title,
+                        icon=page.image,
+                        url=page.route,
                     )
-                    for page in pages
-                ],
+                ),
                 width="100%",
                 overflow_y="auto",
                 align_items="flex-start",

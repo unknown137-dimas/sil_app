@@ -1,9 +1,11 @@
 from Frontend.const import allowed_path
 from Frontend.enum.enums import UserRoles
+from Frontend.models.page_model import PageModel
 from Frontend.const.api import API_USER
 from Frontend.utilities import api_call
 
 import reflex as rx
+from reflex.page import get_decorated_pages
 
 
 class AuthState(rx.State):
@@ -33,6 +35,18 @@ class AuthState(rx.State):
     @rx.var
     def is_lab_staff(self) -> bool:
         return self.role == UserRoles.Lab.value
+
+    @rx.var
+    def get_allowed_pages(self) -> list[PageModel]:
+        pages = []
+        if(self.role != ""):
+            pages = [
+                PageModel(
+                    title=page.get("title", page["route"].strip("/").capitalize()),
+                    image=page.get("image", "/github.svg"),
+                    route=page["route"]
+                ) for page in get_decorated_pages() if page["route"] in allowed_path.path_config[self.role]]
+        return pages
 
 
     async def authentication_check(self):
