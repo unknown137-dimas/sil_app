@@ -3,6 +3,7 @@ from Frontend.enum.enums import UserRoles
 from Frontend.models.page_model import PageModel
 from Frontend.const.api import API_USER
 from Frontend.utilities import api_call
+from Frontend.utilities.converter import to_initial
 
 import reflex as rx
 from reflex.page import get_decorated_pages
@@ -19,6 +20,10 @@ class AuthState(rx.State):
     @rx.var
     def full_name(self) -> str:
         return f"{self.firstName} {self.lastName}"
+
+    @rx.var
+    def initial(self) -> str:
+        return to_initial(self.full_name)
 
     @rx.var
     def is_admin(self) -> bool:

@@ -6,7 +6,6 @@ from Frontend.models.services_model import CheckServiceModel, CheckServicesModel
 from Frontend.enum.enums import CheckType, Gender
 
 def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, DataFrame):
-
     if(input_data == []):
         return [], [], None
     ignored_columns = ["id"] + ignored_columns
@@ -47,6 +46,10 @@ def to_date_input(date_string: str) -> str:
 
 def to_title_case(input: str) -> str:
     return re.sub(r"([A-Z])", r" \1", input).title().strip()
+
+def to_initial(input: str) -> str:
+    parts = input.split()
+    return ''.join([part[0].upper() for part in parts if part])
 
 def to_check_services_model(category: str, services: list[dict]) -> CheckServicesModel:
     return CheckServicesModel(
