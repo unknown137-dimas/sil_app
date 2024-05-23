@@ -212,7 +212,17 @@ def patient_check() -> rx.Component:
                         color_scheme="yellow",
                     ),
                     rx.fragment(
-                        rx.flex(rx.text(PatientCheckState.selected_patient_data["name"])),
+                        rx.flex(
+                            rx.text("Selected Patient: "),
+                            rx.badge(
+                                PatientCheckState.selected_patient_data["name"],
+                                variant="solid",
+                                size="2",
+                                radius="full"
+                            ),
+                            spacing="1",
+                            align="center"
+                        ),
                         multiple_selections(PatientCheckState.check_options, PatientCheckState.select_service),
                     ),
                 ),

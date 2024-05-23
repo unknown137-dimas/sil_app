@@ -84,6 +84,10 @@ class PatientState(rx.State):
     def get_columns(self) -> list[str]:
         return get_columns(self)
 
+    @rx.var
+    def is_patient_data_empty(self) -> bool:
+        return self.selected_data == {}
+
     async def get_data(self):
         _, self.raw_data = await api_call.get(API_PATIENT)
         if self.raw_data:
@@ -191,32 +195,63 @@ class PatientState(rx.State):
     def sort_table(self, sort_key: str):
         sort_table(self, sort_key)
 
+    def clear_selection(self):
+        self.selected_data = {}
+        self.updating = False
+
 @template(route="/patient", title="Patient", image="/user-round.svg")
 def patient() -> rx.Component:
     return rx.vstack(
-        rx.cond(
+        rx.match(
             AuthState.is_regis_staff,
-            rx.hstack(
-                crud_button(
-                    "Patient",
-                    PatientState,
-                    PatientState.new_patient_form,
-                    PatientState.update_patient_form,
+            (
+                True,
+                rx.hstack(
+                    crud_button(
+                        "Patient",
+                        PatientState,
+                        PatientState.new_patient_form,
+                        PatientState.update_patient_form,
+                    ),
+                    rx.button(
+                        "Patient Sample", 
+                        disabled=~PatientState.updating,
+                        on_click=rx.redirect("/patient_sample"),
+                        radius="full"
+                    ),
+                    rx.button(
+                        "Patient Check", 
+                        disabled=~PatientState.updating,
+                        on_click=rx.redirect("/patient_check"),
+                        radius="full"
+                    ),
+                    spacing="8"
                 ),
-                rx.button(
-                    "Patient Sample", 
-                    disabled=~PatientState.updating,
-                    on_click=rx.redirect("/patient_sample"),
-                    radius="full"
-                ),
-                rx.button(
-                    "Patient Check", 
-                    disabled=~PatientState.updating,
-                    on_click=rx.redirect("/patient_check"),
-                    radius="full"
-                ),
-                spacing="8"
             ),
+        ),
+        rx.flex(
+            rx.text("Selected Patient: "),
+            rx.cond(
+                PatientState.is_patient_data_empty,
+                rx.text(),
+                rx.flex(
+                    rx.badge(
+                        PatientState.selected_data["name"],
+                        variant="solid",
+                        size="2",
+                        radius="full"
+                    ),
+                    rx.button(
+                        rx.icon("x"),
+                        on_click=PatientState.clear_selection,
+                        variant="ghost"
+                    ),
+                    spacing="1",
+                    align="center"
+                )
+            ),
+            spacing="1",
+            align="center"
         ),
         table(PatientState, PatientState.get_columns, PatientState.sort_table),
         on_mount=PatientState.get_data

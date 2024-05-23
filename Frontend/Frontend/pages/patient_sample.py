@@ -171,7 +171,17 @@ def patient_sample() -> rx.Component:
                         color_scheme="yellow",
                     ),
                     rx.fragment(
-                        rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
+                        rx.flex(
+                            rx.text("Selected Patient: "),
+                            rx.badge(
+                                PatientSampleState.selected_patient_data["name"],
+                                variant="solid",
+                                size="2",
+                                radius="full"
+                            ),
+                            spacing="1",
+                            align="center"
+                        ),
                         multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
                     ),
                 ),
