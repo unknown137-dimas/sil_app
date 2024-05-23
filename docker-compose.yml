@@ -1,0 +1,30 @@
+version: "3"
+services:
+  proxy:
+    container_name: sil_proxy
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+  web:
+    container_name: sil_app
+    build:
+      dockerfile: Frontend.Dockerfile
+    environment:
+        - API_HOST=http://sil_backend:8080
+    ports:
+      - 3000:3000
+      - 8000:8000
+  backend:
+    container_name: sil_backend
+    hostname: sil_backend
+    build:
+      dockerfile: Backend.Dockerfile
+    volumes:
+      - ./Backend/App.db:/app/App.db
+
