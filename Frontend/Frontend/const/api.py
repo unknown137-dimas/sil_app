@@ -1,11 +1,7 @@
 import os
-from dotenv import load_dotenv
-from pathlib import Path
 
-load_dotenv(Path("../../.env"))
-
-API_HOST = os.getenv("API_HOST")
-API_URL = API_HOST if API_HOST else "http://localhost:5056" + "/api"
+API_HOST = os.getenv("API_HOST", "http://localhost:5056")
+API_URL = API_HOST + "/api"
 API_USER = API_URL + "/user"
 API_USER_LOGIN = API_USER + "/login"
 API_ROLE = API_URL + "/role"
