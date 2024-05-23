@@ -200,13 +200,23 @@ class PatientCheckState(rx.State):
 @template(route="/patient_check", title="Patient Check", image="/stethoscope.svg")
 def patient_check() -> rx.Component:
     return rx.vstack(
-        rx.cond(
+        rx.match(
             AuthState.is_regis_staff,
-            rx.fragment(
-                rx.flex(rx.text(PatientCheckState.selected_patient_data["name"])),
-                multiple_selections(PatientCheckState.check_options, PatientCheckState.select_service),
-            ),
-            rx.flex()
+            (
+                True, 
+                rx.cond(
+                    PatientCheckState.is_patient_data_empty,
+                    rx.callout(
+                        "No patient selected, please select patient first from patient page",
+                        icon="info",
+                        color_scheme="yellow",
+                    ),
+                    rx.fragment(
+                        rx.flex(rx.text(PatientCheckState.selected_patient_data["name"])),
+                        multiple_selections(PatientCheckState.check_options, PatientCheckState.select_service),
+                    ),
+                ),
+            )
         ),
         rx.cond(
             AuthState.is_regis_staff,

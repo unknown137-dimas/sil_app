@@ -98,10 +98,10 @@ class PatientSampleState(rx.State):
         
         sample_categories_states = await self.get_state(SampleCategoryState)
         await sample_categories_states.get_data()
+        self.sample_options = [converter.to_sample_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
 
         if patient_states.selected_data:
             self.selected_patient_data = patient_states.selected_data
-            self.sample_options = [converter.to_sample_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
 
         _, self.raw_data = await api_call.get(API_PATIENT_SAMPLE)
         if self.raw_data:
@@ -159,13 +159,23 @@ class PatientSampleState(rx.State):
 @template(route="/patient_sample", title="Patient Sample", image="/pipette.svg")
 def patient_sample() -> rx.Component:
     return rx.vstack(
-        rx.cond(
+        rx.match(
             AuthState.is_regis_staff,
-            rx.fragment(
-                rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
-                multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service, ),
-            ),
-            rx.flex()
+            (
+                True, 
+                rx.cond(
+                    PatientSampleState.is_patient_data_empty,
+                    rx.callout(
+                        "No patient selected, please select patient first from patient page",
+                        icon="info",
+                        color_scheme="yellow",
+                    ),
+                    rx.fragment(
+                        rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
+                        multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
+                    ),
+                ),
+            )
         ),
         rx.cond(
             AuthState.is_regis_staff,
