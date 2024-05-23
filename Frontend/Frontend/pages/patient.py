@@ -74,7 +74,7 @@ class PatientState(rx.State):
             name="address",
             placeholder="Address",
             required=True,
-            form_type=FormType.Input.value,
+            form_type=FormType.Text.value,
             min_length=10,
         ),
     ]
@@ -161,9 +161,8 @@ class PatientState(rx.State):
                     name="address",
                     placeholder="Address",
                     required=True,
-                    form_type=FormType.Input.value,
-                    min_length=10,
-                    default_value=self.selected_data["address"]
+                    form_type=FormType.Text.value,
+                    min_length=10
                 ),
             ]
     

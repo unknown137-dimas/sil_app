@@ -10,14 +10,26 @@ def generate_form_field(field: FormModel) -> rx.Component:
             rx.form.label(
                 field.placeholder,
             ),
-            rx.cond(
-                field.form_type == FormType.Select.value,
-                rx.select(
-                    name=field.name,
-                    placeholder=field.placeholder,
-                    required=field.required,
-                    items=field.options,
-                    default_value=field.default_value,
+            rx.match(
+                field.form_type,
+                (
+                    FormType.Select.value,
+                    rx.select(
+                        name=field.name,
+                        placeholder=field.placeholder,
+                        required=field.required,
+                        items=field.options,
+                        default_value=field.default_value,
+                    )
+                ),
+                (
+                    FormType.Text.value,
+                    rx.text_area(
+                        name=field.name,
+                        placeholder=field.placeholder,
+                        required=field.required,
+                        min_length=field.min_length,
+                    )
                 ),
                 rx.form.control(
                     rx.input(

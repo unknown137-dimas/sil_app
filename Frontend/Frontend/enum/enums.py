@@ -8,6 +8,7 @@ class FormType(Enum):
     Time = "time"
     Datetime = "datetime-local"
     Select = "select"
+    Text = "text"
 
 class CheckType(IntEnum):
     Numeric = 0
