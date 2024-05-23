@@ -77,6 +77,10 @@ class PatientSampleState(rx.State):
         return self.selected_patient_data == {}
 
     @rx.var
+    def is_allowed_to_add(self) -> bool:
+        return ((not self.is_patient_data_empty) and (self.selected_service_ids != []))
+
+    @rx.var
     def get_columns(self) -> list[str]:
         return get_columns(self)
     
@@ -100,8 +104,7 @@ class PatientSampleState(rx.State):
         await sample_categories_states.get_data()
         self.sample_options = [converter.to_sample_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
 
-        if patient_states.selected_data:
-            self.selected_patient_data = patient_states.selected_data
+        self.selected_patient_data = patient_states.selected_data
 
         _, self.raw_data = await api_call.get(API_PATIENT_SAMPLE)
         if self.raw_data:
@@ -201,7 +204,7 @@ def patient_sample() -> rx.Component:
                     PatientSampleState,
                     PatientSampleState.patient_sample_form,
                     PatientSampleState.patient_sample_form,
-                    PatientSampleState.is_patient_data_empty
+                    ~PatientSampleState.is_allowed_to_add
                 ),
                 spacing="8"
             ),

@@ -94,6 +94,10 @@ class PatientCheckState(rx.State):
         return self.selected_patient_data == {}
 
     @rx.var
+    def is_allowed_to_add(self) -> bool:
+        return ((not self.is_patient_data_empty) and (self.selected_service_ids != []))
+
+    @rx.var
     def get_columns(self) -> list[str]:
         return get_columns(self)
 
@@ -117,8 +121,8 @@ class PatientCheckState(rx.State):
         await check_categories_states.get_data()
         self.check_services = [converter.to_check_services_model(item["name"], item["checkServices"]) for item in check_categories_states.raw_data]
         
-        if patient_states.selected_data:
-            self.selected_patient_data = patient_states.selected_data
+        self.selected_patient_data = patient_states.selected_data
+        if self.selected_patient_data:
             check_data = []
             for item in check_categories_states.raw_data:
                 item["checkServices"] = [service for service in item["checkServices"] if service["gender"] == patient_states.selected_data["gender"]]
@@ -242,7 +246,7 @@ def patient_check() -> rx.Component:
                     PatientCheckState,
                     PatientCheckState.patient_check_form,
                     PatientCheckState.patient_check_form,
-                    PatientCheckState.is_patient_data_empty
+                    ~PatientCheckState.is_allowed_to_add
                 ),
                 spacing="8"
             ),
