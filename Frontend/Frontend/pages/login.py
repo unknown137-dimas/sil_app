@@ -45,24 +45,29 @@ class LoginState(AuthState):
 def login() -> rx.Component:
     return rx.theme(
         rx.box(
-            rx.card(
-                rx.form(
-                    rx.vstack(
-                        rx.foreach(
-                            LoginState.login_form,
-                            generate_form_field
+            rx.vstack(
+                rx.heading("Pelayanan Laboratorium RSUD Jogja", weight="bold"),
+                rx.card(
+                    rx.form(
+                        rx.vstack(
+                            rx.foreach(
+                                LoginState.login_form,
+                                generate_form_field
+                            ),
+                            rx.button(
+                                "Login",
+                                rx.icon("log-in", size=20),
+                                type="submit",
+                                radius="full"
+                            ),
+                            align="center"
                         ),
-                        rx.button(
-                            "Login",
-                            rx.icon("log-in", size=20),
-                            type="submit",
-                            radius="full"
-                        ),
-                        align="center"
+                        on_submit=LoginState.login,
+                        reset_on_submit=True,
                     ),
-                    on_submit=LoginState.login,
-                    reset_on_submit=True,
                 ),
+                spacing="2",
+                align="center"
             ),
             display="flex",
             justify_content="center",

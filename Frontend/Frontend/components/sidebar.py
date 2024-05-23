@@ -16,15 +16,12 @@ def sidebar_header() -> rx.Component:
     """
     return rx.hstack(
         rx.icon("hospital", size=50),
-        rx.spacer(),
-        rx.heading(
-            "Pelayanan Laboratorium",
-            weight="bold",
-        ),
+        rx.heading("RSUD Jogja", weight="bold"),
         align="center",
         width="100%",
         border_bottom=styles.border,
         padding="1em",
+        spacing="2"
     )
 
 
