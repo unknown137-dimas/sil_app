@@ -6,6 +6,7 @@ from Frontend.models.services_model import ServicesModel
 def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandler)  -> rx.Component:
     return rx.fragment(
         rx.flex(
+            rx.text("Selected Item: "),
             rx.foreach(
                 data,
                 lambda item: rx.foreach(
@@ -13,7 +14,15 @@ def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandl
                     lambda service:
                     rx.match(
                         service.selected,
-                        (True, rx.badge(service.name))
+                        (
+                            True,
+                            rx.badge(
+                                service.name,
+                                variant="solid",
+                                size="2",
+                                radius="full"
+                            ),
+                        )
                     )
                 )
             ),
@@ -45,6 +54,7 @@ def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandl
                     value=items.name
                 )
             ),
+            default_value=data[0].name,
             orientation="vertical",
         )
     )
