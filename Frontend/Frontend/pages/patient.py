@@ -246,7 +246,7 @@ def patient() -> rx.Component:
                         on_click=PatientState.clear_selection,
                         variant="ghost"
                     ),
-                    spacing="1",
+                    spacing="2",
                     align="center"
                 )
             ),
