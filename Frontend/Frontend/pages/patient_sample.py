@@ -93,14 +93,15 @@ class PatientSampleState(rx.State):
                     return service
 
     async def get_data(self):
-        sample_categories_states = await self.get_state(SampleCategoryState)
-        await sample_categories_states.get_data()
-        self.sample_options = [converter.to_sample_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
-
         patient_states = await self.get_state(PatientState)
         await patient_states.get_data()
+        
+        sample_categories_states = await self.get_state(SampleCategoryState)
+        await sample_categories_states.get_data()
+
         if patient_states.selected_data:
             self.selected_patient_data = patient_states.selected_data
+            self.sample_options = [converter.to_sample_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
 
         _, self.raw_data = await api_call.get(API_PATIENT_SAMPLE)
         if self.raw_data:
