@@ -205,13 +205,6 @@ def patient_check() -> rx.Component:
             rx.fragment(
                 rx.flex(rx.text(PatientCheckState.selected_patient_data["name"])),
                 multiple_selections(PatientCheckState.check_options, PatientCheckState.select_service),
-                rx.flex(
-                    rx.foreach(
-                        PatientCheckState.selected_service_ids,
-                        rx.badge
-                    ),
-                    spacing="2"
-                ),
             ),
             rx.flex()
         ),

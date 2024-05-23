@@ -162,14 +162,7 @@ def patient_sample() -> rx.Component:
             AuthState.is_regis_staff,
             rx.fragment(
                 rx.flex(rx.text(PatientSampleState.selected_patient_data["name"])),
-                multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
-                rx.flex(
-                    rx.foreach(
-                        PatientSampleState.selected_service_ids,
-                        rx.badge
-                    ),
-                    spacing="2"
-                ),
+                multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service, ),
             ),
             rx.flex()
         ),
