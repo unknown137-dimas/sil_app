@@ -53,18 +53,10 @@ def generate_form_field(field: FormModel) -> rx.Component:
                             ),
                             as_child=True
                         ),
-                        rx.flex(
-                            rx.switch(
-                                on_change=FormState.toggle_visibility,
-                                radius="full"
-                            ),
-                            rx.text(
-                                "Show/Hide Password",
-                                size="1"
-                            ),
-                            spacing="2",
-                            align="center"
-                        )
+                        rx.checkbox(
+                            "Show password",
+                            on_change=FormState.toggle_visibility,
+                        ),
                     ),
                 ),
                 rx.form.control(
