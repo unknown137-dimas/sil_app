@@ -3,6 +3,16 @@ from Frontend.models.form_model import FormModel
 from Frontend.utilities.converter import to_title_case
 import reflex as rx
 
+class FormState(rx.State):
+    show_password: bool = False
+
+    @rx.var
+    def password_type(self) -> str:
+        return FormType.Input.value if self.show_password else FormType.Password.value
+
+    def toggle_visibility(self, value):
+        self.show_password = value
+
 
 def generate_form_field(field: FormModel) -> rx.Component:
     return rx.form.field(
@@ -30,6 +40,32 @@ def generate_form_field(field: FormModel) -> rx.Component:
                         required=field.required,
                         min_length=field.min_length,
                     )
+                ),
+                (
+                    FormType.Password.value,
+                    rx.vstack(
+                        rx.form.control(
+                            rx.input(
+                                name=field.name,
+                                placeholder=field.placeholder,
+                                required=field.required,
+                                type=FormState.password_type,
+                            ),
+                            as_child=True
+                        ),
+                        rx.flex(
+                            rx.switch(
+                                on_change=FormState.toggle_visibility,
+                                radius="full"
+                            ),
+                            rx.text(
+                                "Show/Hide Password",
+                                size="1"
+                            ),
+                            spacing="2",
+                            align="center"
+                        )
+                    ),
                 ),
                 rx.form.control(
                     rx.input(
