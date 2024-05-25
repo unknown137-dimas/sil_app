@@ -10,10 +10,10 @@ accent_text_color = rx.color("accent", 10)
 accent_color = rx.color("accent", 3)
 hover_accent_color = {"_hover": {"color": accent_text_color}}
 hover_accent_bg = {"_hover": {"background_color": accent_color}}
-content_width_vw = "90vw"
-sidebar_width = "20em"
+content_width_vw = "85vw"
+sidebar_width = "15vw"
 
-template_page_style = {"padding_top": "5em", "padding_x": ["auto", "2em"], "flex": "1"}
+template_page_style = {"padding_top": "3em", "padding_x": ["auto", "2em"], "flex": "1"}
 
 template_content_style = {
     "align_items": "flex-start",

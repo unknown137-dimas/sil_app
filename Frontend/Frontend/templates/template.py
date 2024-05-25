@@ -60,19 +60,24 @@ def template(
         all_meta = [*default_meta, *(meta or [])]
 
         def templated_page():
-            return rx.hstack(
+            return rx.flex(
                 sidebar(),
-                rx.vstack(
+                rx.flex(
                     rx.flex(
-                        rx.avatar(rx.icon("user-round"), fallback=AuthState.initial, size="4", radius="full"),
+                        rx.spacer(),
                         rx.flex(
-                            rx.text(AuthState.full_name, weight="bold", size="4"),
-                            rx.text(AuthState.role, color_scheme="gray"),
-                            direction="column",
+                            rx.avatar(rx.icon("user-round"), fallback=AuthState.initial, size="4", radius="full"),
+                            rx.flex(
+                                rx.text(AuthState.full_name, weight="bold", size="4"),
+                                rx.text(AuthState.role, color_scheme="gray"),
+                                direction="column",
+                            ),
+                            spacing="2",
+                            align="center",
+                            padding="1em"
                         ),
-                        spacing="2",
-                        align="center",
-                        padding="10px"
+                        align="end",
+                        width=styles.content_width_vw
                     ),
                     rx.box(
                         rx.box(
@@ -81,9 +86,11 @@ def template(
                         ),
                         **styles.template_page_style,
                     ),
-                    align="end"
+                    direction="column",
+                    width=styles.content_width_vw
                 ),
-                align="start",
+                height="100vh",
+                width="100vw"
             )
 
         on_load = AuthState.authentication_check
