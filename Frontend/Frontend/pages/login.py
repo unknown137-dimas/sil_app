@@ -44,6 +44,9 @@ class LoginState(AuthState):
         else:
             self.error_message = error_messages[-1]
 
+    def reset_error(self):
+        self.error_message = ""
+
 @rx.page(route="/login", title="Login")
 def login() -> rx.Component:
     return rx.theme(
@@ -87,6 +90,7 @@ def login() -> rx.Component:
             justify_content="center",
             align_items="center",
             height="100vh",
+            on_mount=LoginState.reset_error
         ),
         accent_color=ThemeState.accent_color
     )
