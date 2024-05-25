@@ -12,6 +12,8 @@ hover_accent_color = {"_hover": {"color": accent_text_color}}
 hover_accent_bg = {"_hover": {"background_color": accent_color}}
 content_width_vw = "85vw"
 sidebar_width = "15vw"
+table_height_vh = "30vh"
+table_width_vw = "80vw"
 
 template_page_style = {"padding_top": "3em", "padding_x": ["auto", "2em"], "flex": "1"}
 

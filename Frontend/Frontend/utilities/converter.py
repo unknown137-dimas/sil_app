@@ -32,9 +32,20 @@ def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, 
     data = dataframe.values.tolist()
     
     for columnTitle, columnType in zip(dataframe.columns.tolist(), [type(x).__name__ for x in data[0]]):
+        title = to_title_case(columnTitle)
+        title_length = len(title)
+        multiplier = 30
+        
+        if title_length > 10 and title_length <= 15:
+            multiplier = 20
+        elif title_length > 15:
+            multiplier = 10
+        width = title_length * multiplier
+        
         column = {
-            "title": to_title_case(columnTitle),
+            "title": title,
             "type": columnType,
+            "width": width
         }
         columns.append(column)
 
