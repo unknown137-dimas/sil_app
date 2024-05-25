@@ -12,6 +12,7 @@ from pickle import dumps
 import reflex as rx
 
 class LoginState(AuthState):
+    error_message: str = ""
     login_form: list[FormModel] = [
         FormModel(
             name="userName",
@@ -27,6 +28,10 @@ class LoginState(AuthState):
         ),
     ]
 
+    @rx.var
+    def is_error(self) -> bool:
+        return self.error_message != ""
+
     async def login(self, form_data: dict):
         error_messages, response_data = await api_call.post(API_USER_LOGIN, form_data)
         if response_data:
@@ -37,9 +42,7 @@ class LoginState(AuthState):
                 self.token = response_data[0]["token"]
                 return rx.redirect(self.get_allowed_pages[0].route)
         else:
-            for error in error_messages:
-                print(error)
-                rx.window_alert(error)
+            self.error_message = error_messages[-1]
 
 @rx.page(route="/login", title="Login")
 def login() -> rx.Component:
@@ -48,6 +51,17 @@ def login() -> rx.Component:
             rx.vstack(
                 rx.heading("Pelayanan Laboratorium RSUD Jogja", weight="bold"),
                 rx.card(
+                    rx.match(
+                        LoginState.is_error,
+                        (
+                            True,
+                            rx.callout(
+                                LoginState.error_message,
+                                icon="shield-x",
+                                color_scheme="red",
+                            ),
+                        )
+                    ),
                     rx.form(
                         rx.vstack(
                             rx.foreach(

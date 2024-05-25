@@ -96,7 +96,7 @@ public class UserController : ApiBaseController<UserController, UserDTO>
             };
             return GeneratedResponse(loginInfo, "", _loginResponseFactory);
         }
-        return GeneratedResponse(null, "Error login", _loginResponseFactory);
+        return GeneratedResponse(null, "Wrong Username or Password", _loginResponseFactory);
     }
 
     [HttpPost("{userId}")]
