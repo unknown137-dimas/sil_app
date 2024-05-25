@@ -4,26 +4,37 @@ services:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
-      - '80:80'
-      - '81:81'
       - '443:443'
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-  web:
-    container_name: sil_app
-    build:
-      dockerfile: Frontend.Dockerfile
-    environment:
-        - API_HOST=http://sil_backend:8080
-        - API_URL=https://app-backend.burbee.duckdns.org
-    expose:
-      - 3000
-      - 8000
+  
   backend:
     container_name: sil_backend
+    restart: always
     build:
       dockerfile: Backend.Dockerfile
     volumes:
       - ./Backend/App.db:/app/App.db
 
+  app:
+    container_name: sil_app
+    image: local/sil_app
+    environment:
+      API_HOST: http://sil_backend:8080
+      API_URL: https://app-backend.burbee.duckdns.org
+    build:
+      context: .
+      dockerfile: Prod.Dockerfile
+    expose:
+      - 8000
+    restart: always
+
+  webserver:
+    container_name: sil_web_server
+    build:
+      context: .
+      dockerfile: Caddy.Dockerfile
+    restart: always
+    depends_on:
+      - app
