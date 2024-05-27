@@ -6,9 +6,11 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType, CalibrationStatus
-from Frontend.components.crud_button import crud_button
+from Frontend.components.dynamic_form import dynamic_form_dialog
+from Frontend.components.crud_button import delete_button
 from Frontend.components.table import table, sort_table, get_columns
 from pandas import DataFrame
+from Frontend.states.auth_state import AuthState
 
 import reflex as rx
 
@@ -53,6 +55,7 @@ class MedicalToolState(rx.State):
             self.data = dataFrame.values.tolist()
             self.dataFrame = dataFrame
         self.loading = False
+        self.updating = False
 
 
     def get_selected_data(self, pos):
@@ -130,11 +133,14 @@ class MedicalToolState(rx.State):
 @template(route="/medical_tool", title="Medical Tool", image="/microscope.svg")
 def medical_tool() -> rx.Component:
     return rx.vstack(
-        crud_button(
-            "Medical Tool",
-            MedicalToolState,
-            MedicalToolState.new_medical_tool_form,
-            MedicalToolState.update_medical_tool_form,
+        rx.flex(
+            dynamic_form_dialog(False, "Add Medical Tool", "Add", MedicalToolState.new_medical_tool_form, MedicalToolState.add_data),
+            dynamic_form_dialog(~MedicalToolState.updating, "Update Medical Tool", "Update", MedicalToolState.update_medical_tool_form, MedicalToolState.update_data),
+            rx.match(
+                AuthState.is_admin,
+                (True, delete_button(~MedicalToolState.updating, MedicalToolState.delete_data))
+            ),
+            spacing="3",
         ),
         table(MedicalToolState, MedicalToolState.get_columns, MedicalToolState.sort_table),
         on_mount=MedicalToolState.get_data
