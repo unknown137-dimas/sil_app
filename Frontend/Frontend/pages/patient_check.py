@@ -75,8 +75,26 @@ class PatientCheckState(rx.State):
                     )
                 )
 
-        for form in forms:
-            if self.selected_data and self.selected_data[form.name]:
+            for form in forms:
+                form.default_value = self.selected_data[form.name]
+        return forms
+
+    @rx.var
+    def patient_check_validate_result_form(self) -> list[FormModel]:
+        forms = []
+        if self.selected_data:
+            forms.append(
+                FormModel(
+                    name="validationStatus",
+                    placeholder="Validation Status",
+                    required=True,
+                    form_type=FormType.Select.value,
+                    options=[converter.to_title_case(vs.name) for vs in ValidationStatus],
+                    default_value=converter.to_title_case(ValidationStatus(self.selected_data["validationStatus"]).name)
+                )
+            )
+
+            for form in forms:
                 form.default_value = self.selected_data[form.name]
         return forms
 
@@ -96,6 +114,12 @@ class PatientCheckState(rx.State):
     @rx.var
     def is_allowed_to_add(self) -> bool:
         return ((not self.is_patient_data_empty) and (self.selected_service_ids != []))
+
+    @rx.var
+    def is_result_submitted(self) -> bool:
+        if self.selected_data:
+            return self.selected_data["checkStatus"] == CheckStatus.Done.value
+        return False
 
     @rx.var
     def get_columns(self) -> list[str]:
@@ -186,8 +210,12 @@ class PatientCheckState(rx.State):
 
     async def submit_check_data(self, form_data: dict):
         form_data["checkStatus"] = CheckStatus.Done.value
-        for key, value in form_data.items():
-            self.selected_data[key] = value if value else None
+        if "validationStatus" not in form_data.keys():
+            form_data["validationStatus"] = ValidationStatus.WaitingValidation.value
+        else:
+            form_data["validationStatus"] = ValidationStatus[form_data["validationStatus"].replace(" ","")].value
+        self.selected_data.update(form_data)
+        print(self.selected_data)
         await api_call.post(
             f"{API_PATIENT_CHECK}/{self.selected_data['id']}",
             payload=dict(self.selected_data)
@@ -250,16 +278,28 @@ def patient_check() -> rx.Component:
                 ),
                 spacing="8"
             ),
-            rx.cond(
+            rx.match(
                 AuthState.is_lab_staff,
-                dynamic_form_dialog(
-                    ~PatientCheckState.updating,
-                    "Submit Check Result",
-                    "Submit Check",
-                    PatientCheckState.patient_check_result_form,
-                    PatientCheckState.submit_check_data
-                ),
-                rx.flex(),
+                (
+                    True,
+                    rx.flex(
+                        dynamic_form_dialog(
+                            ~PatientCheckState.updating,
+                            "Submit Check Result",
+                            "Submit Result",
+                            PatientCheckState.patient_check_result_form,
+                            PatientCheckState.submit_check_data
+                        ),
+                        dynamic_form_dialog(
+                            ~PatientCheckState.is_result_submitted,
+                            "Validate Result",
+                            "Validate Result",
+                            PatientCheckState.patient_check_validate_result_form,
+                            PatientCheckState.submit_check_data
+                        ),
+                        spacing="2"
+                    )
+                )
             ),
         ),
         table(PatientCheckState, PatientCheckState.get_columns, PatientCheckState.sort_table),
