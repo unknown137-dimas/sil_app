@@ -74,7 +74,7 @@ def template(
                             ),
                             spacing="2",
                             align="center",
-                            padding="1em"
+                            padding="2em"
                         ),
                         align="end",
                         width=styles.content_width_vw
