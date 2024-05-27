@@ -43,8 +43,8 @@ class PatientSampleState(rx.State):
                 min_value=TODAY_DATE_ONLY
             )
         ]
-        for form in forms:
-            if self.selected_data and self.selected_data[form.name]:
+        if self.selected_data:
+            for form in forms:
                 form.default_value = converter.to_date_input(self.selected_data[form.name])
         return forms
     
@@ -58,8 +58,8 @@ class PatientSampleState(rx.State):
                 form_type=FormType.Input.value,
             )
         ]
-        for form in forms:
-            if self.selected_data and self.selected_data[form.name]:
+        if self.selected_data:
+            for form in forms:
                 form.default_value = self.selected_data[form.name]
         return forms
 
