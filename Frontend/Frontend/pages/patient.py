@@ -214,12 +214,14 @@ def patient() -> rx.Component:
                         PatientState.update_patient_form,
                     ),
                     rx.button(
+                        rx.icon("pipette", size=20),
                         "Patient Sample", 
                         disabled=~PatientState.updating,
                         on_click=rx.redirect("/patient_sample"),
                         radius="full"
                     ),
                     rx.button(
+                        rx.icon("stethoscope", size=20),
                         "Patient Check", 
                         disabled=~PatientState.updating,
                         on_click=rx.redirect("/patient_check"),
@@ -244,7 +246,8 @@ def patient() -> rx.Component:
                     rx.button(
                         rx.icon("x"),
                         on_click=PatientState.clear_selection,
-                        variant="ghost"
+                        variant="ghost",
+                        radius="full"
                     ),
                     spacing="2",
                     align="center"
