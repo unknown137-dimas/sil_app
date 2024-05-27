@@ -17,9 +17,6 @@ def to_data_table(input_data: list, ignored_columns: list = []) -> (list, list, 
         if "date" in column.lower() or "schedule" in column.lower():
             dataframe[column] = to_datetime(dataframe[column], format="mixed")
             dataframe[column] = dataframe[column].dt.strftime("%d %B %Y")
-        if "takendate" in column.lower():
-            dataframe[column] = to_datetime(dataframe[column], format="mixed")
-            dataframe[column] = dataframe[column].dt.strftime("%H:%M %d %B %Y")
         if "Id" in column:
             dataframe.rename(columns={column: column.replace("Id", "")}, inplace=True)
 

@@ -145,7 +145,7 @@ class PatientSampleState(rx.State):
 
     async def submit_sample_data(self, form_data: dict):
         self.selected_data.update(form_data)
-        self.selected_data["sampleTakenDate"] = TODAY_DATETIME
+        self.selected_data["sampleTakenDate"] = TODAY_DATE_ONLY
         await api_call.post(
             f"{API_PATIENT_SAMPLE}/{self.selected_data['id']}",
             payload=dict(self.selected_data)
