@@ -1,6 +1,6 @@
 from Frontend import styles
 import reflex as rx
-from Frontend.models.services_model import ServicesModel
+from Frontend.models.services_model import ServicesModel, ServiceModel
 
 
 def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandler)  -> rx.Component:
@@ -38,7 +38,7 @@ def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandl
             rx.foreach(
                 data,
                 lambda items: rx.tabs.content(
-                    rx.flex(
+                    rx.grid(
                         rx.foreach(
                             items.services,
                             lambda item: rx.checkbox(
@@ -47,14 +47,58 @@ def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandl
                                 on_change=lambda value: callback(item.id, value)
                                 )
                         ),
-                        direction="column",
+                        rows="3",
+                        flow="column",
+                        justify="between",
                         spacing="2",
-                        padding="10px"
+                        width="100%",
+                        padding="10px",
+                        spacing_x="6"
                     ),
                     value=items.name
                 )
             ),
             default_value=data[0].name,
             orientation="vertical",
+        )
+    )
+
+def multiple_selections_checkbox(data: list[ServiceModel], callback: rx.event.EventHandler)  -> rx.Component:
+    return rx.fragment(
+        rx.flex(
+            rx.text("Selected Item: "),
+            rx.foreach(
+                data,
+                lambda service:
+                rx.match(
+                    service.selected,
+                    (
+                        True,
+                        rx.badge(
+                            service.name,
+                            variant="solid",
+                            size="2",
+                            radius="full"
+                        ),
+                    )
+                )
+            ),
+            spacing="1"
+        ),
+        rx.grid(
+            rx.foreach(
+                data,
+                lambda item: rx.checkbox(
+                    item.name,
+                    checked=item.selected,
+                    on_change=lambda value: callback(item.id, value)
+                    )
+            ),
+            rows="3",
+            flow="column",
+            justify="between",
+            spacing="2",
+            width="100%",
+            spacing_x="6"
         )
     )
