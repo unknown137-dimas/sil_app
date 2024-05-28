@@ -166,7 +166,8 @@ class PatientState(rx.State):
                     placeholder="Address",
                     required=True,
                     form_type=FormType.Text.value,
-                    min_length=10
+                    min_length=10,
+                    default_value=self.selected_data["address"]
                 ),
             ]
     

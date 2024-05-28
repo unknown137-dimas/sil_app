@@ -5,6 +5,7 @@ import reflex as rx
 
 class FormState(rx.State):
     show_password: bool = False
+    text: str
 
     @rx.var
     def password_type(self) -> str:
@@ -39,6 +40,8 @@ def generate_form_field(field: FormModel) -> rx.Component:
                         placeholder=field.placeholder,
                         required=field.required,
                         min_length=field.min_length,
+                        value=field.default_value,
+                        on_change=FormState.set_text
                     )
                 ),
                 (
