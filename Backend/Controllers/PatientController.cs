@@ -46,6 +46,7 @@ public class PatientController : ApiBaseController<PatientController, PatientDTO
         try
         {
             newPatient.Name = textInfo.ToTitleCase(newPatient.Name.ToLower());
+            newPatient.Address = textInfo.ToTitleCase(newPatient.Address.ToLower());
             item = await _patientModule.AddAsync(newPatient);
         }
         catch (Exception ex)
@@ -67,6 +68,7 @@ public class PatientController : ApiBaseController<PatientController, PatientDTO
         try
         {
             updatedPatient.Name = textInfo.ToTitleCase(updatedPatient.Name.ToLower());
+            updatedPatient.Address = textInfo.ToTitleCase(updatedPatient.Address.ToLower());
             item = await _patientModule.UpdateAsync(patientId, updatedPatient);
         }
         catch (Exception ex)
