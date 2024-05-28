@@ -6,12 +6,12 @@ from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY, TO
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
-from Frontend.models.services_model import SampleServicesModel, SampleServiceModel
+from Frontend.models.services_model import SampleServiceModel
 from Frontend.enum.enums import FormType
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
 from Frontend.components.table import table, sort_table, get_columns
-from Frontend.components.multiple_selections import multiple_selections
+from Frontend.components.multiple_selections import multiple_selections_checkbox
 from .sample_category_services import SampleCategoryState
 from .patient import PatientState
 from datetime import datetime
@@ -28,7 +28,7 @@ class PatientSampleState(rx.State):
     selected_data: dict[str, str] = {}
     updating: bool = False
     loading: bool = True
-    sample_options: list[SampleServicesModel]
+    sample_options: list[SampleServiceModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
 
@@ -66,10 +66,9 @@ class PatientSampleState(rx.State):
     @rx.var
     def selected_service_ids(self) -> list[str]:
         result: list[str] = []
-        for category in self.sample_options:
-            for service in category.services:
-                if service.selected:
-                    result.append(service.id)
+        for service in self.sample_options:
+            if service.selected:
+                result.append(service.id)
         return result
 
     @rx.var
@@ -85,16 +84,14 @@ class PatientSampleState(rx.State):
         return get_columns(self)
     
     def select_service(self, service_id: str, value):
-        for category in self.sample_options:
-            for service in category.services:
-                if service.id == service_id:
-                    service.selected = value
+        for service in self.sample_options:
+            if service.id == service_id:
+                service.selected = value
 
     def get_sample_service(self, service_id: str) -> SampleServiceModel:
-        for category in self.sample_options:
-            for service in category.services:
-                if service.id == service_id:
-                    return service
+        for service in self.sample_options:
+            if service.id == service_id:
+                return service
 
     async def get_data(self):
         patient_states = await self.get_state(PatientState)
@@ -102,7 +99,7 @@ class PatientSampleState(rx.State):
         
         sample_categories_states = await self.get_state(SampleCategoryState)
         await sample_categories_states.get_data()
-        self.sample_options = [converter.to_sample_services_model(item["name"], item["sampleServices"]) for item in sample_categories_states.raw_data]
+        self.sample_options = [SampleServiceModel(id=service["id"], name=service["name"]) for item in sample_categories_states.raw_data for service in item["sampleServices"]]
 
         self.selected_patient_data = patient_states.selected_data
 
@@ -185,7 +182,7 @@ def patient_sample() -> rx.Component:
                             spacing="1",
                             align="center"
                         ),
-                        multiple_selections(PatientSampleState.sample_options, PatientSampleState.select_service),
+                        multiple_selections_checkbox(PatientSampleState.sample_options, PatientSampleState.select_service),
                     ),
                 ),
             )
