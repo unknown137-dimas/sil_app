@@ -244,7 +244,7 @@ def patient() -> rx.Component:
                         radius="full"
                     ),
                     rx.button(
-                        rx.icon("x"),
+                        rx.icon("x", size=20),
                         on_click=PatientState.clear_selection,
                         variant="ghost",
                         radius="full"
