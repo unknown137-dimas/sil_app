@@ -206,55 +206,57 @@ def patient() -> rx.Component:
             AuthState.is_regis_staff,
             (
                 True,
-                rx.hstack(
-                    crud_button(
-                        "Patient",
-                        PatientState,
-                        PatientState.new_patient_form,
-                        PatientState.update_patient_form,
+                rx.fragment(
+                    rx.hstack(
+                        crud_button(
+                            "Patient",
+                            PatientState,
+                            PatientState.new_patient_form,
+                            PatientState.update_patient_form,
+                        ),
+                        rx.button(
+                            rx.icon("pipette", size=20),
+                            "Patient Sample", 
+                            disabled=~PatientState.updating,
+                            on_click=rx.redirect("/patient_sample"),
+                            radius="full"
+                        ),
+                        rx.button(
+                            rx.icon("stethoscope", size=20),
+                            "Patient Check", 
+                            disabled=~PatientState.updating,
+                            on_click=rx.redirect("/patient_check"),
+                            radius="full"
+                        ),
+                        spacing="8"
                     ),
-                    rx.button(
-                        rx.icon("pipette", size=20),
-                        "Patient Sample", 
-                        disabled=~PatientState.updating,
-                        on_click=rx.redirect("/patient_sample"),
-                        radius="full"
+                    rx.flex(
+                        rx.text("Selected Patient: "),
+                        rx.cond(
+                            PatientState.is_patient_data_empty,
+                            rx.text(),
+                            rx.flex(
+                                rx.badge(
+                                    PatientState.selected_data["name"],
+                                    variant="solid",
+                                    size="2",
+                                    radius="full"
+                                ),
+                                rx.button(
+                                    rx.icon("x", size=20),
+                                    on_click=PatientState.clear_selection,
+                                    variant="ghost",
+                                    radius="full"
+                                ),
+                                spacing="2",
+                                align="center"
+                            )
+                        ),
+                        spacing="1",
+                        align="center"
                     ),
-                    rx.button(
-                        rx.icon("stethoscope", size=20),
-                        "Patient Check", 
-                        disabled=~PatientState.updating,
-                        on_click=rx.redirect("/patient_check"),
-                        radius="full"
-                    ),
-                    spacing="8"
-                ),
-            ),
-        ),
-        rx.flex(
-            rx.text("Selected Patient: "),
-            rx.cond(
-                PatientState.is_patient_data_empty,
-                rx.text(),
-                rx.flex(
-                    rx.badge(
-                        PatientState.selected_data["name"],
-                        variant="solid",
-                        size="2",
-                        radius="full"
-                    ),
-                    rx.button(
-                        rx.icon("x", size=20),
-                        on_click=PatientState.clear_selection,
-                        variant="ghost",
-                        radius="full"
-                    ),
-                    spacing="2",
-                    align="center"
                 )
             ),
-            spacing="1",
-            align="center"
         ),
         table(PatientState, PatientState.get_columns, PatientState.sort_table),
         on_mount=PatientState.get_data
