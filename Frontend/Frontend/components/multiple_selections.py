@@ -51,7 +51,6 @@ def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandl
                         flow="column",
                         justify="between",
                         spacing="2",
-                        width="100%",
                         padding="10px",
                         spacing_x="6"
                     ),
@@ -98,7 +97,6 @@ def multiple_selections_checkbox(data: list[ServiceModel], callback: rx.event.Ev
             flow="column",
             justify="between",
             spacing="2",
-            width="100%",
             spacing_x="6"
         )
     )
