@@ -45,6 +45,12 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
         try
         {
             newMedicalTool.Name = textInfo.ToTitleCase(newMedicalTool.Name.ToLower());
+            if (newMedicalTool.CalibrationNote != null)
+            {
+                var noteArray = newMedicalTool.CalibrationNote.ToLower().Split(" ");
+                noteArray[0] = textInfo.ToTitleCase(noteArray[0]);
+                newMedicalTool.CalibrationNote = string.Join(" ", noteArray);
+            }
             item = await _medicalToolModule.AddAsync(newMedicalTool);
         }
         catch (Exception ex)
@@ -66,6 +72,12 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
         try
         {
             updatedMedicalTool.Name = textInfo.ToTitleCase(updatedMedicalTool.Name.ToLower());
+            if (updatedMedicalTool.CalibrationNote != null)
+            {
+                var noteArray = updatedMedicalTool.CalibrationNote.ToLower().Split(" ");
+                noteArray[0] = textInfo.ToTitleCase(noteArray[0]);
+                updatedMedicalTool.CalibrationNote = string.Join(" ", noteArray);
+            }
             item = await _medicalToolModule.UpdateAsync(medicalToolId, updatedMedicalTool);
         }
         catch (Exception ex)

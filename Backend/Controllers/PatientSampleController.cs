@@ -44,6 +44,12 @@ public class PatientSampleController : ApiBaseController<PatientSampleController
         string message = string.Empty;
         try
         {
+            if (newPatientSample.SampleNote != null)
+            {
+                var noteArray = newPatientSample.SampleNote.ToLower().Split(" ");
+                noteArray[0] = textInfo.ToTitleCase(noteArray[0]);
+                newPatientSample.SampleNote = string.Join(" ", noteArray);
+            }
             item = await _patientSampleModule.AddAsync(newPatientSample);
         }
         catch (Exception ex)
@@ -64,6 +70,12 @@ public class PatientSampleController : ApiBaseController<PatientSampleController
         string message = string.Empty;
         try
         {
+            if (updatedPatientSample.SampleNote != null)
+            {
+                var noteArray = updatedPatientSample.SampleNote.ToLower().Split(" ");
+                noteArray[0] = textInfo.ToTitleCase(noteArray[0]);
+                updatedPatientSample.SampleNote = string.Join(" ", noteArray);
+            }
             item = await _patientSampleModule.UpdateAsync(patientSampleId, updatedPatientSample);
         }
         catch (Exception ex)
