@@ -43,6 +43,7 @@ public class SampleCategoryController : ApiBaseController<SampleCategoryControll
         string message = string.Empty;
         try
         {
+            newSampleCategory.Name = textInfo.ToTitleCase(newSampleCategory.Name.ToLower());
             item = await _sampleCategoryModule.AddAsync(newSampleCategory);
         }
         catch (Exception ex)
@@ -63,6 +64,7 @@ public class SampleCategoryController : ApiBaseController<SampleCategoryControll
         string message = string.Empty;
         try
         {
+            updatedSampleCategory.Name = textInfo.ToTitleCase(updatedSampleCategory.Name.ToLower());
             item = await _sampleCategoryModule.UpdateAsync(sampleCategoryId, updatedSampleCategory);
         }
         catch (Exception ex)

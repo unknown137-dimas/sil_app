@@ -52,7 +52,7 @@ public class RoleController : ApiBaseController<RoleController, RoleDTO>
     {
         var newItem = new IdentityRole()
         {
-            Name = newRole.Name
+            Name = textInfo.ToTitleCase(newRole.Name.ToLower())
         };
         var result = await _roleManager.CreateAsync(newItem);
         if(result.Succeeded)
@@ -70,7 +70,7 @@ public class RoleController : ApiBaseController<RoleController, RoleDTO>
         var existingRole = await _roleManager.FindByIdAsync(roleId);
         if(existingRole is not null)
         {
-            existingRole.Name = updatedRole.Name;
+            existingRole.Name = textInfo.ToTitleCase(updatedRole.Name.ToLower());
             existingRole.NormalizedName = updatedRole.Name.ToUpper();
             result = await _roleManager.UpdateAsync(existingRole);
         }

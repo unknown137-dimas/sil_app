@@ -44,6 +44,7 @@ public class CheckServiceController : ApiBaseController<CheckServiceController, 
         string message = string.Empty;
         try
         {
+            newCheckService.Name = textInfo.ToTitleCase(newCheckService.Name.ToLower());
             item = await _checkServiceModule.AddAsync(newCheckService);
         }
         catch (Exception ex)
@@ -64,6 +65,7 @@ public class CheckServiceController : ApiBaseController<CheckServiceController, 
         string message = string.Empty;
         try
         {
+            updatedCheckService.Name = textInfo.ToTitleCase(updatedCheckService.Name.ToLower());
             item = await _checkServiceModule.UpdateAsync(checkServiceId, updatedCheckService);
         }
         catch (Exception ex)

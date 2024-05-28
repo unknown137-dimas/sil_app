@@ -44,6 +44,7 @@ public class SampleServiceController : ApiBaseController<SampleServiceController
         string message = string.Empty;
         try
         {
+            newSampleService.Name = textInfo.ToTitleCase(newSampleService.Name.ToLower());
             item = await _sampleServiceModule.AddAsync(newSampleService);
         }
         catch (Exception ex)
@@ -64,6 +65,7 @@ public class SampleServiceController : ApiBaseController<SampleServiceController
         string message = string.Empty;
         try
         {
+            updatedSampleService.Name = textInfo.ToTitleCase(updatedSampleService.Name.ToLower());
             item = await _sampleServiceModule.UpdateAsync(sampleServiceId, updatedSampleService);
         }
         catch (Exception ex)

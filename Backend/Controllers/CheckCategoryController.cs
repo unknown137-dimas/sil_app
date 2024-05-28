@@ -43,6 +43,7 @@ public class CheckCategoryController : ApiBaseController<CheckCategoryController
         string message = string.Empty;
         try
         {
+            newCheckCategory.Name = textInfo.ToTitleCase(newCheckCategory.Name.ToLower());
             item = await _checkCategoryModule.AddAsync(newCheckCategory);
         }
         catch (Exception ex)
@@ -63,6 +64,7 @@ public class CheckCategoryController : ApiBaseController<CheckCategoryController
         string message = string.Empty;
         try
         {
+            updatedCheckCategory.Name = textInfo.ToTitleCase(updatedCheckCategory.Name.ToLower());
             item = await _checkCategoryModule.UpdateAsync(checkCategoryId, updatedCheckCategory);
         }
         catch (Exception ex)

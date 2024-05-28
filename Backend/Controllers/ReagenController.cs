@@ -45,6 +45,7 @@ public class ReagenController : ApiBaseController<ReagenController, ReagenDTO>
         string message = string.Empty;
         try
         {
+            newReagen.Name = textInfo.ToTitleCase(newReagen.Name.ToLower());
             item = await _reagenModule.AddAsync(newReagen);
         }
         catch (Exception ex)
@@ -65,6 +66,7 @@ public class ReagenController : ApiBaseController<ReagenController, ReagenDTO>
         string message = string.Empty;
         try
         {
+            updatedReagen.Name = textInfo.ToTitleCase(updatedReagen.Name.ToLower());
             item = await _reagenModule.UpdateAsync(reagenId, updatedReagen);
         }
         catch (Exception ex)

@@ -44,6 +44,7 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
         string message = string.Empty;
         try
         {
+            newMedicalTool.Name = textInfo.ToTitleCase(newMedicalTool.Name.ToLower());
             item = await _medicalToolModule.AddAsync(newMedicalTool);
         }
         catch (Exception ex)
@@ -64,6 +65,7 @@ public class MedicalToolController : ApiBaseController<MedicalToolController, Me
         string message = string.Empty;
         try
         {
+            updatedMedicalTool.Name = textInfo.ToTitleCase(updatedMedicalTool.Name.ToLower());
             item = await _medicalToolModule.UpdateAsync(medicalToolId, updatedMedicalTool);
         }
         catch (Exception ex)

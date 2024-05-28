@@ -1,5 +1,5 @@
+using System.Globalization;
 using Backend.Models;
-using Backend.Modules;
 using Backend.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +13,7 @@ public class ApiBaseController<T, DTO> : ControllerBase where T : ApiBaseControl
 {
     protected ILogger<T> Logger { get; }
     private readonly IResponseFactory<DTO> _responseFactory;
+    protected TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
     public ApiBaseController(
         ILogger<T> logger,

@@ -63,8 +63,8 @@ public class UserController : ApiBaseController<UserController, UserDTO>
         var newItem = new User()
         {
             UserName = newUser.UserName,
-            FirstName = newUser.FirstName,
-            LastName = newUser.LastName,
+            FirstName = textInfo.ToTitleCase(newUser.FirstName.ToLower()),
+            LastName = textInfo.ToTitleCase(newUser.LastName.ToLower()),
             Email = newUser.Email,
             EmailConfirmed = true
 
@@ -106,8 +106,8 @@ public class UserController : ApiBaseController<UserController, UserDTO>
         var existingUser = await _userManager.FindByIdAsync(userId);
         if(existingUser is not null)
         {
-            existingUser.FirstName = updatedUser.FirstName;
-            existingUser.LastName = updatedUser.LastName;
+            existingUser.FirstName = textInfo.ToTitleCase(updatedUser.FirstName.ToLower());
+            existingUser.LastName = textInfo.ToTitleCase(updatedUser.LastName.ToLower());
             existingUser.Email = updatedUser.Email;
             existingUser.UserName = updatedUser.UserName;
             result = await _userManager.UpdateAsync(existingUser);
