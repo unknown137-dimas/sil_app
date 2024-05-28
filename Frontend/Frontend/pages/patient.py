@@ -180,6 +180,7 @@ class PatientState(rx.State):
         )
         await self.get_data()
         self.updating = False
+        self.selected_data = {}
 
     async def add_data(self, form_data: dict):
         form_data["gender"] = Gender[form_data["gender"]].value
