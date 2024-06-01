@@ -43,9 +43,9 @@ public class PatientCheckModule : Module<PatientCheckDTO, PatientCheck>
 
         document.LastSection.AddParagraph("Patient Result", "Heading1");
 
-        #region Patient Data
+        #region Patient Info
 
-        document.LastSection.AddParagraph("Patient Data", "Heading2");
+        document.LastSection.AddParagraph("Patient Info", "Heading2");
         var patientData = patientResult.Select(p => p.Patient).First();
 
         var patientDataTable = new Table();
@@ -82,6 +82,7 @@ public class PatientCheckModule : Module<PatientCheckDTO, PatientCheck>
         #region Patient Result Table
 
         document.LastSection.AddParagraph("Check Result", "Heading2");
+        document.LastSection.AddParagraph($"Check Schedule : {dto.CheckSchedule:dd MMM yyyy}");
         var table = new Table
         {
             Borders =
