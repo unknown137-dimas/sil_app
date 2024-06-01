@@ -96,4 +96,10 @@ public class PatientCheckController : ApiBaseController<PatientCheckController, 
         }
         return GeneratedResponse(item, message);
     }
+
+    [HttpGet("export-pdf")]
+    public ActionResult ExportPdf([FromQuery] PatientCheckRequestDTO requestDTO)
+    {
+        return File(_patientCheckModule.ExportPdf(requestDTO), "application/pdf", $"{requestDTO.PatientId}-{requestDTO.CheckSchedule.Date}.pdf");
+    }
 }
