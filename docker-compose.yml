@@ -26,6 +26,8 @@ services:
     build:
       context: .
       dockerfile: Prod.Dockerfile
+    volumes:
+      - /tmp/:/app/assets/tmp/
     expose:
       - 8000
     restart: always

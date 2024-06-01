@@ -240,7 +240,10 @@ class PatientCheckState(rx.State):
         raw_result = await api_call.get(f"{API_PATIENT_CHECK}/export-pdf", self.selected_data, True)
         file_name_data = findall(r"filename\*?=([^;]+)", raw_result.headers.get("content-disposition"))
         file_name = file_name_data[0].strip().strip('"')
-        return rx.download(filename=file_name, data=raw_result.content)
+        with open(f"assets/tmp/{file_name}", "wb") as file_out:
+            file_out.write(raw_result.content)
+
+        return rx.download(url=f"/tmp/{file_name}")
 
 @template(route="/patient_check", title="Patient Check", image="/stethoscope.svg")
 def patient_check() -> rx.Component:
