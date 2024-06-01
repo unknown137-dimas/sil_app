@@ -35,6 +35,7 @@ class PatientCheckState(rx.State):
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
     service_detail: dict[str, str] = {}
+    downloading: bool = False
 
     @rx.var
     def patient_check_form(self) -> list[FormModel]:
@@ -237,13 +238,12 @@ class PatientCheckState(rx.State):
     async def download_result(self):
         if self.selected_data == {}:
             return
+        self.downloading = True
         raw_result = await api_call.get(f"{API_PATIENT_CHECK}/export-pdf", self.selected_data, True)
         file_name_data = findall(r"filename\*?=([^;]+)", raw_result.headers.get("content-disposition"))
         file_name = file_name_data[0].strip().strip('"')
-        with open(f"assets/tmp/{file_name}", "wb") as file_out:
-            file_out.write(raw_result.content)
-
-        return rx.download(url=f"/tmp/{file_name}")
+        self.downloading = False
+        return rx.download(filename=file_name, data=raw_result.content)
 
 @template(route="/patient_check", title="Patient Check", image="/stethoscope.svg")
 def patient_check() -> rx.Component:
@@ -324,7 +324,8 @@ def patient_check() -> rx.Component:
                 "Download Result",
                 on_click=PatientCheckState.download_result,
                 disabled=~PatientCheckState.is_result_available,
-                radius="full"
+                radius="full",
+                loading=PatientCheckState.downloading
             ),
             spacing="8"
         ),
