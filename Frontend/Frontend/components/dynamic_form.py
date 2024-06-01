@@ -164,10 +164,18 @@ def dynamic_form_dialog(disabled: bool, title: str, form_type: str, form: list[F
     return rx.cond(
         disabled,
         rx.button(
-            rx.match(
-                form_type,
-                ("Add", rx.icon("circle-plus", size=20)),
-                ("Update", rx.icon("pencil", size=20)),
+            rx.cond(
+                "Submit" in form_type,
+                rx.icon("upload", size=20),
+                rx.cond(
+                    "Validate" in form_type,
+                    rx.icon("check", size=20),
+                    rx.match(
+                        form_type,
+                        ("Add", rx.icon("circle-plus", size=20)),
+                        ("Update", rx.icon("pencil", size=20)),
+                    ),
+                ),
             ),
             form_type,
             disabled=True,
@@ -176,10 +184,18 @@ def dynamic_form_dialog(disabled: bool, title: str, form_type: str, form: list[F
         rx.dialog.root(
             rx.dialog.trigger(
                 rx.button(
-                    rx.match(
-                        form_type,
-                        ("Add", rx.icon("circle-plus", size=20)),
-                        ("Update", rx.icon("pencil", size=20)),
+                    rx.cond(
+                        "Submit" in form_type,
+                        rx.icon("upload", size=20),
+                        rx.cond(
+                            "Validate" in form_type,
+                            rx.icon("check", size=20),
+                            rx.match(
+                                form_type,
+                                ("Add", rx.icon("circle-plus", size=20)),
+                                ("Update", rx.icon("pencil", size=20)),
+                            ),
+                        ),
                     ),
                     form_type,
                     radius="full"
