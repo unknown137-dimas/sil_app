@@ -29,6 +29,8 @@ RUN $uv pip install -r requirements.txt
 # Define api url
 ENV API_URL="https://app-backend.burbee.duckdns.org"
 
+RUN reflex init
+
 # Export static copy of frontend to /app/.web/_static
 RUN reflex export --frontend-only --no-zip
 
@@ -46,6 +48,7 @@ USER reflex
 ENV PATH="/app/Frontend/.venv/bin:$PATH"
 
 WORKDIR /app/Frontend
+RUN mkdir -p assets/tmp
 
 # Needed until Reflex properly passes SIGTERM on backend.
 STOPSIGNAL SIGKILL
