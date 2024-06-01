@@ -2,6 +2,7 @@ using Backend.DTOs;
 using Backend.Models;
 using Backend.Modules;
 using Backend.Utilities;
+using Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -11,14 +12,17 @@ namespace Backend.Controllers;
 public class PatientCheckController : ApiBaseController<PatientCheckController, PatientCheckDTO>
 {
     private readonly PatientCheckModule _patientCheckModule;
+    private readonly Module<PatientDTO, Patient> _patientModule;
 
     public PatientCheckController(
         ILogger<PatientCheckController> logger,
         PatientCheckModule patientCheckModule,
+        Module<PatientDTO, Patient> patientModule,
         IResponseFactory<PatientCheckDTO> responseFactory
     ) : base(logger, responseFactory)
     {
         _patientCheckModule = patientCheckModule;
+        _patientModule = patientModule;
     }
 
 
@@ -100,6 +104,8 @@ public class PatientCheckController : ApiBaseController<PatientCheckController, 
     [HttpGet("export-pdf")]
     public ActionResult ExportPdf([FromQuery] PatientCheckRequestDTO requestDTO)
     {
-        return File(_patientCheckModule.ExportPdf(requestDTO), "application/pdf", $"{requestDTO.PatientId}-{requestDTO.CheckSchedule.Date}.pdf");
+        var patientName = _patientModule.GetById(requestDTO.PatientId).GetAwaiter().GetResult()?.Name;
+        var fileName = $"Result_{patientName}_{requestDTO.CheckSchedule:dd_MM_yyyy}.pdf";
+        return File(_patientCheckModule.ExportPdf(requestDTO), "application/pdf", fileName);
     }
 }
