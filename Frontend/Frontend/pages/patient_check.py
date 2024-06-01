@@ -16,6 +16,7 @@ from .check_category_services import CheckCategoryState
 from .patient import PatientState
 from datetime import datetime
 from pandas import DataFrame
+from re import findall
 
 import numpy as np
 import reflex as rx
@@ -110,6 +111,10 @@ class PatientCheckState(rx.State):
     @rx.var
     def is_patient_data_empty(self) -> bool:
         return self.selected_patient_data == {}
+
+    @rx.var
+    def is_result_available(self) -> bool:
+        return self.selected_data != {} and self.is_result_submitted
 
     @rx.var
     def is_allowed_to_add(self) -> bool:
@@ -229,6 +234,14 @@ class PatientCheckState(rx.State):
     def sort_table(self, sort_key: str):
         sort_table(self, sort_key)
 
+    async def download_result(self):
+        if self.selected_data == {}:
+            return
+        raw_result = await api_call.get(f"{API_PATIENT_CHECK}/export-pdf", self.selected_data, True)
+        file_name_data = findall(r"filename\*?=([^;]+)", raw_result.headers.get("content-disposition"))
+        file_name = file_name_data[0].strip().strip('"')
+        return rx.download(filename=file_name, data=raw_result.content)
+
 @template(route="/patient_check", title="Patient Check", image="/stethoscope.svg")
 def patient_check() -> rx.Component:
     return rx.vstack(
@@ -301,6 +314,13 @@ def patient_check() -> rx.Component:
                     )
                 )
             ),
+        ),
+        rx.button(
+            rx.icon("download", size=20),
+            "Download Result",
+            on_click=PatientCheckState.download_result,
+            disabled=~PatientCheckState.is_result_available,
+            radius="full"
         ),
         table(PatientCheckState, PatientCheckState.get_columns, PatientCheckState.sort_table),
         on_mount=PatientCheckState.get_data
