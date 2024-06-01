@@ -7,7 +7,7 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.models.services_model import CheckServicesModel, CheckServiceModel
-from Frontend.enum.enums import FormType, ValidationStatus, CheckStatus, CheckType
+from Frontend.enum.enums import FormType, ValidationStatus, CheckStatus, CheckType, UserRoles
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
 from Frontend.components.table import table, sort_table, get_columns
@@ -273,28 +273,30 @@ def patient_check() -> rx.Component:
                 ),
             )
         ),
-        rx.cond(
-            AuthState.is_regis_staff,
-            rx.hstack(
-                rx.button(
-                    rx.icon("chevron-left"),
-                    "Back", 
-                    on_click=rx.redirect("/patient"),
-                    radius="full"
-                ),
-                crud_button(
-                    "Patient Check",
-                    PatientCheckState,
-                    PatientCheckState.patient_check_form,
-                    PatientCheckState.patient_check_form,
-                    ~PatientCheckState.is_allowed_to_add
-                ),
-                spacing="8"
-            ),
+        rx.flex(
             rx.match(
-                AuthState.is_lab_staff,
+                AuthState.role,
                 (
-                    True,
+                    UserRoles.Regis.value,
+                    rx.flex(
+                        rx.button(
+                            rx.icon("chevron-left"),
+                            "Back", 
+                            on_click=rx.redirect("/patient"),
+                            radius="full"
+                        ),
+                        crud_button(
+                            "Patient Check",
+                            PatientCheckState,
+                            PatientCheckState.patient_check_form,
+                            PatientCheckState.patient_check_form,
+                            ~PatientCheckState.is_allowed_to_add
+                        ),
+                        spacing="8"
+                    ),
+                ),
+                (
+                    UserRoles.Lab.value,
                     rx.flex(
                         dynamic_form_dialog(
                             ~PatientCheckState.updating,
@@ -314,13 +316,14 @@ def patient_check() -> rx.Component:
                     )
                 )
             ),
-        ),
-        rx.button(
-            rx.icon("download", size=20),
-            "Download Result",
-            on_click=PatientCheckState.download_result,
-            disabled=~PatientCheckState.is_result_available,
-            radius="full"
+            rx.button(
+                rx.icon("download", size=20),
+                "Download Result",
+                on_click=PatientCheckState.download_result,
+                disabled=~PatientCheckState.is_result_available,
+                radius="full"
+            ),
+            spacing="8"
         ),
         table(PatientCheckState, PatientCheckState.get_columns, PatientCheckState.sort_table),
         on_mount=PatientCheckState.get_data
