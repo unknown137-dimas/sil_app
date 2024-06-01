@@ -27,6 +27,10 @@ WORKDIR /app
 # Copy the build output from the build stage
 COPY --from=build /app/out .
 
+# Install fonts
+RUN sed -i 's/^Components: main$/& contrib/' /etc/apt/sources.list.d/debian.sources
+RUN apt-get update && apt-get install -y ttf-mscorefonts-installer fontconfig && fc-cache -f -v
+
 # Expose the port the app runs on
 EXPOSE 8080
 
