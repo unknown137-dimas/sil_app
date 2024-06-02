@@ -58,7 +58,6 @@ def multiple_selections(data: list[ServicesModel], callback: rx.event.EventHandl
                 )
             ),
             default_value=data[0].name,
-            orientation="vertical",
         )
     )
 
