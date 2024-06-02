@@ -2,7 +2,6 @@ using Backend.DTOs;
 using Backend.Models;
 using Backend.Modules;
 using Backend.Utilities;
-using Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -11,11 +10,11 @@ namespace Backend.Controllers;
 [Route("api/patient")]
 public class PatientController : ApiBaseController<PatientController, PatientDTO>
 {
-    private readonly Module<PatientDTO, Patient> _patientModule;
+    private readonly PatientModule _patientModule;
 
     public PatientController(
         ILogger<PatientController> logger,
-        Module<PatientDTO, Patient> patientModule,
+        PatientModule patientModule,
         IResponseFactory<PatientDTO> responseFactory
     ) : base(logger, responseFactory)
     {
@@ -36,6 +35,19 @@ public class PatientController : ApiBaseController<PatientController, PatientDTO
         var item = await _patientModule.GetById(patientId);
         var message = item is not null ? "" : "Item Not Found";
         return GeneratedResponse(item, message);
+    }
+
+    [HttpGet("label/{patientId}")]
+    public ActionResult<Response<PatientDTO>> GetPatientLabel(string patientId)
+    {
+        var item =  _patientModule.GetById(patientId).GetAwaiter().GetResult();
+        if(item == null)
+        {
+            return GeneratedResponse(item, "Patient information not found");
+        }
+        
+        var fileName = $"Label_{item.Name}.pdf";
+        return File(_patientModule.GetPatientLabel(patientId), "application/pdf", fileName);
     }
 
     [HttpPost()]
