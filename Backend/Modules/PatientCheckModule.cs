@@ -61,7 +61,7 @@ public class PatientCheckModule : Module<PatientCheckDTO, PatientCheck>
         patipatientDataRow = patientDataTable.AddRow();
         patipatientDataRow.Cells[0].AddParagraph("Age");
         patipatientDataRow.Cells[1].AddParagraph(":");
-        patipatientDataRow.Cells[2].AddParagraph($"{DateTime.Now.Year - patientData.DateOfBirth.Year}");
+        patipatientDataRow.Cells[2].AddParagraph($"{DateTime.Now.Year - patientData.DateOfBirth.Year} Years");
 
         patipatientDataRow = patientDataTable.AddRow();
         patipatientDataRow.Cells[0].AddParagraph("Gender");
@@ -82,7 +82,7 @@ public class PatientCheckModule : Module<PatientCheckDTO, PatientCheck>
         #region Patient Result Table
 
         document.LastSection.AddParagraph("Check Result", "Heading2");
-        document.LastSection.AddParagraph($"Check Schedule : {dto.CheckSchedule:dd MMM yyyy}");
+        document.LastSection.AddParagraph($"Check Schedule : {dto.CheckSchedule:dd MMMM yyyy}");
         var table = new Table
         {
             Borders =
