@@ -5,43 +5,52 @@ import reflex as rx
 
 
 def delete_button(disabled: bool, callback: rx.event.EventHandler) -> rx.Component:
-    return rx.alert_dialog.root(
-        rx.alert_dialog.trigger(
-            rx.button(
-                rx.icon("trash-2", size=20),
-                "Delete",
-                disabled=disabled,
-                color_scheme="red",
-                radius="full"
-            )
+    return rx.cond(
+        disabled,
+        rx.button(
+            rx.icon("trash-2", size=20),
+            "Delete",
+            disabled=disabled,
+            color_scheme="red",
+            radius="full"
         ),
-        rx.alert_dialog.content(
-            rx.alert_dialog.title("Delete Item"),
-            rx.alert_dialog.description(
-                "Are you sure want to delete this item?",
+        rx.alert_dialog.root(
+            rx.alert_dialog.trigger(
+                rx.button(
+                    rx.icon("trash-2", size=20),
+                    "Delete",
+                    color_scheme="red",
+                    radius="full"
+                )
             ),
-            rx.flex(
-                rx.alert_dialog.cancel(
-                    rx.button(
-                        "Cancel",
-                        variant="soft",
-                        color_scheme="gray",
-                        radius="full"
-                    ),
+            rx.alert_dialog.content(
+                rx.alert_dialog.title("Delete Item"),
+                rx.alert_dialog.description(
+                    "Are you sure want to delete this item?",
                 ),
-                rx.alert_dialog.action(
-                    rx.button(
-                        "Delete",
-                        on_click=callback,
-                        color_scheme="red",
-                        radius="full"
+                rx.flex(
+                    rx.alert_dialog.cancel(
+                        rx.button(
+                            "Cancel",
+                            variant="soft",
+                            color_scheme="gray",
+                            radius="full"
+                        ),
                     ),
+                    rx.alert_dialog.action(
+                        rx.button(
+                            "Delete",
+                            on_click=callback,
+                            color_scheme="red",
+                            radius="full"
+                        ),
+                    ),
+                    spacing="3",
+                    margin_top="16px",
+                    justify="end",
                 ),
-                spacing="3",
-                margin_top="16px",
-                justify="end",
             ),
-        ),
+        )
     )
     
 
