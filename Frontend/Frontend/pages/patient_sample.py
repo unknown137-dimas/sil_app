@@ -1,13 +1,13 @@
 from Frontend import styles
 from Frontend.templates import template
 from Frontend.states.auth_state import AuthState
-from Frontend.const.api import API_PATIENT_SAMPLE, API_SAMPLE_SERVICE
+from Frontend.const.api import API_PATIENT_SAMPLE, API_SAMPLE_SERVICE, API_PATIENT
 from Frontend.const.common_variables import TODAY_DATE_ONLY, TODAY_TIME_ONLY, TODAY_DATETIME
 from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.models.services_model import SampleServiceModel
-from Frontend.enum.enums import FormType
+from Frontend.enum.enums import FormType, UserRoles
 from Frontend.components.crud_button import crud_button
 from Frontend.components.dynamic_form import dynamic_form_dialog
 from Frontend.components.table import table, sort_table, get_columns
@@ -16,6 +16,7 @@ from .sample_category_services import SampleCategoryState
 from .patient import PatientState
 from datetime import datetime
 from pandas import DataFrame
+from re import findall
 
 import reflex as rx
 
@@ -31,6 +32,7 @@ class PatientSampleState(rx.State):
     sample_options: list[SampleServiceModel]
     selected_services: list[str]
     selected_patient_data: dict[str, str] = {}
+    downloading: bool = False
 
     @rx.var
     def patient_sample_form(self) -> list[FormModel]:
@@ -156,6 +158,16 @@ class PatientSampleState(rx.State):
     def sort_table(self, sort_key: str):
         sort_table(self, sort_key)
 
+    async def download_label(self):
+        if self.selected_data == {}:
+            return
+        self.downloading = True
+        raw_result = await api_call.get(f"{API_PATIENT}/label/{self.selected_data['patientId']}", raw=True)
+        file_name_data = findall(r"filename\*?=([^;]+)", raw_result.headers.get("content-disposition"))
+        file_name = file_name_data[0].strip().strip('"')
+        self.downloading = False
+        return rx.download(filename=file_name, data=raw_result.content)
+
 @template(route="/patient_sample", title="Patient Sample", image="/pipette.svg")
 def patient_sample() -> rx.Component:
     return rx.vstack(
@@ -187,35 +199,48 @@ def patient_sample() -> rx.Component:
                 ),
             )
         ),
-        rx.cond(
-            AuthState.is_regis_staff,
-            rx.hstack(
-                rx.button(
-                    rx.icon("chevron-left"),
-                    "Back", 
-                    on_click=rx.redirect("/patient"),
-                    radius="full"
+        rx.flex(
+            rx.match(
+                AuthState.role,
+                (
+                    UserRoles.Regis.value,
+                    rx.flex(
+                        rx.button(
+                            rx.icon("chevron-left"),
+                            "Back", 
+                            on_click=rx.redirect("/patient"),
+                            radius="full"
+                        ),
+                        crud_button(
+                            "Patient Sample",
+                            PatientSampleState,
+                            PatientSampleState.patient_sample_form,
+                            PatientSampleState.patient_sample_form,
+                            ~PatientSampleState.is_allowed_to_add
+                        ),
+                        spacing="8"
+                    ),
                 ),
-                crud_button(
-                    "Patient Sample",
-                    PatientSampleState,
-                    PatientSampleState.patient_sample_form,
-                    PatientSampleState.patient_sample_form,
-                    ~PatientSampleState.is_allowed_to_add
-                ),
-                spacing="8"
+                (
+                    UserRoles.Sampling.value,
+                    dynamic_form_dialog(
+                        ~PatientSampleState.updating,
+                        "Submit Sample Result",
+                        "Submit Sample",
+                        PatientSampleState.patient_sample_result_form,
+                        PatientSampleState.submit_sample_data
+                    ),
+                )
             ),
-            rx.cond(
-                AuthState.is_sampling_staff,
-                dynamic_form_dialog(
-                    ~PatientSampleState.updating,
-                    "Submit Sample Result",
-                    "Submit Sample",
-                    PatientSampleState.patient_sample_result_form,
-                    PatientSampleState.submit_sample_data
-                ),
-                rx.flex(),
+            rx.button(
+                rx.icon("download", size=20),
+                "Download Patient Label",
+                on_click=PatientSampleState.download_label,
+                disabled=~PatientSampleState.updating,
+                radius="full",
+                loading=PatientSampleState.downloading
             ),
+            spacing="8"
         ),
         table(PatientSampleState, PatientSampleState.get_columns, PatientSampleState.sort_table),
         on_mount=PatientSampleState.get_data
