@@ -6,11 +6,9 @@ from Frontend.utilities import api_call
 from Frontend.utilities import converter
 from Frontend.models.form_model import FormModel
 from Frontend.enum.enums import FormType
-from Frontend.components.dynamic_form import dynamic_form_dialog
-from Frontend.components.crud_button import delete_button
+from Frontend.components.crud_button import crud_button
 from Frontend.components.table import table, sort_table, get_columns
 from pandas import DataFrame
-from Frontend.states.auth_state import AuthState
 
 import reflex as rx
 
@@ -135,14 +133,11 @@ class ReagenState(rx.State):
 @template(route="/reagen", title="Reagen", image="/dna.svg")
 def reagen() -> rx.Component:
     return rx.vstack(
-        rx.flex(
-            dynamic_form_dialog(False, "Add Reagen", "Add", ReagenState.new_reagen_form, ReagenState.add_data),
-            dynamic_form_dialog(~ReagenState.updating, "Update Reagen", "Update", ReagenState.update_reagen_form, ReagenState.update_data),
-            rx.match(
-                AuthState.is_admin,
-                (True, delete_button(~ReagenState.updating, ReagenState.delete_data))
-            ),
-            spacing="3",
+        crud_button(
+            "Reagen",
+            ReagenState,
+            ReagenState.new_reagen_form,
+            ReagenState.update_reagen_form,
         ),
         table(ReagenState, ReagenState.get_columns, ReagenState.sort_table),
         on_mount=ReagenState.get_data
